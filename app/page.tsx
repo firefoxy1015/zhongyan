@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   CANONICAL_LIAR_TARGET,
   LIAR_GAME,
@@ -105,7 +106,10 @@ export default function Home() {
                 你坐在没有门的密室中。十人围桌而坐，山羊头却只向“九位”参与者问好。
                 这一局不靠数值，不靠抽卡强度；你必须读懂规则、听完每段叙述，并在最后写下唯一的名字。
               </p>
-              <button className="game-primary" onClick={() => setPhase("rules")}>进入面试房</button>
+              <div className="entry-actions">
+                <button className="game-primary" onClick={() => setPhase("rules")}>进入单人剧本</button>
+                <Link className="game-secondary live-room-link" href="/room">创建 / 加入真人房</Link>
+              </div>
             </section>
           )}
 

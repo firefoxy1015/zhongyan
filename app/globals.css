@@ -1123,8 +1123,17 @@ button:focus-visible {
   opacity: 0.38;
 }
 
-.game-stage--entry .game-primary {
+.entry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
   margin-top: 27px;
+}
+
+.live-room-link {
+  color: #eadbbc;
+  text-decoration: none;
 }
 
 .rule-list {
@@ -1574,6 +1583,538 @@ button:focus-visible {
   }
 
   .game-ledger {
+    grid-column: auto;
+  }
+}
+
+.room-entry,
+.live-room-app {
+  background:
+    radial-gradient(circle at 50% -15%, rgba(151, 38, 32, 0.42), transparent 34rem),
+    linear-gradient(145deg, #080809, #17110f 56%, #080809);
+  color: #ded1b7;
+  min-height: 100vh;
+  padding: 28px;
+}
+
+.room-entry {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.room-back {
+  color: #b9a984;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.room-back:hover {
+  color: #e5b75e;
+}
+
+.room-entry > .room-back {
+  margin-bottom: 21px;
+  width: min(100%, 470px);
+}
+
+.room-entry-card {
+  background: linear-gradient(145deg, rgba(34, 28, 24, 0.96), rgba(10, 11, 12, 0.94));
+  border: 1px solid rgba(229, 183, 94, 0.22);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+  max-width: 470px;
+  padding: 36px;
+  width: 100%;
+}
+
+.room-entry-card h1,
+.live-room-header h1 {
+  color: #f0e3c8;
+  font-size: 28px;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  margin: 10px 0 16px;
+}
+
+.room-entry-card > p:not(.game-eyebrow) {
+  color: #b2a793;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  line-height: 1.9;
+  margin: 0 0 26px;
+}
+
+.room-entry-card label {
+  color: #b6a98f;
+  display: grid;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  gap: 7px;
+  letter-spacing: 0.08em;
+  margin: 14px 0;
+}
+
+.room-entry-card input,
+.discussion-panel input {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(229, 183, 94, 0.21);
+  color: #f0e1be;
+  font: inherit;
+  outline: none;
+  padding: 12px;
+}
+
+.room-entry-card input:focus,
+.discussion-panel input:focus {
+  border-color: #e5b75e;
+}
+
+.room-entry-card > button {
+  margin-top: 6px;
+  width: 100%;
+}
+
+.room-entry-divider {
+  border-top: 1px solid rgba(229, 183, 94, 0.16);
+  margin: 25px 0;
+  position: relative;
+}
+
+.room-entry-divider span {
+  background: #171210;
+  color: #8d8374;
+  font-size: 11px;
+  left: 50%;
+  padding: 0 10px;
+  position: absolute;
+  top: -8px;
+  transform: translateX(-50%);
+}
+
+.room-error {
+  color: #e48a6f !important;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px !important;
+  line-height: 1.6;
+  margin: 14px 0 0 !important;
+}
+
+.live-room-header,
+.live-room-grid {
+  margin: 0 auto;
+  max-width: 1500px;
+}
+
+.live-room-header {
+  align-items: center;
+  border-bottom: 1px solid rgba(229, 183, 94, 0.23);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 170px minmax(0, 1fr) auto;
+  min-height: 87px;
+}
+
+.live-room-header h1 {
+  font-size: 20px;
+  margin: 4px 0;
+}
+
+.room-code-button {
+  background: rgba(229, 183, 94, 0.06);
+  border: 1px solid rgba(229, 183, 94, 0.36);
+  color: #e5b75e;
+  cursor: pointer;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 16px;
+  letter-spacing: 0.13em;
+  padding: 10px 13px;
+}
+
+.room-code-button span {
+  color: #a99d89;
+  display: block;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  margin-bottom: 3px;
+}
+
+.live-room-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 230px minmax(0, 1fr) 300px;
+  padding-top: 24px;
+}
+
+.live-panel,
+.live-table {
+  background: linear-gradient(145deg, rgba(30, 25, 22, 0.96), rgba(9, 10, 11, 0.95));
+  border: 1px solid rgba(229, 183, 94, 0.17);
+  box-shadow: 0 22px 64px rgba(0, 0, 0, 0.28);
+}
+
+.live-panel {
+  min-height: 690px;
+  padding: 19px;
+}
+
+.seat-count {
+  color: #e5b75e;
+  display: block;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 22px;
+  font-weight: 500;
+  margin: 7px 0 16px;
+}
+
+.live-seat-list {
+  display: grid;
+  gap: 6px;
+}
+
+.live-seat-list > div {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(229, 183, 94, 0.1);
+  display: grid;
+  gap: 7px;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  min-height: 39px;
+  padding: 7px;
+}
+
+.live-seat-list > div.is-you {
+  background: rgba(153, 48, 40, 0.22);
+  border-color: rgba(229, 183, 94, 0.45);
+}
+
+.live-seat-list span {
+  color: #b16a51;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+}
+
+.live-seat-list strong {
+  color: #cfc1a5;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.live-seat-list i {
+  color: #e5b75e;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 9px;
+  font-style: normal;
+}
+
+.live-table {
+  min-height: 690px;
+  padding: 31px;
+}
+
+.live-table-heading {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.live-table-heading h2 {
+  color: #f0e3c8;
+  font-size: clamp(25px, 3vw, 38px);
+  letter-spacing: 0.08em;
+  margin: 8px 0 0;
+}
+
+.live-identity {
+  border-left: 1px solid rgba(229, 183, 94, 0.22);
+  padding-left: 13px;
+  text-align: right;
+}
+
+.live-identity span,
+.live-identity strong {
+  display: block;
+}
+
+.live-identity span {
+  color: #958a78;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 10px;
+}
+
+.live-identity strong {
+  color: #d05d47;
+  font-size: 17px;
+  letter-spacing: 0.11em;
+  margin-top: 5px;
+}
+
+.live-phase-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  margin-top: 31px;
+}
+
+.live-phase-track span {
+  color: #6f695e;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+}
+
+.live-phase-track span.is-reached {
+  color: #e5b75e;
+}
+
+.live-notice,
+.live-vote,
+.live-result,
+.live-story-turn {
+  border-left: 2px solid rgba(229, 183, 94, 0.65);
+  margin-top: 42px;
+  padding: 7px 0 7px 22px;
+}
+
+.live-notice h3,
+.live-vote h3,
+.live-result h3,
+.live-story-turn h3 {
+  color: #e8d9ba;
+  font-size: 19px;
+  margin: 0 0 11px;
+}
+
+.live-notice p,
+.live-vote > p,
+.live-result p,
+.live-story-turn > p {
+  color: #afa38e;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  line-height: 1.9;
+  margin: 0;
+  max-width: 640px;
+}
+
+.live-story-turn {
+  border-left-color: rgba(206, 90, 69, 0.75);
+}
+
+.live-private-label {
+  color: #d2765d !important;
+  font-size: 10px !important;
+  letter-spacing: 0.12em;
+  margin-top: 20px !important;
+  text-transform: uppercase;
+}
+
+.live-story-turn blockquote {
+  background: rgba(158, 51, 44, 0.14);
+  border: 1px solid rgba(206, 90, 69, 0.27);
+  color: #d4c1a1;
+  font-size: 16px;
+  line-height: 1.85;
+  margin: 8px 0 16px;
+  padding: 16px;
+}
+
+.live-story-turn .game-primary {
+  margin-top: 17px;
+}
+
+.live-suspects {
+  display: grid;
+  gap: 7px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 20px 0;
+}
+
+.live-suspects button {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(229, 183, 94, 0.16);
+  color: #cfc0a2;
+  cursor: pointer;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  padding: 10px;
+  text-align: left;
+}
+
+.live-suspects button.is-selected,
+.live-suspects button:hover {
+  background: rgba(153, 48, 40, 0.22);
+  border-color: rgba(229, 183, 94, 0.55);
+  color: #ffe7bf;
+}
+
+.live-suspects span {
+  color: #ac654e;
+  font-size: 9px;
+  margin-right: 8px;
+}
+
+.live-result.is-victory {
+  border-left-color: #e5b75e;
+}
+
+.live-result.is-failure {
+  border-left-color: #d15d49;
+}
+
+.live-host-controls {
+  border-top: 1px solid rgba(229, 183, 94, 0.14);
+  margin-top: 36px;
+  padding-top: 18px;
+}
+
+.live-host-controls p {
+  color: #a99b86;
+  font-size: 12px;
+  margin: 0;
+}
+
+.discussion-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.discussion-log {
+  display: grid;
+  gap: 9px;
+  margin-top: 16px;
+  max-height: 515px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.discussion-log > p {
+  color: #80786c;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+}
+
+.discussion-log article {
+  background: rgba(255, 255, 255, 0.025);
+  border-left: 1px solid rgba(229, 183, 94, 0.22);
+  padding: 9px;
+}
+
+.discussion-log strong,
+.discussion-log span {
+  display: block;
+}
+
+.discussion-log strong {
+  color: #e1ba6c;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.discussion-log span {
+  color: #b8ad9a;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  line-height: 1.65;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.discussion-panel form {
+  display: grid;
+  gap: 7px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.discussion-panel form input {
+  min-width: 0;
+}
+
+.discussion-panel form button {
+  background: #853029;
+  border: 1px solid #c56850;
+  color: #fee9c1;
+  cursor: pointer;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  padding: 0 11px;
+}
+
+.discussion-panel form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+@media (max-width: 1120px) {
+  .live-room-grid {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .discussion-panel {
+    grid-column: 1 / -1;
+    min-height: 330px;
+  }
+
+  .discussion-log {
+    max-height: 220px;
+  }
+}
+
+@media (max-width: 720px) {
+  .room-entry,
+  .live-room-app {
+    padding: 18px 14px;
+  }
+
+  .live-room-header {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+    padding-bottom: 17px;
+  }
+
+  .room-code-button {
+    width: 100%;
+  }
+
+  .live-room-grid {
+    grid-template-columns: 1fr;
+    padding-top: 14px;
+  }
+
+  .live-panel,
+  .live-table {
+    min-height: auto;
+  }
+
+  .seat-panel {
+    min-height: auto;
+  }
+
+  .live-seat-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .live-table {
+    padding: 24px 18px;
+  }
+
+  .live-table-heading {
+    gap: 14px;
+  }
+
+  .live-suspects {
+    grid-template-columns: 1fr;
+  }
+
+  .discussion-panel {
     grid-column: auto;
   }
 }

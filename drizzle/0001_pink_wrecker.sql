@@ -1,0 +1,1 @@
+ALTER TABLE `game_rooms` ADD `story_index` integer DEFAULT 0 NOT NULL;

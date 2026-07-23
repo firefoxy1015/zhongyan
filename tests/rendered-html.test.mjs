@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { access } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
+async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("http://localhost/", { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
     { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
     { waitUntil() {}, passThroughOnException() {} },
   );
@@ -24,8 +24,17 @@ test("server-renders a playable liar game table", async () => {
   assert.match(html, /女娲游戏/);
   assert.match(html, /说谎者/);
   assert.match(html, /INTERVIEW ROOM/);
-  assert.match(html, /进入面试房/);
+  assert.match(html, /进入单人剧本/);
+  assert.match(html, /创建\s*\/\s*加入真人房/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Building your site/i);
+});
+
+test("server-renders the online room lobby", async () => {
+  const response = await render("/room");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /创建或加入面试房/);
+  assert.match(html, /九人真实房间/);
 });
 
 test("removes the disposable starter preview", async () => {
