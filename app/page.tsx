@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import {
   CANONICAL_LIAR_TARGET,
   LIAR_GAME,
@@ -14,8 +13,8 @@ const PHASES: Array<{ id: LiarGamePhase; label: string }> = [
   { id: "lobby", label: "入场" },
   { id: "rules", label: "规则" },
   { id: "identity", label: "身份牌" },
-  { id: "stories", label: "讲述" },
-  { id: "deduction", label: "推演" },
+  { id: "stories", label: "叙述" },
+  { id: "deduction", label: "调查" },
   { id: "vote", label: "投票" },
   { id: "result", label: "结算" },
 ];
@@ -30,17 +29,43 @@ const PHASE_CLOCK: Record<LiarGamePhase, string> = {
   result: "01:00",
 };
 
+const INVESTIGATION_ACTIONS = [
+  {
+    id: "grid",
+    label: "踏查方格",
+    short: "空间",
+    description: "沿着墙、地面与天花板逐格测量面试房。",
+    result: "方格组成的房间是 4 × 4 × 3 米：这不是可以容纳漫长等待的正常空间。",
+  },
+  {
+    id: "cards",
+    label: "比对身份牌",
+    short: "规则",
+    description: "将九张“说谎者”身份牌与每段叙述并置。",
+    result: "每个人都在用“失去意识”遮蔽同一件事；身份牌不是唯一的谎言来源。",
+  },
+  {
+    id: "host",
+    label: "锁定主持者",
+    short: "人羊",
+    description: "把人羊的叙述放回规则的边界内检查。",
+    result: "九人都属于讲述者，只有人羊把自己排除在外；他的“造神”叙述无法成立。",
+  },
+] as const;
+
 export default function Home() {
   const [phase, setPhase] = useState<LiarGamePhase>("lobby");
   const [identityRevealed, setIdentityRevealed] = useState(false);
   const [storyIndex, setStoryIndex] = useState(0);
   const [heardStories, setHeardStories] = useState<Set<string>>(new Set());
+  const [collectedEvidence, setCollectedEvidence] = useState<Set<string>>(new Set());
   const [deductionRevealed, setDeductionRevealed] = useState(false);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
 
   const currentStory = LIAR_GAME.stories[storyIndex];
   const phaseIndex = PHASES.findIndex((item) => item.id === phase);
   const allStoriesHeard = heardStories.size === LIAR_GAME.stories.length;
+  const allEvidenceCollected = collectedEvidence.size === INVESTIGATION_ACTIONS.length;
   const resolution = useMemo(
     () => (phase === "result" ? resolveCanonicalVote(selectedTarget) : null),
     [phase, selectedTarget],
@@ -52,11 +77,16 @@ export default function Home() {
     setHeardStories((current) => new Set([...current, story.id]));
   };
 
+  const collectEvidence = (id: string) => {
+    setCollectedEvidence((current) => new Set([...current, id]));
+  };
+
   const resetGame = () => {
     setPhase("lobby");
     setIdentityRevealed(false);
     setStoryIndex(0);
     setHeardStories(new Set());
+    setCollectedEvidence(new Set());
     setDeductionRevealed(false);
     setSelectedTarget(null);
   };
@@ -67,7 +97,7 @@ export default function Home() {
         <div className="game-brand">
           <span className="game-brand-mark" aria-hidden="true">女</span>
           <div>
-            <p>女娲游戏 · 原著模式</p>
+            <p>单机剧情 RPG · 第一日</p>
             <h1>说谎者</h1>
           </div>
         </div>
@@ -77,9 +107,9 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="game-frame" aria-label="说谎者游戏桌">
-        <aside className="game-progress" aria-label="游戏阶段">
-          <p className="game-eyebrow">GAME FLOW</p>
+      <section className="game-frame" aria-label="说谎者单机桌游关卡">
+        <aside className="game-progress" aria-label="关卡阶段">
+          <p className="game-eyebrow">SOLO RPG FLOW</p>
           <ol>
             {PHASES.map((item, index) => (
               <li className={index <= phaseIndex ? "is-reached" : ""} key={item.id}>
@@ -90,25 +120,24 @@ export default function Home() {
           </ol>
 
           <div className="game-rule-card">
-            <p className="game-eyebrow">胜负条件</p>
-            <strong>九票必须一致</strong>
-            <p>全部投向唯一的说谎者，参与者才能存活。</p>
+            <p className="game-eyebrow">当前目标</p>
+            <strong>完成叙述与三次调查</strong>
+            <p>你以齐夏的视角读取规则、记录线索，并在最后落下唯一的一票。</p>
           </div>
         </aside>
 
         <section className="game-table" aria-live="polite">
           {phase === "lobby" && (
             <section className="game-stage game-stage--entry">
-              <p className="game-kicker">INTERVIEW ROOM / 09 PARTICIPANTS</p>
+              <p className="game-kicker">SOLO STORY RPG / CHAPTER 001</p>
               <div className="entry-clock" aria-hidden="true"><i /></div>
               <h2>座钟指向十二点。</h2>
               <p className="game-lead">
-                你坐在没有门的密室中。十人围桌而坐，山羊头却只向“九位”参与者问好。
-                这一局不靠数值，不靠抽卡强度；你必须读懂规则、听完每段叙述，并在最后写下唯一的名字。
+                这是单机剧情模式：你将以桌游的行动、线索和投票流程，亲自走完“说谎者”。
+                联机房间不参与当前版本，先把每一个角色、场景与关键时刻做成可体验的故事。
               </p>
               <div className="entry-actions">
-                <button className="game-primary" onClick={() => setPhase("rules")}>进入单人剧本</button>
-                <Link className="game-secondary live-room-link" href="/room">创建 / 加入真人房</Link>
+                <button className="game-primary" onClick={() => setPhase("rules")}>开始第一日</button>
               </div>
             </section>
           )}
@@ -130,7 +159,7 @@ export default function Home() {
                 ))}
               </div>
               <div className="stage-footer">
-                <p>规则已经说完了吗？不要假定主持者会替你补充遗漏的部分。</p>
+                <p>规则不是背景说明。它们会决定每一条叙述能否成立。</p>
                 <button className="game-primary" onClick={() => setPhase("identity")}>抽取身份牌</button>
               </div>
             </section>
@@ -138,26 +167,26 @@ export default function Home() {
 
           {phase === "identity" && (
             <section className="game-stage">
-              <p className="game-kicker">PRIVATE INFORMATION / ONLY YOU</p>
+              <p className="game-kicker">PRIVATE INFORMATION / QI XIA</p>
               <h2>翻开你的身份牌</h2>
               <div className="identity-reveal-layout">
                 <div className="character-keyart character-keyart--qixia" aria-hidden="true" />
-              <button
-                aria-pressed={identityRevealed}
-                className={`identity-card ${identityRevealed ? "is-revealed" : ""}`}
-                onClick={() => setIdentityRevealed(true)}
-              >
-                <span className="identity-card__back">女娲游戏</span>
-                <span className="identity-card__front">说谎者</span>
-              </button>
+                <button
+                  aria-pressed={identityRevealed}
+                  className={`identity-card ${identityRevealed ? "is-revealed" : ""}`}
+                  onClick={() => setIdentityRevealed(true)}
+                >
+                  <span className="identity-card__back">女娲游戏</span>
+                  <span className="identity-card__front">说谎者</span>
+                </button>
               </div>
               <p className="identity-note">
                 {identityRevealed
-                  ? "你拿到的牌要求你必须说谎。先别急着把它当成唯一事实。"
+                  ? "身份牌要求你说谎；但“说谎者”这个词是否只指身份牌，仍需由你在规则中判断。"
                   : "身份牌只向持牌者公开。点击纸牌查看。"}
               </p>
               <div className="stage-footer">
-                <p>原著模式保留身份牌信息差；你可以在叙述中选择相信、质疑或等待。</p>
+                <p>齐夏的第一条行动不是下结论，而是把每个人的叙述完整听完。</p>
                 <button
                   className="game-primary"
                   disabled={!identityRevealed}
@@ -166,7 +195,7 @@ export default function Home() {
                     setPhase("stories");
                   }}
                 >
-                  开始讲述
+                  开始听取叙述
                 </button>
               </div>
             </section>
@@ -180,25 +209,25 @@ export default function Home() {
                   <h2>{currentStory.name}</h2>
                   <span>{currentStory.occupation}</span>
                 </div>
-                <button className="story-mark" onClick={() => openStory(storyIndex)}>记录已听</button>
+                <button className="story-mark" onClick={() => openStory(storyIndex)}>写入手账</button>
               </div>
               <div className={`story-portrait story-portrait--${currentStory.id}`} aria-hidden="true" />
               <div className="story-transcript">
                 <p>{currentStory.summary}</p>
               </div>
               <div className="story-clue">
-                <span>记录</span>
-                <p>{heardStories.has(currentStory.id) ? currentStory.clue : "先完整听取这段叙述，再登记可公开的线索。"}</p>
+                <span>线索记录</span>
+                <p>{heardStories.has(currentStory.id) ? currentStory.clue : "先完整听取这段叙述，再将可公开的矛盾写入手账。"}</p>
               </div>
               <div className="story-controls">
                 <button className="game-secondary" disabled={storyIndex === 0} onClick={() => openStory(storyIndex - 1)}>上一位</button>
                 {storyIndex < LIAR_GAME.stories.length - 1 ? (
-                  <button className="game-primary" onClick={() => openStory(storyIndex + 1)}>下一位讲述者</button>
+                  <button className="game-primary" onClick={() => openStory(storyIndex + 1)}>下一位叙述者</button>
                 ) : (
-                  <button className="game-primary" disabled={!allStoriesHeard} onClick={() => setPhase("deduction")}>进入自由讨论</button>
+                  <button className="game-primary" disabled={!allStoriesHeard} onClick={() => setPhase("deduction")}>进入调查回合</button>
                 )}
               </div>
-              <div className="story-seats" aria-label="讲述者列表">
+              <div className="story-seats" aria-label="叙述者列表">
                 {LIAR_GAME.stories.map((story, index) => (
                   <button
                     aria-pressed={storyIndex === index}
@@ -214,31 +243,48 @@ export default function Home() {
           )}
 
           {phase === "deduction" && (
-            <section className="game-stage">
-              <p className="game-kicker">FREE DISCUSSION / REMAINING 20:00</p>
-              <h2>找出唯一能被证明的谎言</h2>
+            <section className="game-stage game-stage--deduction">
+              <p className="game-kicker">RPG INVESTIGATION / 03 ACTIONS</p>
+              <h2>将线索落到棋盘上</h2>
+              <p className="game-lead investigation-lead">每次行动都会留下可以验证的记录。完成三次调查，才允许进入最终投票。</p>
+              <div className="investigation-board" aria-label="调查行动">
+                {INVESTIGATION_ACTIONS.map((action, index) => {
+                  const isCollected = collectedEvidence.has(action.id);
+                  return (
+                    <button
+                      aria-pressed={isCollected}
+                      className={isCollected ? "is-collected" : ""}
+                      key={action.id}
+                      onClick={() => collectEvidence(action.id)}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <strong>{action.label}</strong>
+                      <em>{action.short}</em>
+                      <p>{isCollected ? action.result : action.description}</p>
+                    </button>
+                  );
+                })}
+              </div>
               <div className="deduction-grid">
-                <article>
-                  <span>已知</span>
-                  <h3>规则绝对</h3>
-                  <p>“有且只有一位说谎者”与“身份牌”同时为真，不能只挑其中一条相信。</p>
+                <article className={collectedEvidence.has("grid") ? "is-revealed" : ""}>
+                  <span>行动 01</span>
+                  <h3>密室与氧气</h3>
+                  <p>{collectedEvidence.has("grid") ? `房间体积只有 ${chamberVolume()} 立方米；时间、人数与空气的逻辑无法共存。` : "完成“踏查方格”后解锁。"}</p>
                 </article>
-                <article>
-                  <span>已知</span>
+                <article className={collectedEvidence.has("cards") ? "is-revealed" : ""}>
+                  <span>行动 02</span>
                   <h3>九张身份牌</h3>
-                  <p>每段叙述都用“昏迷”遮住了同一个致命事实；卡面并未提供唯一答案。</p>
+                  <p>{collectedEvidence.has("cards") ? "所有人都说了谎，但其中只有一段叙述违反了规则本身。" : "完成“比对身份牌”后解锁。"}</p>
                 </article>
                 <article className={deductionRevealed ? "is-revealed" : ""}>
                   <span>{deductionRevealed ? "已推演" : "待推演"}</span>
-                  <h3>密室与氧气</h3>
-                  <p>{deductionRevealed
-                    ? `房间体积只有 ${chamberVolume()} 立方米；按规则给出的时间与人数，空气消耗已经超过容积。`
-                    : "测量墙面、地板与天花板的方格，验证这间密室真正的异常。"}</p>
-                  {!deductionRevealed && <button className="game-secondary" onClick={() => setDeductionRevealed(true)}>推演密室</button>}
+                  <h3>唯一说谎者</h3>
+                  <p>{deductionRevealed ? "人羊将自己排除在讲述者之外；这正是规则允许被九票锁定的唯一谎言。" : "完成三次行动后，提交最终推演。"}</p>
+                  {!deductionRevealed && <button className="game-secondary" disabled={!allEvidenceCollected} onClick={() => setDeductionRevealed(true)}>提交推演</button>}
                 </article>
               </div>
               <div className="stage-footer">
-                <p>{deductionRevealed ? "所有参与者都已死亡，因此每个人都在自己的故事中说了谎。现在只剩一个问题：谁也被算作讲述者？" : "在最后投票前，先完成至少一次可验证的推演。"}</p>
+                <p>{deductionRevealed ? "推演成立：现在由你亲手写下最终一票。" : `已完成 ${collectedEvidence.size} / ${INVESTIGATION_ACTIONS.length} 次调查行动。`}</p>
                 <button className="game-primary" disabled={!deductionRevealed} onClick={() => setPhase("vote")}>拿起投票纸</button>
               </div>
             </section>
@@ -246,9 +292,9 @@ export default function Home() {
 
           {phase === "vote" && (
             <section className="game-stage game-stage--vote">
-              <p className="game-kicker">SECRET VOTE / 09 BALLOTS REQUIRED</p>
+              <p className="game-kicker">FINAL DECISION / ONE BALLOT</p>
               <h2>在纸上写下一个名字。</h2>
-              <p className="game-lead">人羊也讲了一个故事：他将众人聚集到这里，是为了创造“神”。在已知事实中，只有这个故事无法成立。</p>
+              <p className="game-lead">将所有线索还原到规则的边界：只有人羊将自己排除在叙述者之外。现在由你落下这一票。</p>
               <div className="suspect-grid">
                 {LIAR_GAME.suspects.map((suspect) => (
                   <button
@@ -263,7 +309,7 @@ export default function Home() {
                 ))}
               </div>
               <div className="stage-footer">
-                <p>{selectedTarget ? `你的投票：${LIAR_GAME.suspects.find((suspect) => suspect.id === selectedTarget)?.name}` : "尚未落笔。投票确认后不可更改。"}</p>
+                <p>{selectedTarget ? `你的投票：${LIAR_GAME.suspects.find((suspect) => suspect.id === selectedTarget)?.name}` : "尚未落笔。"}</p>
                 <button className="game-danger" disabled={!selectedTarget} onClick={() => setPhase("result")}>确认投票</button>
               </div>
             </section>
@@ -271,12 +317,12 @@ export default function Home() {
 
           {phase === "result" && resolution && (
             <section className={`game-stage game-stage--result ${resolution.isCorrect ? "is-victory" : "is-failure"}`}>
-              <p className="game-kicker">GAME OVER / {resolution.isCorrect ? "CLEAR" : "FAILED"}</p>
+              <p className="game-kicker">CHAPTER RESULT / {resolution.isCorrect ? "CLEAR" : "FAILED"}</p>
               <h2>{resolution.isCorrect ? "九票一致：人羊" : `投票偏差：${resolution.target?.name ?? "未知"}`}</h2>
               <p className="result-copy">
                 {resolution.isCorrect
-                  ? "所有身份牌翻开后，九人均为“说谎者”。唯一的谎言来自人羊将自己排除在讲述者之外；规则允许你们将票投给他。人羊接受制裁，面试房第一局结束。"
-                  : "规则没有留下容错。只要有一票没有投向唯一的说谎者，人羊存活，参与者全部出局。重新回到座钟指向十二点的时刻。"}
+                  ? "九张身份牌全部翻开后，九人均为“说谎者”。唯一能被规则证明的谎言来自人羊将自己排除在讲述者之外。面试房第一局结束。"
+                  : "规则没有留下容错。只要没有锁定唯一的说谎者，面试房就会回到座钟指向十二点的时刻。"}
               </p>
               <div className="result-record">
                 <span>你的投票</span><strong>{resolution.target?.name}</strong>
@@ -288,16 +334,17 @@ export default function Home() {
         </section>
 
         <aside className="game-ledger" aria-label="本局记录">
-          <p className="game-eyebrow">TABLE LEDGER</p>
+          <p className="game-eyebrow">RPG LEDGER</p>
           <h2>面试房</h2>
           <dl>
+            <div><dt>视角角色</dt><dd>齐夏</dd></div>
             <div><dt>主持者</dt><dd>{LIAR_GAME.host}</dd></div>
             <div><dt>参与者</dt><dd>{LIAR_GAME.participantCount} 人</dd></div>
             <div><dt>房间</dt><dd>{LIAR_GAME.chamber.lengthMeters} × {LIAR_GAME.chamber.widthMeters} × {LIAR_GAME.chamber.heightMeters} m</dd></div>
           </dl>
 
           <div className="ledger-section">
-            <p className="game-eyebrow">已听叙述</p>
+            <p className="game-eyebrow">叙述记录</p>
             <strong>{heardStories.size} / {LIAR_GAME.stories.length}</strong>
             <div className="ledger-dots" aria-label="叙述收听进度">
               {LIAR_GAME.stories.map((story) => <i className={heardStories.has(story.id) ? "is-heard" : ""} key={story.id} />)}
@@ -305,8 +352,9 @@ export default function Home() {
           </div>
 
           <div className="ledger-section">
-            <p className="game-eyebrow">本局原则</p>
-            <p>原著模式不替玩家提前公布答案。每个可用结论都必须由规则、叙述或现场证据支持。</p>
+            <p className="game-eyebrow">调查行动</p>
+            <strong>{collectedEvidence.size} / {INVESTIGATION_ACTIONS.length}</strong>
+            <p>桌游规则负责边界，RPG 行动负责把边界变成你的判断。</p>
           </div>
         </aside>
       </section>

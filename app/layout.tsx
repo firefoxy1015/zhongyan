@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "十日终焉：原著同人桌游",
-  description: "可游玩的《十日终焉》原著模式同人桌游。",
+  title: "十日终焉：单机剧情 RPG",
+  description: "以桌游与叙事 RPG 方式体验《十日终焉》原著关卡。",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
