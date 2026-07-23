@@ -1492,6 +1492,219 @@ button:focus-visible {
   justify-content: space-between;
 }
 
+.story-legacy {
+  display: none !important;
+}
+
+.game-stage--testimony {
+  min-height: 0;
+}
+
+.testimony-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.testimony-heading h2 {
+  margin: 6px 0 4px;
+}
+
+.testimony-heading > div > span {
+  color: #a89b84;
+  font-size: 13px;
+}
+
+.testimony-record,
+.testimony-speak {
+  align-items: center;
+  background: rgba(181, 63, 46, 0.15);
+  border: 1px solid rgba(229, 183, 94, 0.48);
+  color: #f0d6a4;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  justify-content: center;
+  letter-spacing: 0.08em;
+}
+
+.testimony-record {
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 0 17px;
+}
+
+.testimony-record.is-recorded,
+.testimony-record:disabled {
+  background: rgba(95, 63, 34, 0.18);
+  border-color: rgba(229, 183, 94, 0.22);
+  color: #a89b84;
+  cursor: default;
+}
+
+.testimony-layout {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(188px, 0.8fr) minmax(0, 1.2fr);
+  margin-top: 22px;
+}
+
+.character-dossier,
+.testimony-card {
+  background: linear-gradient(145deg, rgba(35, 29, 24, 0.9), rgba(14, 14, 14, 0.94));
+  border: 1px solid rgba(229, 183, 94, 0.2);
+  min-width: 0;
+}
+
+.character-dossier {
+  display: flex;
+  flex-direction: column;
+}
+
+.character-dossier .story-portrait {
+  height: clamp(210px, 25vw, 306px);
+  opacity: 1;
+  position: relative;
+  right: auto;
+  top: auto;
+  transform: none;
+  width: 100%;
+}
+
+.character-dossier__meta {
+  border-top: 1px solid rgba(229, 183, 94, 0.2);
+  display: grid;
+  gap: 4px;
+  padding: 14px 15px 16px;
+}
+
+.character-dossier__meta span,
+.testimony-card__topline {
+  color: #ab9876;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.character-dossier__meta strong {
+  color: #f0e4c9;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.character-dossier__meta em {
+  color: #a89b84;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.testimony-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(22px, 4vw, 38px);
+}
+
+.testimony-card__topline {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.testimony-card__topline em {
+  color: #7f7567;
+  font-size: 9px;
+  font-style: normal;
+  letter-spacing: 0.07em;
+}
+
+.testimony-card__speaker {
+  color: #d7b673;
+  font-size: 14px;
+  margin: 34px 0 9px;
+}
+
+.testimony-card blockquote {
+  border-left: 2px solid rgba(229, 183, 94, 0.66);
+  color: #e5d8bd;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: clamp(20px, 2.4vw, 29px);
+  line-height: 1.7;
+  margin: 0;
+  padding-left: 19px;
+}
+
+.testimony-speak {
+  gap: 9px;
+  margin-top: 30px;
+  min-height: 48px;
+  padding: 0 16px;
+  width: fit-content;
+}
+
+.testimony-speak > span {
+  color: #ee7659;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 14px;
+}
+
+.testimony-speak.is-speaking {
+  background: rgba(195, 72, 49, 0.28);
+  border-color: rgba(242, 151, 97, 0.86);
+}
+
+.testimony-actions {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.testimony-actions .game-secondary {
+  flex: 0 0 auto;
+}
+
+.testimony-actions p {
+  color: #8e8576;
+  font-size: 12px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.testimony-question {
+  background: rgba(92, 31, 27, 0.32);
+  border: 1px solid rgba(199, 89, 65, 0.38);
+  margin-top: 14px;
+  padding: 16px 18px;
+}
+
+.testimony-question span {
+  color: #dfa774;
+  font-size: 12px;
+}
+
+.testimony-question p {
+  color: #d3c3a6;
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+
+.game-stage--testimony .story-clue {
+  max-width: none;
+  margin-top: 16px;
+}
+
+.game-stage--testimony .story-controls {
+  margin-top: 22px;
+}
+
+.game-stage--testimony .story-seats {
+  margin-top: 28px;
+}
+
 .story-portrait {
   background:
     linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
@@ -2509,6 +2722,54 @@ button:focus-visible {
 @keyframes testimony-wave {
   from { height: 3px; opacity: 0.45; }
   to { height: 15px; opacity: 1; }
+}
+
+@media (max-width: 720px) {
+  .testimony-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .testimony-record {
+    align-self: flex-start;
+  }
+
+  .testimony-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .character-dossier .story-portrait {
+    height: clamp(190px, 52vw, 266px);
+  }
+
+  .testimony-card {
+    padding: 23px 19px;
+  }
+
+  .testimony-card__topline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .testimony-card__speaker {
+    margin-top: 22px;
+  }
+
+  .testimony-card blockquote {
+    font-size: 21px;
+  }
+
+  .testimony-speak {
+    margin-top: 24px;
+    width: 100%;
+  }
+
+  .testimony-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 @keyframes portrait-breathe {

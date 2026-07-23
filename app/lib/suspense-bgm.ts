@@ -61,6 +61,14 @@ export class SuspenseBgm {
     }
   }
 
+  setDucked(ducked: boolean) {
+    if (!this.context || !this.master) return;
+    const now = this.context.currentTime;
+    this.master.gain.cancelScheduledValues(now);
+    this.master.gain.setValueAtTime(Math.max(this.master.gain.value, 0.0001), now);
+    this.master.gain.exponentialRampToValueAtTime(ducked ? 0.12 : 0.46, now + 0.12);
+  }
+
   private addDrone(frequency: number, type: OscillatorType, volume: number) {
     if (!this.context || !this.master) return;
 

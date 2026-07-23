@@ -9,6 +9,7 @@ import {
   resolveCanonicalVote,
 } from "./lib/liar-game";
 import { SuspenseBgm } from "./lib/suspense-bgm";
+import { TestimonySpeech, type CharacterVoiceId } from "./lib/testimony-speech";
 
 const PHASES: Array<{ id: LiarGamePhase; label: string }> = [
   { id: "lobby", label: "入场" },
@@ -60,6 +61,8 @@ export default function Home() {
   const [storyIndex, setStoryIndex] = useState(0);
   const [storyTake, setStoryTake] = useState(0);
   const [narrationPlaying, setNarrationPlaying] = useState(true);
+  const [storyQuestionOpen, setStoryQuestionOpen] = useState(false);
+  const [testimonyPlaying, setTestimonyPlaying] = useState(false);
   const [musicEnabled, setMusicEnabled] = useState(true);
   const [musicStarted, setMusicStarted] = useState(false);
   const [heardStories, setHeardStories] = useState<Set<string>>(new Set());
@@ -67,6 +70,7 @@ export default function Home() {
   const [deductionRevealed, setDeductionRevealed] = useState(false);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
   const bgmRef = useRef<SuspenseBgm | null>(null);
+  const speechRef = useRef<TestimonySpeech | null>(null);
 
   const currentStory = LIAR_GAME.stories[storyIndex];
   const phaseIndex = PHASES.findIndex((item) => item.id === phase);
@@ -81,6 +85,12 @@ export default function Home() {
     const bgm = new SuspenseBgm();
     bgmRef.current = bgm;
     return () => bgm.stop();
+  }, []);
+
+  useEffect(() => {
+    const speech = new TestimonySpeech();
+    speechRef.current = speech;
+    return () => speech.stop();
   }, []);
 
   const startMusic = () => {
@@ -111,11 +121,38 @@ export default function Home() {
 
   const openStory = (index: number) => {
     startMusic();
-    const story = LIAR_GAME.stories[index];
+    speechRef.current?.stop();
+    bgmRef.current?.setDucked(false);
     setStoryIndex(index);
     setStoryTake((current) => current + 1);
     setNarrationPlaying(true);
-    setHeardStories((current) => new Set([...current, story.id]));
+    setStoryQuestionOpen(false);
+    setTestimonyPlaying(false);
+  };
+
+  const recordCurrentStory = () => {
+    setHeardStories((current) => new Set([...current, currentStory.id]));
+  };
+
+  const toggleCurrentTestimony = () => {
+    if (testimonyPlaying) {
+      speechRef.current?.stop();
+      bgmRef.current?.setDucked(false);
+      setTestimonyPlaying(false);
+      return;
+    }
+
+    startMusic();
+    bgmRef.current?.setDucked(true);
+    const started = speechRef.current?.speak(
+      currentStory.id as CharacterVoiceId,
+      currentStory.testimony,
+      () => {
+        bgmRef.current?.setDucked(false);
+        setTestimonyPlaying(false);
+      },
+    );
+    setTestimonyPlaying(Boolean(started));
   };
 
   const collectEvidence = (id: string) => {
@@ -128,6 +165,10 @@ export default function Home() {
     setStoryIndex(0);
     setStoryTake(0);
     setNarrationPlaying(true);
+    setStoryQuestionOpen(false);
+    speechRef.current?.stop();
+    bgmRef.current?.setDucked(false);
+    setTestimonyPlaying(false);
     setHeardStories(new Set());
     setCollectedEvidence(new Set());
     setDeductionRevealed(false);
@@ -262,7 +303,102 @@ export default function Home() {
           )}
 
           {phase === "stories" && (
-            <section className="game-stage game-stage--stories">
+            <>
+              <section className="game-stage game-stage--testimony" aria-label="角色证词回合">
+                <div className="testimony-heading">
+                  <div>
+                    <p className="game-kicker">FIRST TRIAL / TESTIMONY {String(storyIndex + 1).padStart(2, "0")}</p>
+                    <h2>{currentStory.name}</h2>
+                    <span>{currentStory.occupation}</span>
+                  </div>
+                  <button
+                    className={`testimony-record ${heardStories.has(currentStory.id) ? "is-recorded" : ""}`}
+                    disabled={heardStories.has(currentStory.id)}
+                    onClick={recordCurrentStory}
+                  >
+                    {heardStories.has(currentStory.id) ? "矛盾已记录" : "记录矛盾"}
+                  </button>
+                </div>
+
+                <div className="testimony-layout">
+                  <article className="character-dossier">
+                    <div
+                      aria-label={`${currentStory.name}立绘`}
+                      className={`story-portrait story-portrait--${currentStory.id}`}
+                      key={`${currentStory.id}-${storyTake}`}
+                      role="img"
+                    />
+                    <div className="character-dossier__meta">
+                      <span>角色档案 / {String(storyIndex + 1).padStart(2, "0")}</span>
+                      <strong>{currentStory.name}</strong>
+                      <em>{currentStory.occupation}</em>
+                    </div>
+                  </article>
+
+                  <article className="testimony-card">
+                    <div className="testimony-card__topline">
+                      <span>当事人证词</span>
+                      <em>TTS 配音 · 固定角色声线</em>
+                    </div>
+                    <p className="testimony-card__speaker">{currentStory.name}：</p>
+                    <blockquote>“{currentStory.testimony}”</blockquote>
+                    <button
+                      aria-pressed={testimonyPlaying}
+                      className={`testimony-speak ${testimonyPlaying ? "is-speaking" : ""}`}
+                      onClick={toggleCurrentTestimony}
+                    >
+                      <span aria-hidden="true">{testimonyPlaying ? "II" : "▶"}</span>
+                      {testimonyPlaying ? "停止本段证词" : "播放本段证词"}
+                    </button>
+                  </article>
+                </div>
+
+                <div className="testimony-actions">
+                  <button
+                    aria-expanded={storyQuestionOpen}
+                    className="game-secondary"
+                    onClick={() => setStoryQuestionOpen((current) => !current)}
+                  >
+                    {storyQuestionOpen ? "收起追问" : "追问细节"}
+                  </button>
+                  <p>先听证词，再将发现的矛盾写入手账。已记录 {heardStories.size} / {LIAR_GAME.stories.length}</p>
+                </div>
+
+                {storyQuestionOpen && (
+                  <aside className="testimony-question">
+                    <span>追问结果</span>
+                    <p>{currentStory.clue}</p>
+                  </aside>
+                )}
+
+                <div className={`story-clue ${heardStories.has(currentStory.id) ? "is-recorded" : ""}`}>
+                  <span>手账记录</span>
+                  <p>{heardStories.has(currentStory.id) ? currentStory.clue : "这段证词尚未入账。找到矛盾后点击“记录矛盾”。"}</p>
+                </div>
+
+                <div className="story-controls">
+                  <button className="game-secondary" disabled={storyIndex === 0} onClick={() => openStory(storyIndex - 1)}>上一位</button>
+                  {storyIndex < LIAR_GAME.stories.length - 1 ? (
+                    <button className="game-primary" onClick={() => openStory(storyIndex + 1)}>下一位叙述者</button>
+                  ) : (
+                    <button className="game-primary" disabled={!allStoriesHeard} onClick={() => advanceTo("deduction")}>进入调查回合</button>
+                  )}
+                </div>
+
+                <div className="story-seats" aria-label="叙述者列表">
+                  {LIAR_GAME.stories.map((story, index) => (
+                    <button
+                      aria-pressed={storyIndex === index}
+                      className={`${storyIndex === index ? "is-current" : ""} ${heardStories.has(story.id) ? "is-heard" : ""}`}
+                      key={story.id}
+                      onClick={() => openStory(index)}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>{story.name}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            <section className="game-stage game-stage--stories story-legacy">
               <div className="story-heading">
                 <div>
                   <p className="game-kicker">NARRATIVE {storyIndex + 1} / {LIAR_GAME.stories.length}</p>
@@ -329,6 +465,7 @@ export default function Home() {
                 ))}
               </div>
             </section>
+            </>
           )}
 
           {phase === "deduction" && (
