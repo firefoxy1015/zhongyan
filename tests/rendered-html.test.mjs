@@ -44,6 +44,8 @@ test("removes the disposable starter preview", async () => {
   await access(new URL("../public/art/interview-room-v1.png", import.meta.url));
   await access(new URL("../public/art/liar-tableau-v1.png", import.meta.url));
   await access(new URL("../public/art/qixia-v1.png", import.meta.url));
+  await access(new URL("../public/art/tiantian-v1.png", import.meta.url));
+  await access(new URL("../public/art/xiaoran-v1.png", import.meta.url));
   await access(new URL("../public/art/qiaojiajin-v1.png", import.meta.url));
   await access(new URL("../public/art/linqin-v1.png", import.meta.url));
   await access(new URL("../public/art/renyang-v1.png", import.meta.url));

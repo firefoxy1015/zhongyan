@@ -26,6 +26,20 @@
       "officialAsset": false
     },
     {
+      "id": "tiantian-v1",
+      "file": "/art/tiantian-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Tian Tian", "technical worker", "canvas bag"],
+      "officialAsset": false
+    },
+    {
+      "id": "xiaoran-v1",
+      "file": "/art/xiaoran-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Xiao Ran", "kindergarten teacher", "childlike hair tie"],
+      "officialAsset": false
+    },
+    {
       "id": "qiaojiajin-v1",
       "file": "/art/qiaojiajin-v1.png",
       "type": "generated-original-character-key-art",
