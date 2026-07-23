@@ -819,6 +819,12 @@ button:focus-visible {
   min-height: 90px;
 }
 
+.game-topbar__tools {
+  align-items: center;
+  display: flex;
+  gap: 18px;
+}
+
 .game-brand {
   align-items: center;
   display: flex;
@@ -886,6 +892,52 @@ button:focus-visible {
   font-weight: 500;
   letter-spacing: 0.12em;
   padding-left: 12px;
+}
+
+.music-control {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(229, 183, 94, 0.2);
+  color: #978b78;
+  cursor: pointer;
+  display: grid;
+  font-family: "Microsoft YaHei", sans-serif;
+  gap: 2px 7px;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.music-control i {
+  background: #5d332d;
+  border-radius: 50%;
+  grid-row: 1 / -1;
+  height: 7px;
+  width: 7px;
+}
+
+.music-control span {
+  color: #d4b978;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.music-control em {
+  color: #8e8372;
+  font-size: 9px;
+  font-style: normal;
+}
+
+.music-control.is-enabled {
+  border-color: rgba(229, 183, 94, 0.44);
+}
+
+.music-control.is-enabled i {
+  background: #e65e49;
+  box-shadow: 0 0 0 0 rgba(230, 94, 73, 0.65);
+  animation: recording-pulse 1.25s ease-out infinite;
 }
 
 .game-frame {
@@ -2025,6 +2077,11 @@ button:focus-visible {
     flex-direction: column;
     gap: 15px;
     padding: 18px 0;
+  }
+
+  .game-topbar__tools {
+    justify-content: space-between;
+    width: 100%;
   }
 
   .game-frame {

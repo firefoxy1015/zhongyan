@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CANONICAL_LIAR_TARGET,
   LIAR_GAME,
@@ -8,6 +8,7 @@ import {
   chamberVolume,
   resolveCanonicalVote,
 } from "./lib/liar-game";
+import { SuspenseBgm } from "./lib/suspense-bgm";
 
 const PHASES: Array<{ id: LiarGamePhase; label: string }> = [
   { id: "lobby", label: "入场" },
@@ -59,10 +60,13 @@ export default function Home() {
   const [storyIndex, setStoryIndex] = useState(0);
   const [storyTake, setStoryTake] = useState(0);
   const [narrationPlaying, setNarrationPlaying] = useState(true);
+  const [musicEnabled, setMusicEnabled] = useState(true);
+  const [musicStarted, setMusicStarted] = useState(false);
   const [heardStories, setHeardStories] = useState<Set<string>>(new Set());
   const [collectedEvidence, setCollectedEvidence] = useState<Set<string>>(new Set());
   const [deductionRevealed, setDeductionRevealed] = useState(false);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const bgmRef = useRef<SuspenseBgm | null>(null);
 
   const currentStory = LIAR_GAME.stories[storyIndex];
   const phaseIndex = PHASES.findIndex((item) => item.id === phase);
@@ -73,7 +77,36 @@ export default function Home() {
     [phase, selectedTarget],
   );
 
+  useEffect(() => {
+    const bgm = new SuspenseBgm();
+    bgmRef.current = bgm;
+    return () => bgm.stop();
+  }, []);
+
+  const startMusic = () => {
+    if (!musicEnabled) return;
+    if (bgmRef.current?.start()) setMusicStarted(true);
+  };
+
+  const toggleMusic = () => {
+    if (musicEnabled) {
+      bgmRef.current?.stop();
+      setMusicStarted(false);
+      setMusicEnabled(false);
+      return;
+    }
+
+    setMusicEnabled(true);
+    if (bgmRef.current?.start()) setMusicStarted(true);
+  };
+
+  const advanceTo = (nextPhase: LiarGamePhase) => {
+    startMusic();
+    setPhase(nextPhase);
+  };
+
   const openStory = (index: number) => {
+    startMusic();
     const story = LIAR_GAME.stories[index];
     setStoryIndex(index);
     setStoryTake((current) => current + 1);
@@ -107,9 +140,20 @@ export default function Home() {
             <h1>说谎者</h1>
           </div>
         </div>
-        <div className="game-clock" aria-label="游戏时间">
-          <span>座钟</span>
-          <strong>{PHASE_CLOCK[phase]}</strong>
+        <div className="game-topbar__tools">
+          <button
+            aria-pressed={musicEnabled}
+            className={`music-control ${musicEnabled ? "is-enabled" : ""}`}
+            onClick={toggleMusic}
+          >
+            <i aria-hidden="true" />
+            <span>BGM</span>
+            <em>{musicEnabled ? (musicStarted ? "紧迫声场" : "点击剧情启动") : "静音"}</em>
+          </button>
+          <div className="game-clock" aria-label="游戏时间">
+            <span>座钟</span>
+            <strong>{PHASE_CLOCK[phase]}</strong>
+          </div>
         </div>
       </header>
 
@@ -143,7 +187,7 @@ export default function Home() {
                 联机房间不参与当前版本，先把每一个角色、场景与关键时刻做成可体验的故事。
               </p>
               <div className="entry-actions">
-                <button className="game-primary" onClick={() => setPhase("rules")}>开始第一日</button>
+                <button className="game-primary" onClick={() => advanceTo("rules")}>开始第一日</button>
               </div>
             </section>
           )}
@@ -166,7 +210,7 @@ export default function Home() {
               </div>
               <div className="stage-footer">
                 <p>规则不是背景说明。它们会决定每一条叙述能否成立。</p>
-                <button className="game-primary" onClick={() => setPhase("identity")}>抽取身份牌</button>
+                <button className="game-primary" onClick={() => advanceTo("identity")}>抽取身份牌</button>
               </div>
             </section>
           )}
@@ -204,7 +248,7 @@ export default function Home() {
                   disabled={!identityRevealed}
                   onClick={() => {
                     openStory(0);
-                    setPhase("stories");
+                    advanceTo("stories");
                   }}
                 >
                   开始听取叙述
@@ -256,7 +300,7 @@ export default function Home() {
                 {storyIndex < LIAR_GAME.stories.length - 1 ? (
                   <button className="game-primary" onClick={() => openStory(storyIndex + 1)}>下一位叙述者</button>
                 ) : (
-                  <button className="game-primary" disabled={!allStoriesHeard} onClick={() => setPhase("deduction")}>进入调查回合</button>
+                  <button className="game-primary" disabled={!allStoriesHeard} onClick={() => advanceTo("deduction")}>进入调查回合</button>
                 )}
               </div>
               <div className="story-seats" aria-label="叙述者列表">
@@ -317,7 +361,7 @@ export default function Home() {
               </div>
               <div className="stage-footer">
                 <p>{deductionRevealed ? "推演成立：现在由你亲手写下最终一票。" : `已完成 ${collectedEvidence.size} / ${INVESTIGATION_ACTIONS.length} 次调查行动。`}</p>
-                <button className="game-primary" disabled={!deductionRevealed} onClick={() => setPhase("vote")}>拿起投票纸</button>
+                <button className="game-primary" disabled={!deductionRevealed} onClick={() => advanceTo("vote")}>拿起投票纸</button>
               </div>
             </section>
           )}
@@ -342,7 +386,7 @@ export default function Home() {
               </div>
               <div className="stage-footer">
                 <p>{selectedTarget ? `你的投票：${LIAR_GAME.suspects.find((suspect) => suspect.id === selectedTarget)?.name}` : "尚未落笔。"}</p>
-                <button className="game-danger" disabled={!selectedTarget} onClick={() => setPhase("result")}>确认投票</button>
+                <button className="game-danger" disabled={!selectedTarget} onClick={() => advanceTo("result")}>确认投票</button>
               </div>
             </section>
           )}
