@@ -2,14 +2,14 @@ import assert from "node:assert/strict";
 import { access } from "node:fs/promises";
 import test from "node:test";
 
-async function render(path = "/") {
+async function render(path = "/", env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }) {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
     new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    env,
     { waitUntil() {}, passThroughOnException() {} },
   );
 }
@@ -31,6 +31,11 @@ test("server-renders the solo RPG liar chapter", async () => {
 
 test("online room is retained but not promoted by the solo entry", async () => {
   const response = await render("/room");
+  assert.equal(response.status, 200);
+});
+
+test("self-hosted solo entry renders without Cloudflare bindings", async () => {
+  const response = await render("/", undefined);
   assert.equal(response.status, 200);
 });
 

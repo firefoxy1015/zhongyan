@@ -27,11 +27,18 @@ interface ExecutionContext {
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
 const worker = {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    setDatabaseBinding(env.DB);
+  async fetch(request: Request, env: Env | undefined, ctx: ExecutionContext): Promise<Response> {
+    // `vinext start` invokes this entry without Cloudflare bindings. The solo
+    // campaign does not need D1, while the retained room API still requires it.
+    if (env?.DB) {
+      setDatabaseBinding(env.DB);
+    }
     const url = new URL(request.url);
 
     if (url.pathname === "/_vinext/image") {
+      if (!env?.ASSETS || !env.IMAGES) {
+        return new Response("Image optimization requires Cloudflare bindings.", { status: 501 });
+      }
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
       return handleImageOptimization(request, {
         fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
