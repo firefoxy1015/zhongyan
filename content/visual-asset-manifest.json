@@ -12,6 +12,13 @@
       "officialAsset": false
     },
     {
+      "id": "liar-tableau-v1",
+      "file": "/art/liar-tableau-v1.png",
+      "type": "generated-original-ensemble-key-art",
+      "direction": ["first trial ensemble", "sealed interview room", "nine seats", "goat-mask host"],
+      "officialAsset": false
+    },
+    {
       "id": "qixia-v1",
       "file": "/art/qixia-v1.png",
       "type": "generated-original-character-key-art",
