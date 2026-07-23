@@ -217,7 +217,11 @@ export default function Home() {
                 </div>
                 <button className="story-mark" onClick={() => openStory(storyIndex)}>写入手账</button>
               </div>
-              <div className={`story-portrait story-portrait--${currentStory.id}`} aria-hidden="true" />
+              <div
+                aria-hidden="true"
+                className={`story-portrait story-portrait--${currentStory.id}`}
+                key={currentStory.id}
+              />
               <div className="story-transcript">
                 <p>{currentStory.summary}</p>
               </div>
