@@ -1303,8 +1303,7 @@ button:focus-visible {
   margin: 0;
   overflow: hidden;
   position: relative;
-  transform-style: preserve-3d;
-  transition: transform 420ms ease;
+  transition: box-shadow 280ms ease, transform 180ms ease;
   width: 170px;
 }
 
@@ -1315,7 +1314,6 @@ button:focus-visible {
 .identity-card__back,
 .identity-card__front {
   align-items: center;
-  backface-visibility: hidden;
   display: flex;
   font-family: "Microsoft YaHei", sans-serif;
   height: 100%;
@@ -1330,24 +1328,52 @@ button:focus-visible {
 .identity-card__back {
   background: repeating-linear-gradient(45deg, rgba(229, 183, 94, 0.11) 0 1px, transparent 1px 10px), #31251f;
   font-size: 17px;
+  transition: opacity 220ms ease;
   writing-mode: vertical-rl;
 }
 
 .identity-card__front {
+  align-items: stretch;
   background: linear-gradient(145deg, #dfd1b1, #bba47b);
   color: #6b1f1c;
+  flex-direction: column;
   font-family: "Noto Serif SC", "Songti SC", serif;
-  font-size: 28px;
-  font-weight: 700;
-  transform: rotateY(180deg);
+  gap: 10px;
+  opacity: 0;
+  padding: 31px 17px;
+  transition: opacity 220ms ease;
 }
 
 .identity-card.is-revealed {
-  transform: rotateY(180deg);
+  box-shadow: 0 0 0 2px rgba(229, 183, 94, 0.75), 0 0 38px rgba(229, 183, 94, 0.2);
 }
 
 .identity-card.is-revealed:hover {
-  transform: rotateY(180deg) translateY(-4px);
+  transform: translateY(-4px);
+}
+
+.identity-card.is-revealed .identity-card__back {
+  opacity: 0;
+}
+
+.identity-card.is-revealed .identity-card__front {
+  opacity: 1;
+}
+
+.identity-card__front small,
+.identity-card__front em {
+  color: #835128;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.16em;
+}
+
+.identity-card__front b {
+  color: #6b1f1c;
+  font-size: 31px;
+  letter-spacing: 0.18em;
+  margin: auto 0;
 }
 
 .identity-note {

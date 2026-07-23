@@ -177,7 +177,11 @@ export default function Home() {
                   onClick={() => setIdentityRevealed(true)}
                 >
                   <span className="identity-card__back">女娲游戏</span>
-                  <span className="identity-card__front">说谎者</span>
+                  <span className="identity-card__front">
+                    <small>你的身份</small>
+                    <b>说谎者</b>
+                    <em>你必须说谎</em>
+                  </span>
                 </button>
               </div>
               <p className="identity-note">
