@@ -1,0 +1,43 @@
+{
+  "policy": "Official materials define the visual direction. Generated assets are original companion art and must not be presented as official frames or adaptation stills.",
+  "references": [
+    "content/official-visual-reference.json"
+  ],
+  "assets": [
+    {
+      "id": "interview-room-v1",
+      "file": "/art/interview-room-v1.png",
+      "type": "generated-original-environment",
+      "direction": ["sealed interview room", "tungsten light", "pendulum clock"],
+      "officialAsset": false
+    },
+    {
+      "id": "qixia-v1",
+      "file": "/art/qixia-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Qi Xia", "charcoal outerwear", "brass clock light"],
+      "officialAsset": false
+    },
+    {
+      "id": "qiaojiajin-v1",
+      "file": "/art/qiaojiajin-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Qiao Jiajin", "worn workwear", "chair pose"],
+      "officialAsset": false
+    },
+    {
+      "id": "linqin-v1",
+      "file": "/art/linqin-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Lin Qin", "notebook", "pendulum clock"],
+      "officialAsset": false
+    },
+    {
+      "id": "renyang-v1",
+      "file": "/art/renyang-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Ren Yang", "goat mask", "pocket watch"],
+      "officialAsset": false
+    }
+  ]
+}

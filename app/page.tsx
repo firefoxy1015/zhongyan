@@ -114,9 +114,13 @@ export default function Home() {
           )}
 
           {phase === "rules" && (
-            <section className="game-stage">
+            <section className="game-stage game-stage--rules">
               <p className="game-kicker">HOST: 人羊</p>
               <h2>规则公布</h2>
+              <div className="host-showcase" aria-hidden="true">
+                <div className="host-showcase__portrait" />
+                <i className="host-showcase__glow" />
+              </div>
               <div className="rule-list">
                 {LIAR_GAME.rules.map((rule, index) => (
                   <article key={rule}>
@@ -136,6 +140,8 @@ export default function Home() {
             <section className="game-stage">
               <p className="game-kicker">PRIVATE INFORMATION / ONLY YOU</p>
               <h2>翻开你的身份牌</h2>
+              <div className="identity-reveal-layout">
+                <div className="character-keyart character-keyart--qixia" aria-hidden="true" />
               <button
                 aria-pressed={identityRevealed}
                 className={`identity-card ${identityRevealed ? "is-revealed" : ""}`}
@@ -144,6 +150,7 @@ export default function Home() {
                 <span className="identity-card__back">女娲游戏</span>
                 <span className="identity-card__front">说谎者</span>
               </button>
+              </div>
               <p className="identity-note">
                 {identityRevealed
                   ? "你拿到的牌要求你必须说谎。先别急着把它当成唯一事实。"
@@ -175,6 +182,7 @@ export default function Home() {
                 </div>
                 <button className="story-mark" onClick={() => openStory(storyIndex)}>记录已听</button>
               </div>
+              <div className={`story-portrait story-portrait--${currentStory.id}`} aria-hidden="true" />
               <div className="story-transcript">
                 <p>{currentStory.summary}</p>
               </div>

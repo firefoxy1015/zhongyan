@@ -40,4 +40,10 @@ test("server-renders the online room lobby", async () => {
 test("removes the disposable starter preview", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   await access(new URL("../content/official-visual-reference.json", import.meta.url));
+  await access(new URL("../content/visual-asset-manifest.json", import.meta.url));
+  await access(new URL("../public/art/interview-room-v1.png", import.meta.url));
+  await access(new URL("../public/art/qixia-v1.png", import.meta.url));
+  await access(new URL("../public/art/qiaojiajin-v1.png", import.meta.url));
+  await access(new URL("../public/art/linqin-v1.png", import.meta.url));
+  await access(new URL("../public/art/renyang-v1.png", import.meta.url));
 });

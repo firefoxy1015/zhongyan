@@ -1016,8 +1016,44 @@ button:focus-visible {
 
 .game-stage--entry {
   align-items: center;
+  background: #0b0908;
+  isolation: isolate;
   justify-content: center;
+  overflow: hidden;
   text-align: center;
+}
+
+.game-stage--entry::before,
+.game-stage--entry::after {
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.game-stage--entry::before {
+  background:
+    linear-gradient(90deg, rgba(7, 7, 8, 0.96) 0%, rgba(7, 7, 8, 0.42) 40%, rgba(7, 7, 8, 0.9) 100%),
+    url("/art/interview-room-v1.png") center / cover;
+  filter: saturate(0.78) contrast(1.08);
+  transform: scale(1.06);
+  z-index: 0;
+  animation: scene-drift 16s ease-in-out infinite alternate;
+}
+
+.game-stage--entry::after {
+  background:
+    radial-gradient(circle at 54% 17%, rgba(241, 185, 81, 0.17), transparent 13rem),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.06) 4px 5px);
+  mix-blend-mode: screen;
+  opacity: 0.62;
+  z-index: 0;
+  animation: tungsten-flicker 6.8s steps(1, end) infinite;
+}
+
+.game-stage--entry > * {
+  position: relative;
+  z-index: 1;
 }
 
 .game-stage--entry h2 {
@@ -1033,6 +1069,7 @@ button:focus-visible {
   height: 156px;
   position: relative;
   width: 156px;
+  animation: clock-breathe 4.6s ease-in-out infinite;
 }
 
 .entry-clock::before,
@@ -1067,6 +1104,7 @@ button:focus-visible {
   left: calc(50% - 6px);
   top: calc(50% - 6px);
   width: 13px;
+  animation: clock-core 1.15s ease-in-out infinite;
 }
 
 .game-lead {
@@ -1140,6 +1178,53 @@ button:focus-visible {
   display: grid;
   gap: 10px;
   margin-top: 32px;
+  max-width: 64%;
+  position: relative;
+  z-index: 1;
+}
+
+.game-stage--rules {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.game-stage--rules > .game-kicker,
+.game-stage--rules > h2,
+.game-stage--rules > .stage-footer {
+  position: relative;
+  z-index: 1;
+}
+
+.host-showcase {
+  bottom: 0;
+  opacity: 0.94;
+  pointer-events: none;
+  position: absolute;
+  right: -1.2rem;
+  top: 1.3rem;
+  width: min(46%, 390px);
+  z-index: 0;
+}
+
+.host-showcase__portrait {
+  background:
+    linear-gradient(90deg, rgba(10, 9, 8, 1) 0%, transparent 28%, transparent 72%, rgba(10, 9, 8, 0.74) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.93) 0%, transparent 42%),
+    url("/art/renyang-v1.png") center top / cover;
+  inset: 0;
+  position: absolute;
+  animation: host-arrival 820ms cubic-bezier(0.18, 0.75, 0.22, 1) both, portrait-breathe 7s ease-in-out 1s infinite alternate;
+}
+
+.host-showcase__glow {
+  background: radial-gradient(ellipse at center, rgba(229, 183, 94, 0.24), transparent 62%);
+  border-radius: 50%;
+  height: 55%;
+  left: 10%;
+  position: absolute;
+  top: 8%;
+  width: 90%;
+  animation: mask-glow 3.4s ease-in-out infinite;
 }
 
 .rule-list article {
@@ -1187,13 +1272,35 @@ button:focus-visible {
   max-width: 66%;
 }
 
+.identity-reveal-layout {
+  align-items: center;
+  display: grid;
+  gap: clamp(22px, 4vw, 70px);
+  grid-template-columns: minmax(210px, 330px) 170px;
+  justify-content: center;
+  margin: 18px auto 0;
+  min-height: 290px;
+}
+
+.character-keyart {
+  background:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 28%, transparent 74%, rgba(10, 9, 8, 0.76) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.82) 0%, transparent 38%),
+    url("/art/qixia-v1.png") center 35% / cover;
+  border-left: 1px solid rgba(229, 183, 94, 0.48);
+  height: 286px;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: portrait-arrival 780ms cubic-bezier(0.18, 0.75, 0.22, 1) 180ms both, portrait-breathe 8s ease-in-out 1s infinite alternate;
+}
+
 .identity-card {
   background: #30241e;
   border: 1px solid rgba(229, 183, 94, 0.52);
   color: var(--gold);
   cursor: pointer;
   height: 240px;
-  margin: 40px auto 0;
+  margin: 0;
   overflow: hidden;
   position: relative;
   transform-style: preserve-3d;
@@ -1239,6 +1346,10 @@ button:focus-visible {
   transform: rotateY(180deg);
 }
 
+.identity-card.is-revealed:hover {
+  transform: rotateY(180deg) translateY(-4px);
+}
+
 .identity-note {
   color: #aaa08f;
   font-size: 13px;
@@ -1251,6 +1362,53 @@ button:focus-visible {
   align-items: flex-start;
   display: flex;
   justify-content: space-between;
+}
+
+.story-portrait {
+  background:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%);
+  height: 388px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: clamp(18px, 4vw, 54px);
+  top: 22px;
+  transform: translateX(20px);
+  width: min(34%, 270px);
+}
+
+.story-portrait--qixia,
+.story-portrait--qiao,
+.story-portrait--lin {
+  animation: portrait-arrival 600ms cubic-bezier(0.18, 0.75, 0.22, 1) both, portrait-breathe 7.6s ease-in-out 700ms infinite alternate;
+}
+
+.story-portrait--qixia {
+  background-image:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
+    url("/art/qixia-v1.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.story-portrait--qiao {
+  background-image:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
+    url("/art/qiaojiajin-v1.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.story-portrait--lin {
+  background-image:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
+    url("/art/linqin-v1.png");
+  background-position: center;
+  background-size: cover;
 }
 
 .story-heading h2 {
@@ -1272,6 +1430,7 @@ button:focus-visible {
 .story-transcript {
   border-left: 2px solid rgba(229, 183, 94, 0.58);
   margin-top: 34px;
+  max-width: 67%;
   padding: 5px 0 5px 23px;
 }
 
@@ -1286,6 +1445,7 @@ button:focus-visible {
   background: rgba(158, 51, 44, 0.13);
   border: 1px solid rgba(206, 90, 69, 0.25);
   margin-top: 24px;
+  max-width: 67%;
   padding: 13px 15px;
 }
 
@@ -1563,6 +1723,42 @@ button:focus-visible {
     padding: 28px 22px;
   }
 
+  .game-stage--rules .rule-list,
+  .story-transcript,
+  .story-clue {
+    max-width: none;
+  }
+
+  .host-showcase {
+    opacity: 0.32;
+    right: -70px;
+    top: 88px;
+    width: 330px;
+  }
+
+  .identity-reveal-layout {
+    display: block;
+    min-height: 0;
+  }
+
+  .character-keyart {
+    height: 176px;
+    margin: 12px auto 20px;
+    max-width: 300px;
+  }
+
+  .identity-card {
+    margin: 0 auto;
+  }
+
+  .story-portrait {
+    height: 240px;
+    opacity: 0.32;
+    right: 10px;
+    top: 88px;
+    width: 210px;
+  }
+
   .deduction-grid,
   .story-seats,
   .suspect-grid {
@@ -1814,8 +2010,51 @@ button:focus-visible {
 }
 
 .live-table {
+  background:
+    linear-gradient(145deg, rgba(24, 20, 18, 0.94), rgba(9, 10, 11, 0.93)),
+    url("/art/interview-room-v1.png") center / cover;
   min-height: 690px;
   padding: 31px;
+}
+
+@keyframes scene-drift {
+  from { transform: scale(1.06) translate3d(-0.7%, -0.3%, 0); }
+  to { transform: scale(1.13) translate3d(0.9%, 0.6%, 0); }
+}
+
+@keyframes tungsten-flicker {
+  0%, 17%, 19%, 61%, 63%, 100% { opacity: 0.58; }
+  18%, 62% { opacity: 0.32; }
+}
+
+@keyframes clock-breathe {
+  0%, 100% { box-shadow: 0 0 0 2px #b98f51, 0 16px 50px rgba(0, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 0 2px #d9aa5a, 0 0 34px rgba(229, 183, 94, 0.23), 0 16px 50px rgba(0, 0, 0, 0.5); }
+}
+
+@keyframes clock-core {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.16); }
+}
+
+@keyframes host-arrival {
+  from { opacity: 0; transform: translateX(42px) scale(1.03); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes portrait-arrival {
+  from { opacity: 0; transform: translateX(-20px) scale(1.03); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes portrait-breathe {
+  from { transform: scale(1) translateY(0); }
+  to { transform: scale(1.025) translateY(-4px); }
+}
+
+@keyframes mask-glow {
+  0%, 100% { opacity: 0.35; transform: scale(0.94); }
+  50% { opacity: 0.82; transform: scale(1.06); }
 }
 
 .live-table-heading {
