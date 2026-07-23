@@ -30,7 +30,16 @@
       "file": "/art/tiantian-v1.png",
       "type": "generated-original-character-key-art",
       "direction": ["Tian Tian", "technical worker", "canvas bag"],
-      "officialAsset": false
+      "officialAsset": false,
+      "status": "superseded"
+    },
+    {
+      "id": "tiantian-v2",
+      "file": "/art/tiantian-v2.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Tian Tian", "adult hostess", "worn black club dress", "earthquake survivor"],
+      "officialAsset": false,
+      "status": "active"
     },
     {
       "id": "xiaoran-v1",

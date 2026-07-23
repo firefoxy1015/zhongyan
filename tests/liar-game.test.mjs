@@ -15,3 +15,9 @@ test("resolves the canonical liar vote", () => {
   assert.equal(resolveCanonicalVote("renyang").isCorrect, true);
   assert.equal(resolveCanonicalVote("qixia").isCorrect, false);
 });
+
+test("keeps Tian Tian's first-trial identity and testimony locked", () => {
+  const tianTian = LIAR_GAME.stories.find((story) => story.id === "tiantian");
+  assert.equal(tianTian?.occupation, "陪酒小姐");
+  assert.match(tianTian?.testimony ?? "", /车里上班/);
+});

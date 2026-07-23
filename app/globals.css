@@ -1893,7 +1893,7 @@ button:focus-visible {
   background-image:
     linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
     linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
-    url("/art/tiantian-v1.png");
+    url("/art/tiantian-v2.png");
   background-position: center;
   background-size: cover;
 }
@@ -2846,7 +2846,7 @@ button:focus-visible {
 .live-identity--tiantian > i {
   background-image:
     linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
-    url("/art/tiantian-v1.png");
+    url("/art/tiantian-v2.png");
 }
 
 .live-identity--xiao > i {

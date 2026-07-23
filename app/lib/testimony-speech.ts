@@ -1,5 +1,5 @@
 export const CHARACTER_VOICE_PROFILES = {
-  tiantian: { label: "甜甜", portraitAsset: "tiantian-v1", gender: "female", rate: 0.92, pitch: 1.08, voiceHints: ["Xiaoxiao", "Huihui", "female"] },
+  tiantian: { label: "甜甜", portraitAsset: "tiantian-v2", gender: "female", rate: 0.92, pitch: 1.08, voiceHints: ["Xiaoxiao", "Huihui", "female"] },
   qiao: { label: "乔家劲", portraitAsset: "qiaojiajin-v1", gender: "male", rate: 0.86, pitch: 0.76, voiceHints: ["Yunxi", "Kangkang", "male"] },
   xiao: { label: "肖冉", portraitAsset: "xiaoran-v1", gender: "female", rate: 0.96, pitch: 0.98, voiceHints: ["Xiaoyi", "Huihui", "female"] },
   zhao: { label: "赵海博", portraitAsset: "zhaohaibo-v1", gender: "male", rate: 0.91, pitch: 0.84, voiceHints: ["Yunyang", "Kangkang", "male"] },

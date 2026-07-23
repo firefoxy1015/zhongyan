@@ -48,7 +48,7 @@ test("ships the full first-trial visual set", async () => {
     "interview-room-v1.png",
     "liar-tableau-v1.png",
     "qixia-v1.png",
-    "tiantian-v1.png",
+    "tiantian-v2.png",
     "qiaojiajin-v1.png",
     "xiaoran-v1.png",
     "zhaohaibo-v1.png",
