@@ -1382,7 +1382,11 @@ button:focus-visible {
 .story-portrait--qiao,
 .story-portrait--lin,
 .story-portrait--tiantian,
-.story-portrait--xiao {
+.story-portrait--xiao,
+.story-portrait--zhao,
+.story-portrait--han,
+.story-portrait--zhang,
+.story-portrait--li {
   animation: portrait-arrival 600ms cubic-bezier(0.18, 0.75, 0.22, 1) both, portrait-breathe 7.6s ease-in-out 700ms infinite alternate;
 }
 
@@ -1427,6 +1431,42 @@ button:focus-visible {
     linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
     linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
     url("/art/xiaoran-v1.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.story-portrait--zhao {
+  background-image:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
+    url("/art/zhaohaibo-v1.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.story-portrait--han {
+  background-image:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
+    url("/art/hanyimo-v1.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.story-portrait--zhang {
+  background-image:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
+    url("/art/zhangchenze-v1.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.story-portrait--li {
+  background-image:
+    linear-gradient(90deg, rgba(10, 9, 8, 0.98) 0%, transparent 30%, transparent 70%, rgba(10, 9, 8, 0.84) 100%),
+    linear-gradient(0deg, rgba(10, 9, 8, 0.92) 0%, transparent 42%),
+    url("/art/lishangwu-v1.png");
   background-position: center;
   background-size: cover;
 }
@@ -2139,6 +2179,30 @@ button:focus-visible {
   background-image:
     linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
     url("/art/xiaoran-v1.png");
+}
+
+.live-identity--zhao > i {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
+    url("/art/zhaohaibo-v1.png");
+}
+
+.live-identity--han > i {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
+    url("/art/hanyimo-v1.png");
+}
+
+.live-identity--zhang > i {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
+    url("/art/zhangchenze-v1.png");
+}
+
+.live-identity--li > i {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
+    url("/art/lishangwu-v1.png");
 }
 
 .live-identity span,

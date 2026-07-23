@@ -40,6 +40,34 @@
       "officialAsset": false
     },
     {
+      "id": "zhaohaibo-v1",
+      "file": "/art/zhaohaibo-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Zhao Haibo", "doctor", "stethoscope"],
+      "officialAsset": false
+    },
+    {
+      "id": "hanyimo-v1",
+      "file": "/art/hanyimo-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Han Yimo", "online fiction writer", "notebook"],
+      "officialAsset": false
+    },
+    {
+      "id": "zhangchenze-v1",
+      "file": "/art/zhangchenze-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Zhang Chenze", "lawyer", "document folder"],
+      "officialAsset": false
+    },
+    {
+      "id": "lishangwu-v1",
+      "file": "/art/lishangwu-v1.png",
+      "type": "generated-original-character-key-art",
+      "direction": ["Li Shangwu", "criminal police officer", "field notebook"],
+      "officialAsset": false
+    },
+    {
       "id": "qiaojiajin-v1",
       "file": "/art/qiaojiajin-v1.png",
       "type": "generated-original-character-key-art",
