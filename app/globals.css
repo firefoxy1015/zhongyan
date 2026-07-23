@@ -1564,7 +1564,9 @@ button:focus-visible {
 }
 
 .character-dossier .story-portrait {
-  height: clamp(210px, 25vw, 306px);
+  aspect-ratio: 3 / 4;
+  background-position: center 18%;
+  height: auto;
   opacity: 1;
   position: relative;
   right: auto;
@@ -2740,7 +2742,9 @@ button:focus-visible {
   }
 
   .character-dossier .story-portrait {
-    height: clamp(190px, 52vw, 266px);
+    aspect-ratio: 3 / 4;
+    background-position: center 18%;
+    height: auto;
   }
 
   .testimony-card {
