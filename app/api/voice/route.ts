@@ -16,8 +16,7 @@ function readConfig(characterId: CharacterId) {
   return {
     apiKey,
     voiceId: profile.voiceId,
-    endpoint: process.env.LINGKE_TTS_URL ?? "https://lingkeapi.com/v1/audio/speech",
-    model: process.env.LINGKE_TTS_MODEL ?? "gpt-4o-mini-tts",
+    endpoint: process.env.LINGKE_TTS_URL ?? "https://lingkeapi.com/kling/v1/audio/tts",
     speed: Number(process.env.LINGKE_TTS_SPEED ?? "1"),
   };
 }
@@ -43,21 +42,25 @@ export async function POST(request: Request) {
   }
 
   const input = body.kind === "testimony" ? story.testimony : story.followUp;
-  const upstream = await fetch(config.endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${config.apiKey}`,
-    },
-    body: JSON.stringify({
-      model: config.model,
-      input,
-      voice: config.voiceId,
-      response_format: "mp3",
-      speed: Number.isFinite(config.speed) && config.speed > 0 ? config.speed : 1,
-    }),
-    cache: "no-store",
-  });
+  let upstream: Response;
+  try {
+    upstream = await fetch(config.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        text: input,
+        voice_id: config.voiceId,
+        voice_language: "zh",
+        voice_speed: String(Number.isFinite(config.speed) && config.speed > 0 ? config.speed : 1),
+      }),
+      cache: "no-store",
+    });
+  } catch {
+    return Response.json({ error: "灵客语音网关暂时无法连接。" }, { status: 502 });
+  }
 
   if (!upstream.ok) {
     return Response.json({ error: "灵客语音生成失败。" }, { status: 502 });
@@ -77,7 +80,12 @@ export async function POST(request: Request) {
   if (!payload) return Response.json({ error: "灵客未返回可播放音频。" }, { status: 502 });
 
   const result = (payload.result ?? payload.data ?? payload) as Record<string, unknown>;
-  const audioUrl = result.media_url ?? result.audio_url ?? result.audio ?? result.url;
+  const audio = result.media_url ?? result.audio_url ?? result.audio ?? result.url;
+  const audioUrl = typeof audio === "string"
+    ? audio
+    : audio && typeof audio === "object" && "url" in audio && typeof audio.url === "string"
+      ? audio.url
+      : null;
   if (typeof audioUrl !== "string" || !audioUrl) {
     return Response.json({ error: "灵客未返回可播放音频。" }, { status: 502 });
   }
