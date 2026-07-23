@@ -57,6 +57,8 @@ export default function Home() {
   const [phase, setPhase] = useState<LiarGamePhase>("lobby");
   const [identityRevealed, setIdentityRevealed] = useState(false);
   const [storyIndex, setStoryIndex] = useState(0);
+  const [storyTake, setStoryTake] = useState(0);
+  const [narrationPlaying, setNarrationPlaying] = useState(true);
   const [heardStories, setHeardStories] = useState<Set<string>>(new Set());
   const [collectedEvidence, setCollectedEvidence] = useState<Set<string>>(new Set());
   const [deductionRevealed, setDeductionRevealed] = useState(false);
@@ -74,6 +76,8 @@ export default function Home() {
   const openStory = (index: number) => {
     const story = LIAR_GAME.stories[index];
     setStoryIndex(index);
+    setStoryTake((current) => current + 1);
+    setNarrationPlaying(true);
     setHeardStories((current) => new Set([...current, story.id]));
   };
 
@@ -85,6 +89,8 @@ export default function Home() {
     setPhase("lobby");
     setIdentityRevealed(false);
     setStoryIndex(0);
+    setStoryTake(0);
+    setNarrationPlaying(true);
     setHeardStories(new Set());
     setCollectedEvidence(new Set());
     setDeductionRevealed(false);
@@ -220,8 +226,24 @@ export default function Home() {
               <div
                 aria-hidden="true"
                 className={`story-portrait story-portrait--${currentStory.id}`}
-                key={currentStory.id}
-              />
+                key={`${currentStory.id}-${storyTake}`}
+              >
+                <div className={`story-portrait__hud ${narrationPlaying ? "is-playing" : ""}`}>
+                  <span className="story-portrait__signal" />
+                  <span>证词接入</span>
+                  <div className="story-portrait__wave">
+                    {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
+                  </div>
+                </div>
+              </div>
+              <button
+                aria-pressed={narrationPlaying}
+                className={`story-playback ${narrationPlaying ? "is-playing" : ""}`}
+                onClick={() => setNarrationPlaying((current) => !current)}
+              >
+                <span aria-hidden="true">{narrationPlaying ? "II" : "▶"}</span>
+                {narrationPlaying ? "叙述演出中" : "继续叙述演出"}
+              </button>
               <div className="story-transcript">
                 <p>{currentStory.summary}</p>
               </div>
