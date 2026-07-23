@@ -4,27 +4,40 @@ export class SuspenseBgm {
   private drones: OscillatorNode[] = [];
   private pulseTimer: number | null = null;
 
-  start() {
-    if (typeof window === "undefined" || this.context) return Boolean(this.context);
+  async start() {
+    if (typeof window === "undefined") return false;
 
-    const AudioContextConstructor = window.AudioContext
-      ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextConstructor) return false;
+    if (!this.context) {
+      const AudioContextConstructor = window.AudioContext
+        ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextConstructor) return false;
 
-    const context = new AudioContextConstructor();
-    const master = context.createGain();
-    master.gain.setValueAtTime(0.0001, context.currentTime);
-    master.gain.exponentialRampToValueAtTime(0.24, context.currentTime + 0.45);
-    master.connect(context.destination);
+      const context = new AudioContextConstructor();
+      const master = context.createGain();
+      master.gain.setValueAtTime(0.0001, context.currentTime);
+      master.gain.exponentialRampToValueAtTime(0.46, context.currentTime + 0.18);
+      master.connect(context.destination);
 
-    this.context = context;
-    this.master = master;
-    this.addDrone(55, "sine", 0.19);
-    this.addDrone(82.41, "triangle", 0.055);
-    this.schedulePulse();
-    this.pulseTimer = window.setInterval(() => this.schedulePulse(), 1500);
-    void context.resume();
-    return true;
+      this.context = context;
+      this.master = master;
+      this.addDrone(55, "sine", 0.31);
+      this.addDrone(82.41, "triangle", 0.1);
+    }
+
+    try {
+      // Android may suspend a live context after focus or audio-route changes.
+      // Resume on every intentional in-game interaction, not only first creation.
+      await this.context.resume();
+      if (this.context.state !== "running") return false;
+
+      if (this.pulseTimer === null) {
+        this.schedulePulse();
+        this.pulseTimer = window.setInterval(() => this.schedulePulse(), 1500);
+      }
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   stop() {
@@ -71,10 +84,10 @@ export class SuspenseBgm {
     if (!context) return;
 
     const start = context.currentTime + 0.03;
-    this.hit(55, start, 0.27, 0.17, "triangle");
-    this.hit(55, start + 0.22, 0.19, 0.11, "triangle");
-    this.hit(110, start + 0.74, 0.07, 0.035, "sine");
-    this.hit(82.41, start + 1.1, 0.11, 0.048, "sine");
+    this.hit(55, start, 0.31, 0.33, "triangle");
+    this.hit(55, start + 0.25, 0.21, 0.23, "triangle");
+    this.hit(110, start + 0.76, 0.08, 0.08, "sine");
+    this.hit(82.41, start + 1.1, 0.13, 0.11, "sine");
   }
 
   private hit(frequency: number, start: number, duration: number, volume: number, type: OscillatorType) {

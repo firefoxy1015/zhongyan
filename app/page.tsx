@@ -85,19 +85,23 @@ export default function Home() {
 
   const startMusic = () => {
     if (!musicEnabled) return;
-    if (bgmRef.current?.start()) setMusicStarted(true);
+    void bgmRef.current?.start().then(setMusicStarted);
+  };
+
+  const activateMusic = () => {
+    setMusicEnabled(true);
+    void bgmRef.current?.start().then(setMusicStarted);
   };
 
   const toggleMusic = () => {
-    if (musicEnabled) {
+    if (musicStarted) {
       bgmRef.current?.stop();
       setMusicStarted(false);
       setMusicEnabled(false);
       return;
     }
 
-    setMusicEnabled(true);
-    if (bgmRef.current?.start()) setMusicStarted(true);
+    activateMusic();
   };
 
   const advanceTo = (nextPhase: LiarGamePhase) => {
@@ -283,10 +287,19 @@ export default function Home() {
               <button
                 aria-pressed={narrationPlaying}
                 className={`story-playback ${narrationPlaying ? "is-playing" : ""}`}
+                onPointerDown={startMusic}
                 onClick={() => setNarrationPlaying((current) => !current)}
               >
                 <span aria-hidden="true">{narrationPlaying ? "II" : "▶"}</span>
                 {narrationPlaying ? "叙述演出中" : "继续叙述演出"}
+              </button>
+              <button
+                aria-pressed={musicStarted}
+                className={`story-audio ${musicStarted ? "is-running" : ""}`}
+                onClick={toggleMusic}
+              >
+                <span aria-hidden="true">{musicStarted ? "●" : "♪"}</span>
+                {musicEnabled ? (musicStarted ? "紧迫声场运行中 · 点击静音" : "点击开启紧迫声场") : "声场已静音 · 点击恢复"}
               </button>
               <div className="story-transcript">
                 <p>{currentStory.summary}</p>
