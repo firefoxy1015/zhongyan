@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "十日终焉：原著同人桌游",
-  description: "基于原著剧情资料构建的在线桌游开发版本。",
+  description: "可游玩的《十日终焉》原著模式同人桌游。",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

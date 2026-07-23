@@ -787,3 +787,793 @@ button:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Playable "Liar" table. The legacy archive styles above remain available for later codex screens. */
+.game-app {
+  --void: #070708;
+  --paper: #ded1b7;
+  --muted-paper: #a99d89;
+  --line-hot: rgba(229, 183, 94, 0.3);
+  --red: #9e332c;
+  --red-hot: #ce5a45;
+  --gold: #e5b75e;
+  background:
+    radial-gradient(circle at 50% -20%, rgba(157, 40, 30, 0.48), transparent 35rem),
+    linear-gradient(145deg, #070708 0%, #171210 50%, #070708 100%);
+  color: var(--paper);
+  min-height: 100vh;
+  padding: 0 28px 32px;
+}
+
+.game-topbar,
+.game-frame {
+  margin: 0 auto;
+  max-width: 1460px;
+}
+
+.game-topbar {
+  align-items: center;
+  border-bottom: 1px solid var(--line-hot);
+  display: flex;
+  justify-content: space-between;
+  min-height: 90px;
+}
+
+.game-brand {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.game-brand-mark {
+  align-items: center;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  display: inline-flex;
+  font-size: 26px;
+  height: 46px;
+  justify-content: center;
+  position: relative;
+  width: 46px;
+}
+
+.game-brand-mark::after {
+  border: 1px solid rgba(158, 51, 44, 0.9);
+  content: "";
+  inset: 4px;
+  position: absolute;
+}
+
+.game-brand p,
+.game-eyebrow,
+.game-kicker {
+  color: var(--muted-paper);
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.17em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.game-brand h1,
+.game-stage h2,
+.game-ledger h2 {
+  color: #f0e4c9;
+  font-size: 24px;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  margin: 6px 0 0;
+}
+
+.game-clock {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.game-clock span {
+  color: var(--muted-paper);
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+}
+
+.game-clock strong {
+  border-left: 1px solid var(--line-hot);
+  color: var(--gold);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  padding-left: 12px;
+}
+
+.game-frame {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 208px minmax(0, 1fr) 245px;
+  padding-top: 25px;
+}
+
+.game-progress,
+.game-ledger,
+.game-table {
+  background: linear-gradient(145deg, rgba(26, 22, 20, 0.95), rgba(9, 10, 11, 0.94));
+  border: 1px solid rgba(229, 183, 94, 0.16);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+.game-progress,
+.game-ledger {
+  min-height: 700px;
+  padding: 21px;
+}
+
+.game-progress ol {
+  border-left: 1px solid rgba(229, 183, 94, 0.14);
+  list-style: none;
+  margin: 22px 0 0 8px;
+  padding: 0;
+}
+
+.game-progress li {
+  color: #746e64;
+  font-size: 13px;
+  margin: 0;
+  padding: 0 0 23px 20px;
+  position: relative;
+}
+
+.game-progress li::before {
+  background: #3c3730;
+  border-radius: 50%;
+  content: "";
+  height: 7px;
+  left: -4px;
+  position: absolute;
+  top: 4px;
+  width: 7px;
+}
+
+.game-progress li.is-reached {
+  color: #e5d5b5;
+}
+
+.game-progress li.is-reached::before {
+  background: var(--red-hot);
+  box-shadow: 0 0 12px rgba(206, 90, 69, 0.7);
+}
+
+.game-progress li span {
+  color: var(--gold);
+  display: block;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.game-rule-card,
+.ledger-section {
+  border-top: 1px solid rgba(229, 183, 94, 0.15);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.game-rule-card {
+  margin-top: 10px;
+}
+
+.game-rule-card strong,
+.ledger-section strong {
+  color: var(--gold);
+  display: block;
+  font-size: 15px;
+  margin-top: 7px;
+}
+
+.game-rule-card p:last-child,
+.ledger-section p:last-child {
+  color: #a69b89;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  line-height: 1.75;
+  margin: 8px 0 0;
+}
+
+.game-table {
+  min-height: 700px;
+  overflow: hidden;
+  position: relative;
+}
+
+.game-table::before {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.017) 1px, transparent 1px);
+  background-size: 42px 42px;
+  content: "";
+  inset: 0;
+  opacity: 0.6;
+  pointer-events: none;
+  position: absolute;
+}
+
+.game-stage {
+  display: flex;
+  flex-direction: column;
+  min-height: 698px;
+  padding: clamp(26px, 4vw, 54px);
+  position: relative;
+  z-index: 1;
+}
+
+.game-stage h2 {
+  font-size: clamp(26px, 3.2vw, 42px);
+  line-height: 1.25;
+  margin-top: 10px;
+}
+
+.game-stage--entry {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.game-stage--entry h2 {
+  font-size: clamp(30px, 4vw, 50px);
+  margin-top: 32px;
+}
+
+.entry-clock {
+  background: radial-gradient(circle at 45% 38%, #e5ce9d, #946f42 59%, #1d1714 61%);
+  border: 10px solid #241a16;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #b98f51, 0 16px 50px rgba(0, 0, 0, 0.5);
+  height: 156px;
+  position: relative;
+  width: 156px;
+}
+
+.entry-clock::before,
+.entry-clock::after,
+.entry-clock i {
+  background: #2d2018;
+  bottom: 50%;
+  content: "";
+  left: 50%;
+  position: absolute;
+  transform-origin: 50% 100%;
+}
+
+.entry-clock::before {
+  height: 35%;
+  transform: translateX(-50%) rotate(-90deg);
+  width: 4px;
+}
+
+.entry-clock::after {
+  height: 28%;
+  transform: translateX(-50%) rotate(0deg);
+  width: 4px;
+}
+
+.entry-clock i {
+  background: var(--gold);
+  border: 2px solid #2d2018;
+  border-radius: 50%;
+  bottom: auto;
+  height: 13px;
+  left: calc(50% - 6px);
+  top: calc(50% - 6px);
+  width: 13px;
+}
+
+.game-lead {
+  color: #c5b89e;
+  font-size: 15px;
+  line-height: 2;
+  margin: 22px auto 0;
+  max-width: 660px;
+}
+
+.game-primary,
+.game-secondary,
+.game-danger,
+.story-mark {
+  background: transparent;
+  border: 1px solid rgba(229, 183, 94, 0.4);
+  color: #eadbbc;
+  cursor: pointer;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 12px 17px;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.game-primary {
+  background: linear-gradient(135deg, #a6372e, #7e2825);
+  border-color: #cf7058;
+  color: #fff0d3;
+}
+
+.game-primary:hover:not(:disabled),
+.game-danger:hover:not(:disabled),
+.story-mark:hover {
+  background: #c14b3a;
+  transform: translateY(-1px);
+}
+
+.game-secondary:hover:not(:disabled) {
+  background: rgba(229, 183, 94, 0.12);
+  border-color: var(--gold);
+}
+
+.game-danger {
+  background: #671e1b;
+  border-color: #bd5544;
+  color: #ffe0c5;
+}
+
+.game-primary:disabled,
+.game-secondary:disabled,
+.game-danger:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.game-stage--entry .game-primary {
+  margin-top: 27px;
+}
+
+.rule-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.rule-list article {
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(229, 183, 94, 0.12);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 34px minmax(0, 1fr);
+  padding: 15px;
+}
+
+.rule-list article span,
+.story-clue span,
+.deduction-grid article > span {
+  color: var(--gold);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.rule-list article p {
+  color: #c5b89f;
+  font-size: 14px;
+  line-height: 1.75;
+  margin: 0;
+}
+
+.stage-footer {
+  align-items: center;
+  border-top: 1px solid rgba(229, 183, 94, 0.14);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.stage-footer p {
+  color: #988f80;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 66%;
+}
+
+.identity-card {
+  background: #30241e;
+  border: 1px solid rgba(229, 183, 94, 0.52);
+  color: var(--gold);
+  cursor: pointer;
+  height: 240px;
+  margin: 40px auto 0;
+  overflow: hidden;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 420ms ease;
+  width: 170px;
+}
+
+.identity-card:hover {
+  transform: translateY(-4px);
+}
+
+.identity-card__back,
+.identity-card__front {
+  align-items: center;
+  backface-visibility: hidden;
+  display: flex;
+  font-family: "Microsoft YaHei", sans-serif;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  letter-spacing: 0.15em;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.identity-card__back {
+  background: repeating-linear-gradient(45deg, rgba(229, 183, 94, 0.11) 0 1px, transparent 1px 10px), #31251f;
+  font-size: 17px;
+  writing-mode: vertical-rl;
+}
+
+.identity-card__front {
+  background: linear-gradient(145deg, #dfd1b1, #bba47b);
+  color: #6b1f1c;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 28px;
+  font-weight: 700;
+  transform: rotateY(180deg);
+}
+
+.identity-card.is-revealed {
+  transform: rotateY(180deg);
+}
+
+.identity-note {
+  color: #aaa08f;
+  font-size: 13px;
+  line-height: 1.75;
+  margin: 21px auto 0;
+  text-align: center;
+}
+
+.story-heading {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.story-heading h2 {
+  display: inline-block;
+  margin-right: 13px;
+}
+
+.story-heading > div > span {
+  color: #9b907d;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+}
+
+.story-mark {
+  color: var(--gold);
+  padding: 9px 11px;
+}
+
+.story-transcript {
+  border-left: 2px solid rgba(229, 183, 94, 0.58);
+  margin-top: 34px;
+  padding: 5px 0 5px 23px;
+}
+
+.story-transcript p {
+  color: #c9bda6;
+  font-size: clamp(17px, 1.8vw, 21px);
+  line-height: 1.9;
+  margin: 0;
+}
+
+.story-clue {
+  background: rgba(158, 51, 44, 0.13);
+  border: 1px solid rgba(206, 90, 69, 0.25);
+  margin-top: 24px;
+  padding: 13px 15px;
+}
+
+.story-clue p {
+  color: #c0b198;
+  font-size: 13px;
+  line-height: 1.75;
+  margin: 7px 0 0;
+}
+
+.story-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.story-seats {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: auto;
+  padding-top: 25px;
+}
+
+.story-seats button {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(229, 183, 94, 0.1);
+  color: #817a6e;
+  cursor: pointer;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  padding: 9px 8px;
+  text-align: left;
+}
+
+.story-seats button span {
+  color: #a45b42;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 9px;
+  margin-right: 7px;
+}
+
+.story-seats button.is-heard {
+  color: #c4b89f;
+}
+
+.story-seats button.is-current {
+  background: rgba(158, 51, 44, 0.25);
+  border-color: rgba(229, 183, 94, 0.5);
+  color: #f3dfba;
+}
+
+.deduction-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 33px;
+}
+
+.deduction-grid article {
+  background: rgba(255, 255, 255, 0.024);
+  border: 1px solid rgba(229, 183, 94, 0.13);
+  min-height: 216px;
+  padding: 18px;
+}
+
+.deduction-grid article.is-revealed {
+  background: rgba(158, 51, 44, 0.2);
+  border-color: rgba(229, 183, 94, 0.48);
+}
+
+.deduction-grid h3 {
+  color: #e7d8b8;
+  font-size: 17px;
+  margin: 12px 0 8px;
+}
+
+.deduction-grid p {
+  color: #aaa08e;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.deduction-grid .game-secondary {
+  margin-top: 18px;
+  padding: 9px 10px;
+}
+
+.suspect-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 29px;
+}
+
+.suspect-grid button {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid rgba(229, 183, 94, 0.16);
+  color: #c7baa0;
+  cursor: pointer;
+  display: flex;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  gap: 11px;
+  padding: 13px 15px;
+  text-align: left;
+}
+
+.suspect-grid button:hover,
+.suspect-grid button.is-selected {
+  background: rgba(158, 51, 44, 0.26);
+  border-color: rgba(229, 183, 94, 0.64);
+  color: #fae8c5;
+}
+
+.suspect-grid button span {
+  color: #a8644e;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  min-width: 42px;
+}
+
+.game-stage--result {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.game-stage--result.is-victory {
+  background: radial-gradient(circle at 50% 44%, rgba(168, 122, 45, 0.19), transparent 38%);
+}
+
+.game-stage--result.is-failure {
+  background: radial-gradient(circle at 50% 44%, rgba(156, 35, 30, 0.3), transparent 38%);
+}
+
+.game-stage--result h2 {
+  font-size: clamp(30px, 4vw, 49px);
+}
+
+.result-copy {
+  color: #cbbda1;
+  font-size: 15px;
+  line-height: 2;
+  margin: 27px auto;
+  max-width: 650px;
+}
+
+.result-record {
+  display: grid;
+  gap: 8px 20px;
+  grid-template-columns: auto auto;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.result-record span {
+  color: #8f8779;
+  font-size: 12px;
+}
+
+.result-record strong {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.game-ledger h2 {
+  font-size: 20px;
+  margin-bottom: 21px;
+}
+
+.game-ledger dl {
+  margin: 0;
+}
+
+.game-ledger dl div {
+  border-top: 1px solid rgba(229, 183, 94, 0.1);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.game-ledger dt {
+  color: #877f73;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+}
+
+.game-ledger dd {
+  color: #d3c3a3;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  margin: 0;
+  text-align: right;
+}
+
+.ledger-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.ledger-dots i {
+  background: #39342e;
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+}
+
+.ledger-dots i.is-heard {
+  background: var(--red-hot);
+  box-shadow: 0 0 9px rgba(206, 90, 69, 0.7);
+}
+
+@media (max-width: 1050px) {
+  .game-frame {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+
+  .game-ledger {
+    grid-column: 1 / -1;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .game-app {
+    padding: 0 14px 20px;
+  }
+
+  .game-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+    padding: 18px 0;
+  }
+
+  .game-frame {
+    grid-template-columns: 1fr;
+    padding-top: 14px;
+  }
+
+  .game-progress {
+    min-height: auto;
+  }
+
+  .game-progress ol {
+    display: grid;
+    gap: 7px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 17px 0 0;
+  }
+
+  .game-progress li {
+    border-left: 1px solid rgba(229, 183, 94, 0.14);
+    font-size: 10px;
+    padding: 0 0 0 11px;
+  }
+
+  .game-progress li::before {
+    left: -4px;
+  }
+
+  .game-rule-card {
+    display: none;
+  }
+
+  .game-stage {
+    min-height: 620px;
+    padding: 28px 22px;
+  }
+
+  .deduction-grid,
+  .story-seats,
+  .suspect-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .stage-footer p {
+    max-width: none;
+  }
+
+  .stage-footer button {
+    width: 100%;
+  }
+
+  .game-ledger {
+    grid-column: auto;
+  }
+}

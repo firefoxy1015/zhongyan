@@ -14,17 +14,17 @@ async function render() {
   );
 }
 
-test("server-renders the ten-day tabletop prototype", async () => {
+test("server-renders a playable liar game table", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /<title>十日终焉：原著同人桌游<\/title>/i);
-  assert.match(html, /十日终焉/);
-  assert.match(html, /正史目录/);
-  assert.match(html, /第一卷/);
-  assert.match(html, /官方视觉参考已锁定/);
+  assert.match(html, /女娲游戏/);
+  assert.match(html, /说谎者/);
+  assert.match(html, /INTERVIEW ROOM/);
+  assert.match(html, /进入面试房/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Building your site/i);
 });
 
