@@ -166,11 +166,13 @@ export default function Home() {
           )}
 
           {phase === "identity" && (
-            <section className="game-stage">
+            <section className="game-stage game-stage--identity">
               <p className="game-kicker">PRIVATE INFORMATION / QI XIA</p>
               <h2>翻开你的身份牌</h2>
               <div className="identity-reveal-layout">
-                <div className="character-keyart character-keyart--qixia" aria-hidden="true" />
+                <div className="character-keyart character-keyart--qixia" aria-label="齐夏立绘">
+                  <span>齐夏 · 职业骗子</span>
+                </div>
                 <button
                   aria-pressed={identityRevealed}
                   className={`identity-card ${identityRevealed ? "is-revealed" : ""}`}

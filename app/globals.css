@@ -1280,6 +1280,31 @@ button:focus-visible {
   justify-content: center;
   margin: 18px auto 0;
   min-height: 290px;
+  position: relative;
+  z-index: 1;
+}
+
+.game-stage--identity {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.game-stage--identity::before {
+  background:
+    linear-gradient(90deg, rgba(9, 9, 10, 0.95), rgba(9, 9, 10, 0.36) 48%, rgba(9, 9, 10, 0.88)),
+    url("/art/liar-tableau-v1.png") center / cover;
+  content: "";
+  inset: 0;
+  opacity: 0.42;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  animation: scene-drift 18s ease-in-out infinite alternate;
+}
+
+.game-stage--identity > *:not(.identity-reveal-layout) {
+  position: relative;
+  z-index: 1;
 }
 
 .character-keyart {
@@ -1289,9 +1314,34 @@ button:focus-visible {
     url("/art/qixia-v1.png") center 35% / cover;
   border-left: 1px solid rgba(229, 183, 94, 0.48);
   height: 286px;
-  opacity: 0;
-  transform: translateX(-20px);
-  animation: portrait-arrival 780ms cubic-bezier(0.18, 0.75, 0.22, 1) 180ms both, portrait-breathe 8s ease-in-out 1s infinite alternate;
+  opacity: 1;
+  overflow: hidden;
+  position: relative;
+  transform: none;
+  animation: portrait-breathe 8s ease-in-out infinite alternate;
+}
+
+.character-keyart::before {
+  background: radial-gradient(circle at 46% 36%, rgba(235, 182, 81, 0.21), transparent 31%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  animation: tungsten-flicker 5.6s steps(1, end) infinite;
+}
+
+.character-keyart span {
+  background: linear-gradient(90deg, rgba(10, 9, 8, 0.9), transparent);
+  bottom: 0;
+  color: #f0d69a;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11px;
+  left: 0;
+  letter-spacing: 0.14em;
+  padding: 12px 13px;
+  position: absolute;
+  right: 0;
+  z-index: 1;
 }
 
 .identity-card {
