@@ -1,51 +1,75 @@
 export const CHARACTER_VOICE_PROFILES = {
-  tiantian: { label: "甜甜", portraitAsset: "tiantian-v2", gender: "female", rate: 0.92, pitch: 1.08, voiceHints: ["Xiaoxiao", "Huihui", "female"] },
-  qiao: { label: "乔家劲", portraitAsset: "qiaojiajin-v1", gender: "male", rate: 0.86, pitch: 0.76, voiceHints: ["Yunxi", "Kangkang", "male"] },
-  xiao: { label: "肖冉", portraitAsset: "xiaoran-v1", gender: "female", rate: 0.96, pitch: 0.98, voiceHints: ["Xiaoyi", "Huihui", "female"] },
-  zhao: { label: "赵海博", portraitAsset: "zhaohaibo-v1", gender: "male", rate: 0.91, pitch: 0.84, voiceHints: ["Yunyang", "Kangkang", "male"] },
-  han: { label: "韩一墨", portraitAsset: "hanyimo-v1", gender: "male", rate: 0.9, pitch: 0.88, voiceHints: ["Yunxi", "Kangkang", "male"] },
-  zhang: { label: "章晨泽", portraitAsset: "zhangchenze-v1", gender: "male", rate: 0.95, pitch: 0.92, voiceHints: ["Yunyang", "Kangkang", "male"] },
-  li: { label: "李尚武", portraitAsset: "lishangwu-v1", gender: "male", rate: 0.88, pitch: 0.8, voiceHints: ["Yunxi", "Kangkang", "male"] },
-  lin: { label: "林檎", portraitAsset: "linqin-v1", gender: "female", rate: 0.9, pitch: 1.03, voiceHints: ["Xiaoxiao", "Huihui", "female"] },
-  qixia: { label: "齐夏", portraitAsset: "qixia-v1", gender: "male", rate: 0.84, pitch: 0.79, voiceHints: ["Yunxi", "Kangkang", "male"] },
+  tiantian: { label: "甜甜", portraitAsset: "tiantian-v2", voiceConfigKey: "LINGKE_TTS_VOICE_TIANTIAN" },
+  qiao: { label: "乔家劲", portraitAsset: "qiaojiajin-v1", voiceConfigKey: "LINGKE_TTS_VOICE_QIAO" },
+  xiao: { label: "肖冉", portraitAsset: "xiaoran-v1", voiceConfigKey: "LINGKE_TTS_VOICE_XIAO" },
+  zhao: { label: "赵海博", portraitAsset: "zhaohaibo-v1", voiceConfigKey: "LINGKE_TTS_VOICE_ZHAO" },
+  han: { label: "韩一墨", portraitAsset: "hanyimo-v1", voiceConfigKey: "LINGKE_TTS_VOICE_HAN" },
+  zhang: { label: "章晨泽", portraitAsset: "zhangchenze-v1", voiceConfigKey: "LINGKE_TTS_VOICE_ZHANG" },
+  li: { label: "李尚武", portraitAsset: "lishangwu-v1", voiceConfigKey: "LINGKE_TTS_VOICE_LI" },
+  lin: { label: "林檎", portraitAsset: "linqin-v1", voiceConfigKey: "LINGKE_TTS_VOICE_LIN" },
+  qixia: { label: "齐夏", portraitAsset: "qixia-v1", voiceConfigKey: "LINGKE_TTS_VOICE_QIXIA" },
 } as const;
 
 export type CharacterVoiceId = keyof typeof CHARACTER_VOICE_PROFILES;
-
-function resolveVoice(profile: (typeof CHARACTER_VOICE_PROFILES)[CharacterVoiceId]) {
-  const voices = window.speechSynthesis.getVoices().filter((voice) => voice.lang.toLowerCase().startsWith("zh"));
-  const hintedVoice = voices.find((voice) => {
-    const normalized = `${voice.name} ${voice.voiceURI}`.toLowerCase();
-    return profile.voiceHints.some((hint) => normalized.includes(hint.toLowerCase()));
-  });
-  return hintedVoice ?? voices[0] ?? null;
-}
+export type VoiceLineKind = "testimony" | "followUp";
 
 export class TestimonySpeech {
-  private active: SpeechSynthesisUtterance | null = null;
+  private active: HTMLAudioElement | null = null;
+  private requestId = 0;
 
-  speak(id: CharacterVoiceId, text: string, onEnd: () => void) {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return false;
+  async speak(id: CharacterVoiceId, kind: VoiceLineKind, onEnd: () => void, onError: () => void) {
+    const requestId = ++this.requestId;
+    this.stopActiveAudio();
 
-    const profile = CHARACTER_VOICE_PROFILES[id];
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voice = resolveVoice(profile);
-    utterance.lang = voice?.lang ?? "zh-CN";
-    utterance.rate = profile.rate;
-    utterance.pitch = profile.pitch;
-    utterance.volume = 1;
-    if (voice) utterance.voice = voice;
-    utterance.onend = onEnd;
-    utterance.onerror = onEnd;
+    try {
+      const response = await fetch("/api/voice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ characterId: id, kind }),
+      });
+      if (!response.ok) {
+        if (requestId === this.requestId) onError();
+        return false;
+      }
 
-    window.speechSynthesis.cancel();
-    this.active = utterance;
-    window.speechSynthesis.speak(utterance);
-    return true;
+      const payload = (await response.json()) as { audioUrl?: unknown };
+      if (typeof payload.audioUrl !== "string" || !payload.audioUrl) {
+        if (requestId === this.requestId) onError();
+        return false;
+      }
+
+      if (requestId !== this.requestId) return false;
+
+      const audio = new Audio(payload.audioUrl);
+      audio.preload = "auto";
+      audio.onended = () => {
+        if (this.active !== audio || requestId !== this.requestId) return;
+        this.active = null;
+        onEnd();
+      };
+      audio.onerror = () => {
+        if (this.active !== audio || requestId !== this.requestId) return;
+        this.active = null;
+        onError();
+      };
+      this.active = audio;
+      await audio.play();
+      return true;
+    } catch {
+      if (requestId === this.requestId) onError();
+      return false;
+    }
   }
 
   stop() {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+    this.requestId += 1;
+    this.stopActiveAudio();
+  }
+
+  private stopActiveAudio() {
+    if (!this.active) return;
+    this.active.pause();
+    this.active.currentTime = 0;
     this.active = null;
   }
 }

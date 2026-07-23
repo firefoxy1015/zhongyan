@@ -1658,6 +1658,13 @@ button:focus-visible {
   border-color: rgba(242, 151, 97, 0.86);
 }
 
+.voice-error {
+  color: #df907b;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 10px 0 0;
+}
+
 .testimony-actions {
   align-items: center;
   display: flex;
@@ -1692,6 +1699,18 @@ button:focus-visible {
   color: #d3c3a6;
   line-height: 1.7;
   margin: 8px 0 0;
+}
+
+.testimony-question .testimony-speak {
+  margin-top: 16px;
+}
+
+.testimony-question__clue {
+  border-top: 1px solid rgba(199, 89, 65, 0.28);
+  color: #aa9980 !important;
+  font-size: 13px;
+  margin-top: 17px !important;
+  padding-top: 14px;
 }
 
 .game-stage--testimony .story-clue {

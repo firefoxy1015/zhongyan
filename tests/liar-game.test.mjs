@@ -7,6 +7,7 @@ import {
   chamberVolume,
   resolveCanonicalVote,
 } from "../app/lib/liar-game.ts";
+import { CHARACTER_VOICE_PROFILES } from "../app/lib/testimony-speech.ts";
 
 test("resolves the canonical liar vote", () => {
   assert.equal(CANONICAL_LIAR_TARGET, "renyang");
@@ -20,4 +21,11 @@ test("keeps Tian Tian's first-trial identity and testimony locked", () => {
   const tianTian = LIAR_GAME.stories.find((story) => story.id === "tiantian");
   assert.equal(tianTian?.occupation, "陪酒小姐");
   assert.match(tianTian?.testimony ?? "", /车里上班/);
+});
+
+test("locks every first-trial character to one unique Lingke voice slot", () => {
+  const ids = LIAR_GAME.stories.map((story) => story.id);
+  const voiceSlots = Object.values(CHARACTER_VOICE_PROFILES).map((profile) => profile.voiceConfigKey);
+  assert.deepEqual(Object.keys(CHARACTER_VOICE_PROFILES).sort(), [...ids].sort());
+  assert.equal(new Set(voiceSlots).size, ids.length);
 });

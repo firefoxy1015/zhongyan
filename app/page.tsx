@@ -9,7 +9,7 @@ import {
   resolveCanonicalVote,
 } from "./lib/liar-game";
 import { SuspenseBgm } from "./lib/suspense-bgm";
-import { TestimonySpeech, type CharacterVoiceId } from "./lib/testimony-speech";
+import { TestimonySpeech, type CharacterVoiceId, type VoiceLineKind } from "./lib/testimony-speech";
 
 const PHASES: Array<{ id: LiarGamePhase; label: string }> = [
   { id: "lobby", label: "入场" },
@@ -62,7 +62,8 @@ export default function Home() {
   const [storyTake, setStoryTake] = useState(0);
   const [narrationPlaying, setNarrationPlaying] = useState(true);
   const [storyQuestionOpen, setStoryQuestionOpen] = useState(false);
-  const [testimonyPlaying, setTestimonyPlaying] = useState(false);
+  const [speakingLine, setSpeakingLine] = useState<VoiceLineKind | null>(null);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
   const [musicEnabled, setMusicEnabled] = useState(true);
   const [musicStarted, setMusicStarted] = useState(false);
   const [heardStories, setHeardStories] = useState<Set<string>>(new Set());
@@ -73,6 +74,8 @@ export default function Home() {
   const speechRef = useRef<TestimonySpeech | null>(null);
 
   const currentStory = LIAR_GAME.stories[storyIndex];
+  const testimonyPlaying = speakingLine === "testimony";
+  const followUpPlaying = speakingLine === "followUp";
   const phaseIndex = PHASES.findIndex((item) => item.id === phase);
   const allStoriesHeard = heardStories.size === LIAR_GAME.stories.length;
   const allEvidenceCollected = collectedEvidence.size === INVESTIGATION_ACTIONS.length;
@@ -127,32 +130,44 @@ export default function Home() {
     setStoryTake((current) => current + 1);
     setNarrationPlaying(true);
     setStoryQuestionOpen(false);
-    setTestimonyPlaying(false);
+    setSpeakingLine(null);
+    setVoiceError(null);
   };
 
   const recordCurrentStory = () => {
     setHeardStories((current) => new Set([...current, currentStory.id]));
   };
 
-  const toggleCurrentTestimony = () => {
-    if (testimonyPlaying) {
+  const toggleCurrentSpeech = (kind: VoiceLineKind) => {
+    if (speakingLine === kind) {
       speechRef.current?.stop();
       bgmRef.current?.setDucked(false);
-      setTestimonyPlaying(false);
+      setSpeakingLine(null);
       return;
     }
 
     startMusic();
     bgmRef.current?.setDucked(true);
-    const started = speechRef.current?.speak(
+    setVoiceError(null);
+    setSpeakingLine(kind);
+    void speechRef.current?.speak(
       currentStory.id as CharacterVoiceId,
-      currentStory.testimony,
+      kind,
       () => {
         bgmRef.current?.setDucked(false);
-        setTestimonyPlaying(false);
+        setSpeakingLine(null);
+      },
+      () => {
+        bgmRef.current?.setDucked(false);
+        setSpeakingLine(null);
+        setVoiceError("灵客语音暂时不可用。");
       },
     );
-    setTestimonyPlaying(Boolean(started));
+  };
+
+  const askFollowUp = () => {
+    setStoryQuestionOpen(true);
+    toggleCurrentSpeech("followUp");
   };
 
   const collectEvidence = (id: string) => {
@@ -168,7 +183,8 @@ export default function Home() {
     setStoryQuestionOpen(false);
     speechRef.current?.stop();
     bgmRef.current?.setDucked(false);
-    setTestimonyPlaying(false);
+    setSpeakingLine(null);
+    setVoiceError(null);
     setHeardStories(new Set());
     setCollectedEvidence(new Set());
     setDeductionRevealed(false);
@@ -338,18 +354,19 @@ export default function Home() {
                   <article className="testimony-card">
                     <div className="testimony-card__topline">
                       <span>当事人证词</span>
-                      <em>TTS 配音 · 固定角色声线</em>
+                      <em>灵客配音 · 固定角色声线</em>
                     </div>
                     <p className="testimony-card__speaker">{currentStory.name}：</p>
                     <blockquote>“{currentStory.testimony}”</blockquote>
                     <button
                       aria-pressed={testimonyPlaying}
                       className={`testimony-speak ${testimonyPlaying ? "is-speaking" : ""}`}
-                      onClick={toggleCurrentTestimony}
+                      onClick={() => toggleCurrentSpeech("testimony")}
                     >
                       <span aria-hidden="true">{testimonyPlaying ? "II" : "▶"}</span>
                       {testimonyPlaying ? "停止本段证词" : "播放本段证词"}
                     </button>
+                    {voiceError && <p className="voice-error" role="status">{voiceError}</p>}
                   </article>
                 </div>
 
@@ -357,17 +374,26 @@ export default function Home() {
                   <button
                     aria-expanded={storyQuestionOpen}
                     className="game-secondary"
-                    onClick={() => setStoryQuestionOpen((current) => !current)}
+                    onClick={askFollowUp}
                   >
-                    {storyQuestionOpen ? "收起追问" : "追问细节"}
+                    {followUpPlaying ? "停止追问语音" : "追问细节"}
                   </button>
                   <p>先听证词，再将发现的矛盾写入手账。已记录 {heardStories.size} / {LIAR_GAME.stories.length}</p>
                 </div>
 
                 {storyQuestionOpen && (
                   <aside className="testimony-question">
-                    <span>追问结果</span>
-                    <p>{currentStory.clue}</p>
+                    <span>追问</span>
+                    <p>{currentStory.followUp}</p>
+                    <button
+                      aria-pressed={followUpPlaying}
+                      className={`testimony-speak testimony-speak--follow-up ${followUpPlaying ? "is-speaking" : ""}`}
+                      onClick={() => toggleCurrentSpeech("followUp")}
+                    >
+                      <span aria-hidden="true">{followUpPlaying ? "II" : "▶"}</span>
+                      {followUpPlaying ? "停止追问语音" : "播放追问语音"}
+                    </button>
+                    <p className="testimony-question__clue">{currentStory.clue}</p>
                   </aside>
                 )}
 
