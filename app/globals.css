@@ -2071,14 +2071,48 @@ button:focus-visible {
 }
 
 .live-identity {
+  background: rgba(13, 12, 11, 0.64);
   border-left: 1px solid rgba(229, 183, 94, 0.22);
-  padding-left: 13px;
+  min-height: 72px;
+  overflow: hidden;
+  padding: 12px 13px 12px 62px;
+  position: relative;
   text-align: right;
+}
+
+.live-identity > i {
+  background:
+    radial-gradient(ellipse at 54% 34%, rgba(229, 183, 94, 0.42) 0 7%, transparent 8%),
+    linear-gradient(90deg, rgba(97, 42, 34, 0.65), rgba(13, 12, 11, 0.24));
+  border-right: 1px solid rgba(229, 183, 94, 0.34);
+  inset: 0 auto 0 0;
+  opacity: 0.8;
+  position: absolute;
+  width: 55px;
+}
+
+.live-identity--qixia > i {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
+    url("/art/qixia-v1.png");
+}
+
+.live-identity--qiao > i {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
+    url("/art/qiaojiajin-v1.png");
+}
+
+.live-identity--lin > i {
+  background-image:
+    linear-gradient(90deg, transparent, rgba(13, 12, 11, 0.42)),
+    url("/art/linqin-v1.png");
 }
 
 .live-identity span,
 .live-identity strong {
   display: block;
+  position: relative;
 }
 
 .live-identity span {

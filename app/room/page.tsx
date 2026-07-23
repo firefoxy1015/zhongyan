@@ -256,7 +256,11 @@ export default function RoomPage() {
         <section className="live-table">
           <div className="live-table-heading">
             <div><p className="game-eyebrow">面试房 / 原著模式</p><h2>{phaseLabels[snapshot.room.phase]}</h2></div>
-            <div className="live-identity"><span>{snapshot.you.role.name} · {snapshot.you.role.occupation}</span><strong>{snapshot.you.identity}</strong></div>
+            <div className={`live-identity live-identity--${snapshot.you.role.id}`}>
+              <i aria-hidden="true" />
+              <span>{snapshot.you.role.name} · {snapshot.you.role.occupation}</span>
+              <strong>{snapshot.you.identity}</strong>
+            </div>
           </div>
 
           <div className="live-phase-track">
