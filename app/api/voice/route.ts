@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 type VoiceKind = "testimony" | "followUp";
 
 type CharacterId = keyof typeof CHARACTER_VOICE_PROFILES;
-export const VOICE_SET_VERSION = "zhongyan-first-trial-static-v1";
+export const VOICE_SET_VERSION = "zhongyan-first-trial-doubao-tts-2-static-v1";
 
 function isVoiceKind(value: unknown): value is VoiceKind {
   return value === "testimony" || value === "followUp";

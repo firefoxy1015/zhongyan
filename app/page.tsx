@@ -357,7 +357,7 @@ export default function Home() {
                   <article className="testimony-card">
                     <div className="testimony-card__topline">
                       <span>{isSelfNarration ? "齐夏陈述 / 你的行动" : "当事人证词"}</span>
-                      <em>灵客配音 · 固定角色声线</em>
+                      <em>豆包语音合成 2.0 · 固定角色音色</em>
                     </div>
                     <p className="testimony-card__speaker">{currentStory.name}：</p>
                     <blockquote>“{currentStory.testimony}”</blockquote>
