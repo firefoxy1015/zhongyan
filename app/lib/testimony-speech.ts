@@ -1,13 +1,13 @@
 export const CHARACTER_VOICE_PROFILES = {
-  tiantian: { label: "甜甜", portraitAsset: "tiantian-v2", voiceId: "tianmeixuemei-v1" },
-  qiao: { label: "乔家劲", portraitAsset: "qiaojiajin-v1", voiceId: "ai_kaiya" },
-  xiao: { label: "肖冉", portraitAsset: "xiaoran-v1", voiceId: "zhinen_xuesheng" },
-  zhao: { label: "赵海博", portraitAsset: "zhaohaibo-v1", voiceId: "ai_chenjiahao_712" },
-  han: { label: "韩一墨", portraitAsset: "hanyimo-v1", voiceId: "yizhipiannan-v1" },
-  zhang: { label: "章晨泽", portraitAsset: "zhangchenze-v1", voiceId: "tiexin_nanyou" },
-  li: { label: "李尚武", portraitAsset: "lishangwu-v1", voiceId: "dongbeilaotie_speech02" },
-  lin: { label: "林檎", portraitAsset: "linqin-v1", voiceId: "chat1_female_new-3" },
-  qixia: { label: "齐夏", portraitAsset: "qixia-v1", voiceId: "diyinnansang_DB_CN_M_04-v2" },
+  tiantian: { label: "甜甜", portraitAsset: "tiantian-v2", voiceId: "Vindemiatrix" },
+  qiao: { label: "乔家劲", portraitAsset: "qiaojiajin-v1", voiceId: "Algenib" },
+  xiao: { label: "肖冉", portraitAsset: "xiaoran-v1", voiceId: "Umbriel" },
+  zhao: { label: "赵海博", portraitAsset: "zhaohaibo-v1", voiceId: "Rasalgethi" },
+  han: { label: "韩一墨", portraitAsset: "hanyimo-v1", voiceId: "Schedar" },
+  zhang: { label: "章晨泽", portraitAsset: "zhangchenze-v1", voiceId: "Achird" },
+  li: { label: "李尚武", portraitAsset: "lishangwu-v1", voiceId: "Alnilam" },
+  lin: { label: "林檎", portraitAsset: "linqin-v1", voiceId: "Despina" },
+  qixia: { label: "齐夏", portraitAsset: "qixia-v1", voiceId: "Kore" },
 } as const;
 
 export type CharacterVoiceId = keyof typeof CHARACTER_VOICE_PROFILES;

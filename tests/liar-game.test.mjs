@@ -28,4 +28,6 @@ test("locks every first-trial character to one unique permanent Lingke voice", (
   const voiceIds = Object.values(CHARACTER_VOICE_PROFILES).map((profile) => profile.voiceId);
   assert.deepEqual(Object.keys(CHARACTER_VOICE_PROFILES).sort(), [...ids].sort());
   assert.equal(new Set(voiceIds).size, ids.length);
+  assert.equal(CHARACTER_VOICE_PROFILES.tiantian.voiceId, "Vindemiatrix");
+  assert.equal(CHARACTER_VOICE_PROFILES.qixia.voiceId, "Kore");
 });
