@@ -62,7 +62,6 @@ export default function Home() {
   const [storyTake, setStoryTake] = useState(0);
   const [storyQuestionOpen, setStoryQuestionOpen] = useState(false);
   const [speakingLine, setSpeakingLine] = useState<VoiceLineKind | null>(null);
-  const [voiceState, setVoiceState] = useState<"generating" | "playing" | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [musicEnabled, setMusicEnabled] = useState(true);
   const [musicStarted, setMusicStarted] = useState(false);
@@ -81,8 +80,6 @@ export default function Home() {
   const responseAction = isSelfNarration ? "内心推演" : "追问";
   const testimonyPlaying = speakingLine === "testimony";
   const followUpPlaying = speakingLine === "followUp";
-  const testimonyGenerating = testimonyPlaying && voiceState === "generating";
-  const followUpGenerating = followUpPlaying && voiceState === "generating";
   const phaseIndex = PHASES.findIndex((item) => item.id === phase);
   const allStoriesHeard = heardStories.size === LIAR_GAME.stories.length;
   const allEvidenceCollected = collectedEvidence.size === INVESTIGATION_ACTIONS.length;
@@ -137,7 +134,6 @@ export default function Home() {
     setStoryTake((current) => current + 1);
     setStoryQuestionOpen(false);
     setSpeakingLine(null);
-    setVoiceState(null);
     setVoiceError(null);
   };
 
@@ -150,7 +146,6 @@ export default function Home() {
       speechRef.current?.stop();
       bgmRef.current?.setDucked(false);
       setSpeakingLine(null);
-      setVoiceState(null);
       return;
     }
 
@@ -158,21 +153,18 @@ export default function Home() {
     bgmRef.current?.setDucked(true);
     setVoiceError(null);
     setSpeakingLine(kind);
-    setVoiceState("generating");
     void speechRef.current?.speak(
       currentStory.id as CharacterVoiceId,
       kind,
-      () => setVoiceState("playing"),
+      () => undefined,
       () => {
         bgmRef.current?.setDucked(false);
         setSpeakingLine(null);
-        setVoiceState(null);
       },
       () => {
         bgmRef.current?.setDucked(false);
         setSpeakingLine(null);
-        setVoiceState(null);
-        setVoiceError("灵客语音暂时不可用。");
+        setVoiceError("固定语音文件暂时无法播放。");
       },
     );
   };
@@ -195,7 +187,6 @@ export default function Home() {
     speechRef.current?.stop();
     bgmRef.current?.setDucked(false);
     setSpeakingLine(null);
-    setVoiceState(null);
     setVoiceError(null);
     setHeardStories(new Set());
     setCollectedEvidence(new Set());
@@ -376,9 +367,8 @@ export default function Home() {
                       onClick={() => toggleCurrentSpeech("testimony")}
                     >
                       <span aria-hidden="true">{testimonyPlaying ? "II" : "▶"}</span>
-                      {testimonyGenerating ? "正在生成角色语音…" : testimonyPlaying ? "停止本段证词" : "播放本段证词"}
+                      {testimonyPlaying ? "停止本段证词" : "播放本段证词"}
                     </button>
-                    {testimonyGenerating && <p className="voice-error" role="status">灵客正在生成 {currentStory.name} 的固定声线。</p>}
                     {voiceError && <p className="voice-error" role="status">{voiceError}</p>}
                   </article>
                 </div>
@@ -405,9 +395,8 @@ export default function Home() {
                       onClick={() => toggleCurrentSpeech("followUp")}
                     >
                       <span aria-hidden="true">{followUpPlaying ? "II" : "▶"}</span>
-                      {followUpGenerating ? `齐夏正在整理${responseAction}…` : followUpPlaying ? `停止${responseAction}语音` : `播放${responseTitle}`}
+                      {followUpPlaying ? `停止${responseAction}语音` : `播放${responseTitle}`}
                     </button>
-                    {followUpGenerating && <p className="voice-error" role="status">灵客正在生成齐夏的固定男声{responseAction}。</p>}
                     <p className="testimony-question__clue">
                       <span>{isSelfNarration ? "齐夏自证线索 / " : `齐夏手账 / ${currentStory.name} / `}</span>
                       {currentStory.clue}

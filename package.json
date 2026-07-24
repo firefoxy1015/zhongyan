@@ -12,7 +12,8 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs tests/liar-game.test.mjs tests/room-logic.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "canon:manifest": "node scripts/generate-canon-manifest.mjs"
+    "canon:manifest": "node scripts/generate-canon-manifest.mjs",
+    "voice:warm": "node scripts/warm-voice-assets.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

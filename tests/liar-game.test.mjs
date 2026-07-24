@@ -8,6 +8,7 @@ import {
   resolveCanonicalVote,
 } from "../app/lib/liar-game.ts";
 import { CHARACTER_VOICE_PROFILES, FOLLOW_UP_SPEAKER_ID } from "../app/lib/testimony-speech.ts";
+import { VOICE_ASSET_URLS } from "../app/lib/voice-assets.ts";
 
 test("resolves the canonical liar vote", () => {
   assert.equal(CANONICAL_LIAR_TARGET, "renyang");
@@ -40,4 +41,15 @@ test("locks every first-trial character to one unique permanent Lingke voice", (
   assert.equal(CHARACTER_VOICE_PROFILES.qixia.voiceId, "Kore");
   assert.match(CHARACTER_VOICE_PROFILES.qiao.deliveryDirection, /香港普通话/);
   assert.equal(FOLLOW_UP_SPEAKER_ID, "qixia");
+});
+
+test("ships every fixed line as a pre-rendered audio asset", () => {
+  const expectedKeys = LIAR_GAME.stories.flatMap((story) => [
+    `${story.id}:testimony`,
+    `${story.id}:followUp`,
+  ]);
+  assert.deepEqual(Object.keys(VOICE_ASSET_URLS).sort(), expectedKeys.sort());
+  for (const url of Object.values(VOICE_ASSET_URLS)) {
+    assert.match(url ?? "", /^https:\/\//);
+  }
 });
