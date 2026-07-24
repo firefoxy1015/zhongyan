@@ -1,6 +1,11 @@
 export const CHARACTER_VOICE_PROFILES = {
   tiantian: { label: "甜甜", portraitAsset: "tiantian-v2", voiceId: "Vindemiatrix" },
-  qiao: { label: "乔家劲", portraitAsset: "qiaojiajin-v1", voiceId: "Algenib" },
+  qiao: {
+    label: "乔家劲",
+    portraitAsset: "qiaojiajin-v1",
+    voiceId: "Algenib",
+    deliveryDirection: "广东男性的自然香港普通话口音，声线干脆、带一点江湖气，但不夸张模仿粤语",
+  },
   xiao: { label: "肖冉", portraitAsset: "xiaoran-v1", voiceId: "Umbriel" },
   zhao: { label: "赵海博", portraitAsset: "zhaohaibo-v1", voiceId: "Rasalgethi" },
   han: { label: "韩一墨", portraitAsset: "hanyimo-v1", voiceId: "Schedar" },
@@ -12,23 +17,41 @@ export const CHARACTER_VOICE_PROFILES = {
 
 export type CharacterVoiceId = keyof typeof CHARACTER_VOICE_PROFILES;
 export type VoiceLineKind = "testimony" | "followUp";
+export const FOLLOW_UP_SPEAKER_ID: CharacterVoiceId = "qixia";
+
+const USER_GESTURE_UNLOCK_AUDIO = "data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA";
 
 export class TestimonySpeech {
   private active: HTMLAudioElement | null = null;
   private activeObjectUrl: string | null = null;
   private requestId = 0;
 
-  async speak(id: CharacterVoiceId, kind: VoiceLineKind, onEnd: () => void, onError: () => void) {
+  async speak(
+    id: CharacterVoiceId,
+    kind: VoiceLineKind,
+    onStart: () => void,
+    onEnd: () => void,
+    onError: () => void,
+  ) {
     const requestId = ++this.requestId;
     this.stopActiveAudio();
+    const audio = new Audio(USER_GESTURE_UNLOCK_AUDIO);
+    audio.muted = true;
+    audio.preload = "auto";
+    this.active = audio;
+    // This call happens inside the click gesture. It keeps mobile browsers willing to play
+    // the generated line after Lingke's asynchronous task has finished.
+    void audio.play().catch(() => undefined);
 
     try {
+      const speakerId = kind === "followUp" ? FOLLOW_UP_SPEAKER_ID : id;
       const response = await fetch("/api/voice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ characterId: id, kind }),
+        body: JSON.stringify({ characterId: id, speakerId, kind }),
       });
       if (!response.ok) {
+        if (this.active === audio) this.stopActiveAudio();
         if (requestId === this.requestId) onError();
         return false;
       }
@@ -41,6 +64,7 @@ export class TestimonySpeech {
       } else {
         const payload = (await response.json()) as { audioUrl?: unknown };
         if (typeof payload.audioUrl !== "string" || !payload.audioUrl) {
+          if (this.active === audio) this.stopActiveAudio();
           if (requestId === this.requestId) onError();
           return false;
         }
@@ -52,7 +76,9 @@ export class TestimonySpeech {
         return false;
       }
 
-      const audio = new Audio(audioSource);
+      audio.pause();
+      audio.src = audioSource;
+      audio.muted = false;
       audio.preload = "auto";
       audio.onended = () => {
         if (this.active !== audio || requestId !== this.requestId) return;
@@ -69,6 +95,7 @@ export class TestimonySpeech {
       this.active = audio;
       try {
         await audio.play();
+        if (this.active === audio && requestId === this.requestId) onStart();
         return true;
       } catch {
         if (this.active === audio) {
@@ -79,6 +106,7 @@ export class TestimonySpeech {
         return false;
       }
     } catch {
+      if (this.active === audio) this.stopActiveAudio();
       if (requestId === this.requestId) onError();
       return false;
     }

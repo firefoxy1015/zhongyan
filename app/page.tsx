@@ -63,6 +63,7 @@ export default function Home() {
   const [narrationPlaying, setNarrationPlaying] = useState(true);
   const [storyQuestionOpen, setStoryQuestionOpen] = useState(false);
   const [speakingLine, setSpeakingLine] = useState<VoiceLineKind | null>(null);
+  const [voiceState, setVoiceState] = useState<"generating" | "playing" | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [musicEnabled, setMusicEnabled] = useState(true);
   const [musicStarted, setMusicStarted] = useState(false);
@@ -76,6 +77,8 @@ export default function Home() {
   const currentStory = LIAR_GAME.stories[storyIndex];
   const testimonyPlaying = speakingLine === "testimony";
   const followUpPlaying = speakingLine === "followUp";
+  const testimonyGenerating = testimonyPlaying && voiceState === "generating";
+  const followUpGenerating = followUpPlaying && voiceState === "generating";
   const phaseIndex = PHASES.findIndex((item) => item.id === phase);
   const allStoriesHeard = heardStories.size === LIAR_GAME.stories.length;
   const allEvidenceCollected = collectedEvidence.size === INVESTIGATION_ACTIONS.length;
@@ -131,6 +134,7 @@ export default function Home() {
     setNarrationPlaying(true);
     setStoryQuestionOpen(false);
     setSpeakingLine(null);
+    setVoiceState(null);
     setVoiceError(null);
   };
 
@@ -143,6 +147,7 @@ export default function Home() {
       speechRef.current?.stop();
       bgmRef.current?.setDucked(false);
       setSpeakingLine(null);
+      setVoiceState(null);
       return;
     }
 
@@ -150,16 +155,20 @@ export default function Home() {
     bgmRef.current?.setDucked(true);
     setVoiceError(null);
     setSpeakingLine(kind);
+    setVoiceState("generating");
     void speechRef.current?.speak(
       currentStory.id as CharacterVoiceId,
       kind,
+      () => setVoiceState("playing"),
       () => {
         bgmRef.current?.setDucked(false);
         setSpeakingLine(null);
+        setVoiceState(null);
       },
       () => {
         bgmRef.current?.setDucked(false);
         setSpeakingLine(null);
+        setVoiceState(null);
         setVoiceError("灵客语音暂时不可用。");
       },
     );
@@ -184,6 +193,7 @@ export default function Home() {
     speechRef.current?.stop();
     bgmRef.current?.setDucked(false);
     setSpeakingLine(null);
+    setVoiceState(null);
     setVoiceError(null);
     setHeardStories(new Set());
     setCollectedEvidence(new Set());
@@ -364,8 +374,9 @@ export default function Home() {
                       onClick={() => toggleCurrentSpeech("testimony")}
                     >
                       <span aria-hidden="true">{testimonyPlaying ? "II" : "▶"}</span>
-                      {testimonyPlaying ? "停止本段证词" : "播放本段证词"}
+                      {testimonyGenerating ? "正在生成角色语音…" : testimonyPlaying ? "停止本段证词" : "播放本段证词"}
                     </button>
+                    {testimonyGenerating && <p className="voice-error" role="status">灵客正在生成 {currentStory.name} 的固定声线。</p>}
                     {voiceError && <p className="voice-error" role="status">{voiceError}</p>}
                   </article>
                 </div>
@@ -383,7 +394,8 @@ export default function Home() {
 
                 {storyQuestionOpen && (
                   <aside className="testimony-question">
-                    <span>追问</span>
+                    <span>齐夏追问</span>
+                    <p className="testimony-card__speaker">齐夏：</p>
                     <p>{currentStory.followUp}</p>
                     <button
                       aria-pressed={followUpPlaying}
@@ -391,8 +403,9 @@ export default function Home() {
                       onClick={() => toggleCurrentSpeech("followUp")}
                     >
                       <span aria-hidden="true">{followUpPlaying ? "II" : "▶"}</span>
-                      {followUpPlaying ? "停止追问语音" : "播放追问语音"}
+                      {followUpGenerating ? "齐夏正在组织追问…" : followUpPlaying ? "停止追问语音" : "播放齐夏追问"}
                     </button>
+                    {followUpGenerating && <p className="voice-error" role="status">灵客正在生成齐夏的固定男声追问。</p>}
                     <p className="testimony-question__clue">{currentStory.clue}</p>
                   </aside>
                 )}

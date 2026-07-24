@@ -33,6 +33,7 @@ function readConfig(characterId: CharacterId) {
   return {
     apiKey,
     voiceId: profile.voiceId,
+    deliveryDirection: "deliveryDirection" in profile ? profile.deliveryDirection : null,
     endpoint: process.env.LINGKE_TTS_URL ?? "https://api.lk888.ai/v1/media/generate",
     statusEndpoint: process.env.LINGKE_TTS_STATUS_URL ?? "https://api.lk888.ai/v1/media/status",
   };
@@ -84,18 +85,26 @@ async function waitForAudio(
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => null)) as { characterId?: unknown; kind?: unknown } | null;
-  if (!body || !isCharacterId(body.characterId) || !isVoiceKind(body.kind)) {
+  const body = (await request.json().catch(() => null)) as {
+    characterId?: unknown;
+    speakerId?: unknown;
+    kind?: unknown;
+  } | null;
+  const speakerId = body?.speakerId ?? body?.characterId;
+  if (!body || !isCharacterId(body.characterId) || !isCharacterId(speakerId) || !isVoiceKind(body.kind)) {
     return Response.json({ error: "无效的角色语音请求。" }, { status: 400 });
   }
 
   const story = LIAR_GAME.stories.find((item) => item.id === body.characterId);
-  const config = readConfig(body.characterId);
+  const config = readConfig(speakerId);
   if (!story || !config) {
     return Response.json({ error: "灵客语音尚未配置。" }, { status: 503 });
   }
 
-  const prompt = body.kind === "testimony" ? story.testimony : story.followUp;
+  const line = body.kind === "testimony" ? story.testimony : story.followUp;
+  const prompt = config.deliveryDirection
+    ? `请以${config.deliveryDirection}朗读下列台词。只朗读台词正文，不要朗读本条说明：\n${line}`
+    : line;
   let upstream: Response;
   try {
     upstream = await fetch(config.endpoint, {

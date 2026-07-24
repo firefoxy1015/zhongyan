@@ -7,7 +7,7 @@ import {
   chamberVolume,
   resolveCanonicalVote,
 } from "../app/lib/liar-game.ts";
-import { CHARACTER_VOICE_PROFILES } from "../app/lib/testimony-speech.ts";
+import { CHARACTER_VOICE_PROFILES, FOLLOW_UP_SPEAKER_ID } from "../app/lib/testimony-speech.ts";
 
 test("resolves the canonical liar vote", () => {
   assert.equal(CANONICAL_LIAR_TARGET, "renyang");
@@ -30,4 +30,6 @@ test("locks every first-trial character to one unique permanent Lingke voice", (
   assert.equal(new Set(voiceIds).size, ids.length);
   assert.equal(CHARACTER_VOICE_PROFILES.tiantian.voiceId, "Vindemiatrix");
   assert.equal(CHARACTER_VOICE_PROFILES.qixia.voiceId, "Kore");
+  assert.match(CHARACTER_VOICE_PROFILES.qiao.deliveryDirection, /香港普通话/);
+  assert.equal(FOLLOW_UP_SPEAKER_ID, "qixia");
 });
