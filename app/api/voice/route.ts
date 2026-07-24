@@ -116,7 +116,8 @@ export async function POST(request: Request) {
   }
 
   if (!upstream.ok) {
-    return Response.json({ error: "灵客语音生成失败。" }, { status: 502 });
+    console.error("Lingke TTS submission failed", { status: upstream.status });
+    return Response.json({ error: "灵客语音生成失败。", upstreamStatus: upstream.status }, { status: 502 });
   }
 
   const task = await upstream.json().catch(() => null) as TaskSubmission | null;
