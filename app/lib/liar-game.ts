@@ -13,7 +13,8 @@ export type LiarStory = {
   occupation: string;
   summary: string;
   testimony: string;
-  followUp: string;
+  followUp?: string;
+  selfReflection?: string;
   clue: string;
 };
 
@@ -112,10 +113,10 @@ export const LIAR_GAME = {
       id: "qixia",
       name: "齐夏",
       occupation: "职业骗子",
-      summary: "他讲述自己处理二百万赃款后遇到地震，冲进房屋寻找重要之人时被坍塌物压住。",
-      testimony: "我刚处理完那笔钱，地震就来了。我冲进屋里找人，房子塌下来压住了我。后面的事，我也说不清。",
-      followUp: "房屋整体坍塌并把你压住后，你凭什么确认自己没有死？",
-      clue: "山东、二百万、坍塌。他主动承认身份牌为“说谎者”。",
+      summary: "作为玩家视角，齐夏没有使用准备好的化名，而是公开职业骗子的身份，讲述自己洗钱后遭遇地震、冲入房屋并被倒塌门廊压住。",
+      testimony: "我叫齐夏，山东人，是个职业骗子。来这里之前，我在洗手里的二百万，最后到手一百四十万。拿钱回家的路上地震了，我担心屋里的人，冲进房间时门廊倒塌，把我压住，随后失去了意识。",
+      selfReflection: "我原本准备化名“李明”，但没有这么做。所有人的故事都指向同一个骗子和同一笔二百万；我公开职业和经历，是为了验证这些故事的连接，不是承认身份牌。",
+      clue: "齐夏公开的内容：山东、二百万、洗钱后一百四十万、摇晃的房屋与倒塌门廊。身份牌仍被他扣在桌上；他只承认自己是职业骗子，没有承认抽到“说谎者”。",
     },
   ] satisfies LiarStory[],
   suspects: [

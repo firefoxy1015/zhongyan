@@ -23,6 +23,14 @@ test("keeps Tian Tian's first-trial identity and testimony locked", () => {
   assert.match(tianTian?.testimony ?? "", /车里上班/);
 });
 
+test("keeps Qixia's own turn distinct from questioning another participant", () => {
+  const qixia = LIAR_GAME.stories.find((story) => story.id === "qixia");
+  assert.match(qixia?.testimony ?? "", /一百四十万/);
+  assert.equal(qixia?.followUp, undefined);
+  assert.match(qixia?.selfReflection ?? "", /化名“李明”/);
+  assert.match(qixia?.clue ?? "", /没有承认抽到“说谎者”/);
+});
+
 test("locks every first-trial character to one unique permanent Lingke voice", () => {
   const ids = LIAR_GAME.stories.map((story) => story.id);
   const voiceIds = Object.values(CHARACTER_VOICE_PROFILES).map((profile) => profile.voiceId);

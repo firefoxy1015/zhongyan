@@ -60,7 +60,6 @@ export default function Home() {
   const [identityRevealed, setIdentityRevealed] = useState(false);
   const [storyIndex, setStoryIndex] = useState(0);
   const [storyTake, setStoryTake] = useState(0);
-  const [narrationPlaying, setNarrationPlaying] = useState(true);
   const [storyQuestionOpen, setStoryQuestionOpen] = useState(false);
   const [speakingLine, setSpeakingLine] = useState<VoiceLineKind | null>(null);
   const [voiceState, setVoiceState] = useState<"generating" | "playing" | null>(null);
@@ -75,6 +74,11 @@ export default function Home() {
   const speechRef = useRef<TestimonySpeech | null>(null);
 
   const currentStory = LIAR_GAME.stories[storyIndex];
+  const isSelfNarration = Boolean(currentStory.selfReflection);
+  const responseLine = currentStory.selfReflection ?? currentStory.followUp ?? "";
+  const responseTitle = isSelfNarration ? "齐夏内心推演" : "齐夏追问";
+  const responseSpeaker = isSelfNarration ? "齐夏（心声）" : "齐夏";
+  const responseAction = isSelfNarration ? "内心推演" : "追问";
   const testimonyPlaying = speakingLine === "testimony";
   const followUpPlaying = speakingLine === "followUp";
   const testimonyGenerating = testimonyPlaying && voiceState === "generating";
@@ -131,7 +135,6 @@ export default function Home() {
     bgmRef.current?.setDucked(false);
     setStoryIndex(index);
     setStoryTake((current) => current + 1);
-    setNarrationPlaying(true);
     setStoryQuestionOpen(false);
     setSpeakingLine(null);
     setVoiceState(null);
@@ -188,7 +191,6 @@ export default function Home() {
     setIdentityRevealed(false);
     setStoryIndex(0);
     setStoryTake(0);
-    setNarrationPlaying(true);
     setStoryQuestionOpen(false);
     speechRef.current?.stop();
     bgmRef.current?.setDucked(false);
@@ -363,7 +365,7 @@ export default function Home() {
 
                   <article className="testimony-card">
                     <div className="testimony-card__topline">
-                      <span>当事人证词</span>
+                      <span>{isSelfNarration ? "齐夏陈述 / 你的行动" : "当事人证词"}</span>
                       <em>灵客配音 · 固定角色声线</em>
                     </div>
                     <p className="testimony-card__speaker">{currentStory.name}：</p>
@@ -387,26 +389,29 @@ export default function Home() {
                     className="game-secondary"
                     onClick={askFollowUp}
                   >
-                    {followUpPlaying ? "停止追问语音" : "追问细节"}
+                    {followUpPlaying ? `停止${responseAction}语音` : isSelfNarration ? "回看齐夏的判断" : "追问细节"}
                   </button>
                   <p>先听证词，再将发现的矛盾写入手账。已记录 {heardStories.size} / {LIAR_GAME.stories.length}</p>
                 </div>
 
                 {storyQuestionOpen && (
                   <aside className="testimony-question">
-                    <span>齐夏追问</span>
-                    <p className="testimony-card__speaker">齐夏：</p>
-                    <p>{currentStory.followUp}</p>
+                    <span>{responseTitle}</span>
+                    <p className="testimony-card__speaker">{responseSpeaker}：</p>
+                    <p>{responseLine}</p>
                     <button
                       aria-pressed={followUpPlaying}
                       className={`testimony-speak testimony-speak--follow-up ${followUpPlaying ? "is-speaking" : ""}`}
                       onClick={() => toggleCurrentSpeech("followUp")}
                     >
                       <span aria-hidden="true">{followUpPlaying ? "II" : "▶"}</span>
-                      {followUpGenerating ? "齐夏正在组织追问…" : followUpPlaying ? "停止追问语音" : "播放齐夏追问"}
+                      {followUpGenerating ? `齐夏正在整理${responseAction}…` : followUpPlaying ? `停止${responseAction}语音` : `播放${responseTitle}`}
                     </button>
-                    {followUpGenerating && <p className="voice-error" role="status">灵客正在生成齐夏的固定男声追问。</p>}
-                    <p className="testimony-question__clue">{currentStory.clue}</p>
+                    {followUpGenerating && <p className="voice-error" role="status">灵客正在生成齐夏的固定男声{responseAction}。</p>}
+                    <p className="testimony-question__clue">
+                      <span>{isSelfNarration ? "齐夏自证线索 / " : `齐夏手账 / ${currentStory.name} / `}</span>
+                      {currentStory.clue}
+                    </p>
                   </aside>
                 )}
 
@@ -437,73 +442,6 @@ export default function Home() {
                   ))}
                 </div>
               </section>
-            <section className="game-stage game-stage--stories story-legacy">
-              <div className="story-heading">
-                <div>
-                  <p className="game-kicker">NARRATIVE {storyIndex + 1} / {LIAR_GAME.stories.length}</p>
-                  <h2>{currentStory.name}</h2>
-                  <span>{currentStory.occupation}</span>
-                </div>
-                <button className="story-mark" onClick={() => openStory(storyIndex)}>写入手账</button>
-              </div>
-              <div
-                aria-hidden="true"
-                className={`story-portrait story-portrait--${currentStory.id}`}
-                key={`${currentStory.id}-${storyTake}`}
-              >
-                <div className={`story-portrait__hud ${narrationPlaying ? "is-playing" : ""}`}>
-                  <span className="story-portrait__signal" />
-                  <span>证词接入</span>
-                  <div className="story-portrait__wave">
-                    {Array.from({ length: 10 }, (_, index) => <i key={index} />)}
-                  </div>
-                </div>
-              </div>
-              <button
-                aria-pressed={narrationPlaying}
-                className={`story-playback ${narrationPlaying ? "is-playing" : ""}`}
-                onPointerDown={startMusic}
-                onClick={() => setNarrationPlaying((current) => !current)}
-              >
-                <span aria-hidden="true">{narrationPlaying ? "II" : "▶"}</span>
-                {narrationPlaying ? "叙述演出中" : "继续叙述演出"}
-              </button>
-              <button
-                aria-pressed={musicStarted}
-                className={`story-audio ${musicStarted ? "is-running" : ""}`}
-                onClick={toggleMusic}
-              >
-                <span aria-hidden="true">{musicStarted ? "●" : "♪"}</span>
-                {musicEnabled ? (musicStarted ? "紧迫声场运行中 · 点击静音" : "点击开启紧迫声场") : "声场已静音 · 点击恢复"}
-              </button>
-              <div className="story-transcript">
-                <p>{currentStory.summary}</p>
-              </div>
-              <div className="story-clue">
-                <span>线索记录</span>
-                <p>{heardStories.has(currentStory.id) ? currentStory.clue : "先完整听取这段叙述，再将可公开的矛盾写入手账。"}</p>
-              </div>
-              <div className="story-controls">
-                <button className="game-secondary" disabled={storyIndex === 0} onClick={() => openStory(storyIndex - 1)}>上一位</button>
-                {storyIndex < LIAR_GAME.stories.length - 1 ? (
-                  <button className="game-primary" onClick={() => openStory(storyIndex + 1)}>下一位叙述者</button>
-                ) : (
-                  <button className="game-primary" disabled={!allStoriesHeard} onClick={() => advanceTo("deduction")}>进入调查回合</button>
-                )}
-              </div>
-              <div className="story-seats" aria-label="叙述者列表">
-                {LIAR_GAME.stories.map((story, index) => (
-                  <button
-                    aria-pressed={storyIndex === index}
-                    className={`${storyIndex === index ? "is-current" : ""} ${heardStories.has(story.id) ? "is-heard" : ""}`}
-                    key={story.id}
-                    onClick={() => openStory(index)}
-                  >
-                    <span>{String(index + 1).padStart(2, "0")}</span>{story.name}
-                  </button>
-                ))}
-              </div>
-            </section>
             </>
           )}
 

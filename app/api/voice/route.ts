@@ -101,7 +101,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "灵客语音尚未配置。" }, { status: 503 });
   }
 
-  const line = body.kind === "testimony" ? story.testimony : story.followUp;
+  const line = body.kind === "testimony" ? story.testimony : (story.selfReflection ?? story.followUp);
+  if (!line) {
+    return Response.json({ error: "这段叙述没有可播放的追问或内心推演。" }, { status: 422 });
+  }
   const prompt = config.deliveryDirection
     ? `请以${config.deliveryDirection}朗读下列台词。只朗读台词正文，不要朗读本条说明：\n${line}`
     : line;
