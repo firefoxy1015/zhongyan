@@ -8,7 +8,7 @@ import {
   resolveCanonicalVote,
 } from "../app/lib/liar-game.ts";
 import { CHARACTER_VOICE_PROFILES, FOLLOW_UP_SPEAKER_ID } from "../app/lib/testimony-speech.ts";
-import { VOICE_ASSET_MODEL, VOICE_ASSET_SPEAKERS, VOICE_ASSET_URLS } from "../app/lib/voice-assets.ts";
+import { VOICE_ASSET_MODEL, VOICE_ASSET_MODELS, VOICE_ASSET_SPEAKERS, VOICE_ASSET_URLS } from "../app/lib/voice-assets.ts";
 
 test("resolves the canonical liar vote", () => {
   assert.equal(CANONICAL_LIAR_TARGET, "renyang");
@@ -32,7 +32,7 @@ test("keeps Qixia's own turn distinct from questioning another participant", () 
   assert.match(qixia?.clue ?? "", /没有承认抽到“说谎者”/);
 });
 
-test("locks every first-trial character to one unique permanent Doubao 2.0 voice", () => {
+test("locks every first-trial character to one unique permanent voice", () => {
   const ids = LIAR_GAME.stories.map((story) => story.id);
   const voiceIds = Object.values(CHARACTER_VOICE_PROFILES).map((profile) => profile.voiceId);
   assert.deepEqual(Object.keys(CHARACTER_VOICE_PROFILES).sort(), [...ids].sort());
@@ -42,6 +42,8 @@ test("locks every first-trial character to one unique permanent Doubao 2.0 voice
   assert.match(CHARACTER_VOICE_PROFILES.tiantian.timbre, /甜美/);
   assert.equal(CHARACTER_VOICE_PROFILES.qixia.model, "doubao-tts-2.0");
   assert.equal(CHARACTER_VOICE_PROFILES.qixia.gender, "男");
+  assert.equal(CHARACTER_VOICE_PROFILES.qiao.model, "speech-2.8");
+  assert.equal(CHARACTER_VOICE_PROFILES.qiao.voiceId, "LK_9011036_1784965778");
   assert.match(CHARACTER_VOICE_PROFILES.qiao.deliveryDirection, /香港普通话/);
   assert.equal(FOLLOW_UP_SPEAKER_ID, "qixia");
   assert.deepEqual(
@@ -69,7 +71,9 @@ test("ships every fixed line as a pre-rendered audio asset", () => {
   for (const url of Object.values(VOICE_ASSET_URLS)) {
     assert.match(url ?? "", /^https:\/\/.*\.mp3$/);
   }
-  assert.equal(VOICE_ASSET_MODEL, "doubao-tts-2.0");
+  assert.equal(VOICE_ASSET_MODEL, "mixed-static");
+  assert.equal(VOICE_ASSET_MODELS["qiao:testimony"], "speech-2.8");
+  assert.equal(VOICE_ASSET_MODELS["qiao:followUp"], "doubao-tts-2.0");
   for (const story of LIAR_GAME.stories) {
     assert.equal(VOICE_ASSET_SPEAKERS[`${story.id}:followUp`], "qixia");
   }

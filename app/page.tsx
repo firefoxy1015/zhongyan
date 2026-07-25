@@ -9,7 +9,12 @@ import {
   resolveCanonicalVote,
 } from "./lib/liar-game";
 import { SuspenseBgm } from "./lib/suspense-bgm";
-import { TestimonySpeech, type CharacterVoiceId, type VoiceLineKind } from "./lib/testimony-speech";
+import {
+  CHARACTER_VOICE_PROFILES,
+  TestimonySpeech,
+  type CharacterVoiceId,
+  type VoiceLineKind,
+} from "./lib/testimony-speech";
 
 const PHASES: Array<{ id: LiarGamePhase; label: string }> = [
   { id: "lobby", label: "入场" },
@@ -73,6 +78,7 @@ export default function Home() {
   const speechRef = useRef<TestimonySpeech | null>(null);
 
   const currentStory = LIAR_GAME.stories[storyIndex];
+  const testimonyVoice = CHARACTER_VOICE_PROFILES[currentStory.id as CharacterVoiceId];
   const isSelfNarration = Boolean(currentStory.selfReflection);
   const responseLine = currentStory.selfReflection ?? currentStory.followUp ?? "";
   const responseTitle = isSelfNarration ? "齐夏内心推演" : "齐夏追问";
@@ -357,7 +363,7 @@ export default function Home() {
                   <article className="testimony-card">
                     <div className="testimony-card__topline">
                       <span>{isSelfNarration ? "齐夏陈述 / 你的行动" : "当事人证词"}</span>
-                      <em>豆包语音合成 2.0 · 固定角色音色</em>
+                      <em>{testimonyVoice.model === "speech-2.8" ? "海螺语音克隆 2.8 · 固定港普音色" : "豆包语音合成 2.0 · 固定角色音色"}</em>
                     </div>
                     <p className="testimony-card__speaker">{currentStory.name}：</p>
                     <blockquote>“{currentStory.testimony}”</blockquote>

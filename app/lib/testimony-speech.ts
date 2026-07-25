@@ -13,11 +13,19 @@ export const CHARACTER_VOICE_PROFILES = {
   qiao: {
     label: "乔家劲",
     portraitAsset: "qiaojiajin-v1",
-    model: "doubao-tts-2.0",
-    voiceId: "zh_male_taocheng_uranus_bigtts",
+    model: "speech-2.8",
+    voiceId: "LK_9011036_1784965778",
     gender: "男",
-    timbre: "小天 2.0",
-    deliveryDirection: "广东男性的自然香港普通话口音，干脆、带江湖气，不夸张模仿粤语。",
+    timbre: "海螺克隆 · 港普男声",
+    deliveryDirection: "广东男性的自然香港普通话口音，干脆、带江湖气，不夸张模仿粤语；使用固定复刻音色。",
+    cloneReference: "qiao-hk-mandarin-reference-v1.mp3",
+    synthesisParams: {
+      quality: "hd",
+      speed: "1",
+      pitch: "-3",
+      emotion: "calm",
+      sound_effects: "none",
+    },
   },
   xiao: {
     label: "肖冉",
