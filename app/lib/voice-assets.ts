@@ -7,7 +7,7 @@ export const VOICE_ASSET_MODEL = "mixed-static";
 export const VOICE_ASSET_URLS: Readonly<Partial<Record<VoiceAssetKey, string>>> = Object.freeze({
   "tiantian:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175519_18c53132528d14ea067e.mp3",
   "tiantian:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175532_18c531354d78ea356e9b.mp3",
-  "qiao:testimony": "https://cos.lingkeai.vip/uploads/2026.07/25/20260725155157_18c5790b7e12e7d3be4c.mp3",
+  "qiao:testimony": "https://cos.lingkeai.vip/uploads/2026.07/25/20260725175221_18c57f9d8865acea5bdc.mp3",
   "qiao:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175552_18c5313a0d8f9469ddcf.mp3",
   "xiao:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175609_18c5313de461781e240c.mp3",
   "xiao:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175619_18c5314042ef4fbd4d83.mp3",

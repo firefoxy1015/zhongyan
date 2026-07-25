@@ -43,7 +43,7 @@ test("locks every first-trial character to one unique permanent voice", () => {
   assert.equal(CHARACTER_VOICE_PROFILES.qixia.model, "doubao-tts-2.0");
   assert.equal(CHARACTER_VOICE_PROFILES.qixia.gender, "男");
   assert.equal(CHARACTER_VOICE_PROFILES.qiao.model, "speech-2.8");
-  assert.equal(CHARACTER_VOICE_PROFILES.qiao.voiceId, "LK_9011036_1784965778");
+  assert.equal(CHARACTER_VOICE_PROFILES.qiao.voiceId, "LK_9011036_1784973101");
   assert.match(CHARACTER_VOICE_PROFILES.qiao.deliveryDirection, /香港普通话/);
   assert.equal(FOLLOW_UP_SPEAKER_ID, "qixia");
   assert.deepEqual(
