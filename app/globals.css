@@ -806,7 +806,8 @@ button:focus-visible {
 }
 
 .game-topbar,
-.game-frame {
+.game-frame,
+.game-site-nav {
   margin: 0 auto;
   max-width: 1460px;
 }
@@ -817,6 +818,42 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   min-height: 90px;
+}
+
+.game-site-nav {
+  align-items: stretch;
+  border-bottom: 1px solid rgba(229, 183, 94, 0.2);
+  display: flex;
+  min-height: 46px;
+}
+
+.game-site-nav span {
+  align-items: center;
+  border-left: 1px solid rgba(229, 183, 94, 0.12);
+  color: #a89b88;
+  display: inline-flex;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  justify-content: center;
+  min-width: 108px;
+  padding: 0 16px;
+}
+
+.game-site-nav span.is-current {
+  background: linear-gradient(135deg, rgba(139, 46, 38, 0.9), rgba(103, 29, 27, 0.9));
+  border-bottom: 2px solid #e5b75e;
+  color: #f7e7c6;
+}
+
+.game-site-nav small {
+  align-items: center;
+  color: #70695e;
+  display: inline-flex;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin-left: auto;
+  padding: 0 15px;
 }
 
 .game-topbar__tools {
@@ -947,6 +984,27 @@ button:focus-visible {
   padding-top: 25px;
 }
 
+.game-app--preamble .game-frame {
+  display: block;
+  max-width: 890px;
+}
+
+.game-app--preamble .game-progress,
+.game-app--preamble .game-ledger {
+  display: none;
+}
+
+.game-app--preamble .game-table {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  min-height: 0;
+}
+
+.game-app--preamble .game-table::before {
+  display: none;
+}
+
 .game-progress,
 .game-ledger,
 .game-table {
@@ -1067,12 +1125,16 @@ button:focus-visible {
 }
 
 .game-stage--entry {
-  align-items: center;
-  background: #0b0908;
+  align-items: flex-start;
+  background: #0d0d0e;
+  border: 1px solid rgba(229, 183, 94, 0.16);
+  box-shadow: 0 28px 88px rgba(0, 0, 0, 0.35);
   isolation: isolate;
   justify-content: center;
+  min-height: min(720px, calc(100vh - 180px));
   overflow: hidden;
-  text-align: center;
+  padding: clamp(44px, 8vw, 92px) clamp(28px, 11vw, 142px);
+  text-align: left;
 }
 
 .game-stage--entry::before,
@@ -1085,12 +1147,12 @@ button:focus-visible {
 
 .game-stage--entry::before {
   background:
-    linear-gradient(90deg, rgba(7, 7, 8, 0.96) 0%, rgba(7, 7, 8, 0.42) 40%, rgba(7, 7, 8, 0.9) 100%),
-    url("/art/liar-tableau-v1.png") center / cover;
-  filter: saturate(0.78) contrast(1.08);
-  transform: scale(1.06);
+    linear-gradient(90deg, rgba(8, 8, 9, 0.97) 0%, rgba(8, 8, 9, 0.78) 58%, rgba(8, 8, 9, 0.98) 100%),
+    url("/art/liar-tableau-v1.png") 72% center / cover;
+  filter: grayscale(0.28) saturate(0.62) contrast(1.08);
+  transform: scale(1.03);
   z-index: 0;
-  animation: scene-drift 16s ease-in-out infinite alternate;
+  animation: scene-drift 22s ease-in-out infinite alternate;
 }
 
 .game-stage--entry::after {
@@ -1110,7 +1172,50 @@ button:focus-visible {
 
 .game-stage--entry h2 {
   font-size: clamp(30px, 4vw, 50px);
+  margin-top: 18px;
+}
+
+.entry-copy {
+  color: #d2c4aa;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 2.1;
   margin-top: 32px;
+  max-width: 640px;
+}
+
+.entry-copy p {
+  margin: 0 0 19px;
+}
+
+.entry-objective {
+  border-left: 2px solid #c89a4b;
+  margin-top: 26px;
+  max-width: 640px;
+  padding: 4px 0 4px 19px;
+}
+
+.entry-objective span {
+  color: #d3a654;
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+
+.entry-objective strong {
+  color: #eee0c2;
+  display: block;
+  font-size: 19px;
+  font-weight: 500;
+  margin-top: 9px;
+}
+
+.entry-objective p {
+  color: #a89d8c;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  line-height: 1.9;
+  margin: 9px 0 0;
 }
 
 .entry-clock {
@@ -1217,7 +1322,7 @@ button:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 27px;
 }
 
@@ -1962,6 +2067,15 @@ button:focus-visible {
   background-size: cover;
 }
 
+/* Evidence portraits are archival plates: never crop a character to make the layout fit. */
+.character-dossier .story-portrait {
+  animation: portrait-arrival 600ms cubic-bezier(0.18, 0.75, 0.22, 1) both;
+  background-color: #0a0a0a;
+  background-position: center, center, center top;
+  background-repeat: no-repeat;
+  background-size: 100% 100%, 100% 100%, contain;
+}
+
 .story-heading h2 {
   display: inline-block;
   margin-right: 13px;
@@ -2336,6 +2450,20 @@ button:focus-visible {
     width: 100%;
   }
 
+  .game-site-nav {
+    overflow-x: auto;
+  }
+
+  .game-site-nav span {
+    flex: 0 0 auto;
+    min-width: 96px;
+    padding: 0 12px;
+  }
+
+  .game-site-nav small {
+    display: none;
+  }
+
   .game-frame {
     grid-template-columns: 1fr;
     padding-top: 14px;
@@ -2369,6 +2497,29 @@ button:focus-visible {
   .game-stage {
     min-height: 620px;
     padding: 28px 22px;
+  }
+
+  .game-app--preamble .game-frame {
+    padding-top: 14px;
+  }
+
+  .game-stage--entry {
+    min-height: calc(100vh - 210px);
+    padding: 48px 24px;
+  }
+
+  .game-stage--entry::before {
+    background-position: 63% center;
+  }
+
+  .entry-copy {
+    font-size: 14px;
+    line-height: 2;
+    margin-top: 25px;
+  }
+
+  .entry-objective {
+    margin-top: 21px;
   }
 
   .game-stage--rules .rule-list,

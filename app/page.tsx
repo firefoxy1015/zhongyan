@@ -36,6 +36,8 @@ const PHASE_CLOCK: Record<LiarGamePhase, string> = {
   result: "01:00",
 };
 
+const ARCHIVE_SECTIONS = ["第一日", "规则卷宗", "参与者档案", "线索手账"];
+
 const INVESTIGATION_ACTIONS = [
   {
     id: "grid",
@@ -201,13 +203,13 @@ export default function Home() {
   };
 
   return (
-    <main className="game-app">
+    <main className={`game-app ${phase === "lobby" ? "game-app--preamble" : "game-app--archive"}`}>
       <header className="game-topbar">
         <div className="game-brand">
-          <span className="game-brand-mark" aria-hidden="true">女</span>
+          <span className="game-brand-mark" aria-hidden="true">终</span>
           <div>
-            <p>单机剧情 RPG · 第一日</p>
-            <h1>说谎者</h1>
+            <p>终焉之地 / 玩家手册</p>
+            <h1>第一日 · 说谎者</h1>
           </div>
         </div>
         <div className="game-topbar__tools">
@@ -226,6 +228,13 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      <nav className="game-site-nav" aria-label="游戏档案栏目">
+        {ARCHIVE_SECTIONS.map((section, index) => (
+          <span className={index === 0 ? "is-current" : ""} key={section}>{section}</span>
+        ))}
+        <small>档案编号 / DAY-01-LIAR</small>
+      </nav>
 
       <section className="game-frame" aria-label="说谎者单机桌游关卡">
         <aside className="game-progress" aria-label="关卡阶段">
@@ -249,15 +258,20 @@ export default function Home() {
         <section className="game-table" aria-live="polite">
           {phase === "lobby" && (
             <section className="game-stage game-stage--entry">
-              <p className="game-kicker">SOLO STORY RPG / CHAPTER 001</p>
-              <div className="entry-clock" aria-hidden="true"><i /></div>
-              <h2>座钟指向十二点。</h2>
-              <p className="game-lead">
-                这是单机剧情模式：你将以桌游的行动、线索和投票流程，亲自走完“说谎者”。
-                联机房间不参与当前版本，先把每一个角色、场景与关键时刻做成可体验的故事。
-              </p>
+              <p className="game-kicker">序</p>
+              <h2>玩家身份</h2>
+              <div className="entry-copy">
+                <p>座钟停在十二点。你以齐夏的视角醒来，九个人被困在同一间方格面试房。</p>
+                <p>人羊宣布了第一场游戏：所有人必须叙述自己的经历，而唯一的说谎者将被投票处决。</p>
+                <p>这里没有自动结论。规则、人物叙述与矛盾都会被收进你的手账，最后一票由你亲手写下。</p>
+              </div>
+              <div className="entry-objective">
+                <span>任务</span>
+                <strong>找出唯一违反规则的人。</strong>
+                <p>进入面试房，听完九段叙述，完成调查，并锁定人羊。</p>
+              </div>
               <div className="entry-actions">
-                <button className="game-primary" onClick={() => advanceTo("rules")}>开始第一日</button>
+                <button className="game-primary" onClick={() => advanceTo("rules")}>进入游戏 ›</button>
               </div>
             </section>
           )}
@@ -362,7 +376,7 @@ export default function Home() {
 
                   <article className="testimony-card">
                     <div className="testimony-card__topline">
-                      <span>{isSelfNarration ? "齐夏陈述 / 你的行动" : "当事人证词"}</span>
+                      <span>{isSelfNarration ? "齐夏陈述 / 你的行动" : "当事人陈述"}</span>
                       <em>{testimonyVoice.model === "speech-2.8" ? "海螺语音克隆 2.8 · 固定港普音色" : "豆包语音合成 2.0 · 固定角色音色"}</em>
                     </div>
                     <p className="testimony-card__speaker">{currentStory.name}：</p>
@@ -532,7 +546,7 @@ export default function Home() {
         </section>
 
         <aside className="game-ledger" aria-label="本局记录">
-          <p className="game-eyebrow">RPG LEDGER</p>
+          <p className="game-eyebrow">玩家手账</p>
           <h2>面试房</h2>
           <dl>
             <div><dt>视角角色</dt><dd>齐夏</dd></div>
