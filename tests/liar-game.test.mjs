@@ -32,6 +32,14 @@ test("keeps Qixia's own turn distinct from questioning another participant", () 
   assert.match(qixia?.clue ?? "", /没有承认抽到“说谎者”/);
 });
 
+test("surfaces the two-million fraud link in every canonical testimony", () => {
+  for (const id of ["qiao", "zhang", "li", "qixia"]) {
+    const story = LIAR_GAME.stories.find((item) => item.id === id);
+    assert.match(story?.testimony ?? "", /二百(?:万|万元)/);
+  }
+  assert.match(LIAR_GAME.stories.find((story) => story.id === "qixia")?.selfReflection ?? "", /乔家劲、章晨泽、李尚武/);
+});
+
 test("locks every first-trial character to one unique permanent voice", () => {
   const ids = LIAR_GAME.stories.map((story) => story.id);
   const voiceIds = Object.values(CHARACTER_VOICE_PROFILES).map((profile) => profile.voiceId);
