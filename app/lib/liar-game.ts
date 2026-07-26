@@ -18,6 +18,27 @@ export type LiarStory = {
   clue: string;
 };
 
+export type LiarEvidenceKind = "人物" | "地点" | "事件" | "规则" | "案件";
+
+export type LiarEvidence = {
+  id: string;
+  storyId: string | "renyang";
+  kind: LiarEvidenceKind;
+  label: string;
+  text: string;
+  source: string;
+  availableAtStart?: boolean;
+};
+
+export type LiarDeduction = {
+  id: string;
+  title: string;
+  description: string;
+  requiredEvidence: readonly string[];
+  requiresDeductions?: readonly string[];
+  result: string;
+};
+
 export const LIAR_GAME = {
   id: "renyang-liar-canon-001",
   title: "说谎者",
@@ -134,6 +155,208 @@ export const LIAR_GAME = {
 } as const;
 
 export const CANONICAL_LIAR_TARGET = "renyang";
+
+// Every card is tied to a concrete first-trial statement. The client may only
+// reveal a card after the corresponding testimony has been recorded.
+export const LIAR_EVIDENCE: readonly LiarEvidence[] = [
+  {
+    id: "rule-exclusive-liar",
+    storyId: "renyang",
+    kind: "规则",
+    label: "有且只有一位说谎者",
+    text: "人羊把条件限定在“讲故事的人”之中，并宣称其中有且只有一位说谎者。",
+    source: "原文锚点：人羊公布“说谎者”规则",
+    availableAtStart: true,
+  },
+  {
+    id: "host-story",
+    storyId: "renyang",
+    kind: "规则",
+    label: "人羊的造神叙述",
+    text: "人羊讲述自己将众人聚集到这里，是为了创造一个“神”。",
+    source: "原文锚点：人羊开场叙述",
+    availableAtStart: true,
+  },
+  {
+    id: "tiantian-terminal",
+    storyId: "tiantian",
+    kind: "事件",
+    label: "广告牌坠向车顶",
+    text: "甜甜把广告牌砸向车辆后的结局说成“失去意识”。",
+    source: "原文锚点：甜甜的面试房叙述",
+  },
+  {
+    id: "qiao-money",
+    storyId: "qiao",
+    kind: "案件",
+    label: "债主被骗走二百万元",
+    text: "乔家劲追讨的债主声称自己被人骗走二百万元。",
+    source: "原文锚点：乔家劲的面试房叙述",
+  },
+  {
+    id: "qiao-terminal",
+    storyId: "qiao",
+    kind: "事件",
+    label: "天台与广告牌",
+    text: "乔家劲从高处坠向广告牌后，也把结局说成“失去意识”。",
+    source: "原文锚点：乔家劲的面试房叙述",
+  },
+  {
+    id: "xiao-terminal",
+    storyId: "xiao",
+    kind: "事件",
+    label: "失控车辆",
+    text: "肖冉在地震中面对失控车辆，却回避了自己与孩子之后的结局。",
+    source: "原文锚点：肖冉的面试房叙述",
+  },
+  {
+    id: "zhao-terminal",
+    storyId: "zhao",
+    kind: "事件",
+    label: "手术室坍塌",
+    text: "赵海博把坍塌与医疗推车造成的结果简化为“撞倒”。",
+    source: "原文锚点：赵海博的面试房叙述",
+  },
+  {
+    id: "han-terminal",
+    storyId: "han",
+    kind: "事件",
+    label: "对抵达过程的空白",
+    text: "韩一墨称自己记不清地震，也不知道自己如何抵达这里。",
+    source: "原文锚点：韩一墨的面试房叙述",
+  },
+  {
+    id: "zhang-money",
+    storyId: "zhang",
+    kind: "案件",
+    label: "当事人被骗二百万元",
+    text: "章晨泽整理的开庭资料，涉及一名被诈骗二百万元的当事人。",
+    source: "原文锚点：章晨泽的面试房叙述",
+  },
+  {
+    id: "zhang-trial",
+    storyId: "zhang",
+    kind: "案件",
+    label: "案件已进入开庭准备",
+    text: "章晨泽正在整理开庭资料；她的叙述默认嫌疑人已进入可审理阶段。",
+    source: "原文锚点：章晨泽的面试房叙述",
+  },
+  {
+    id: "zhang-terminal",
+    storyId: "zhang",
+    kind: "事件",
+    label: "车辆坠入地裂",
+    text: "章晨泽把地裂、追尾与坠入裂缝后的结局说成“失去意识”。",
+    source: "原文锚点：章晨泽的面试房叙述",
+  },
+  {
+    id: "li-money",
+    storyId: "li",
+    kind: "案件",
+    label: "涉案金额二百万元",
+    text: "李尚武正在蹲守一名涉案金额高达二百万元的诈骗嫌疑人。",
+    source: "原文锚点：李尚武的面试房叙述",
+  },
+  {
+    id: "li-stakeout",
+    storyId: "li",
+    kind: "案件",
+    label: "嫌疑人仍在蹲守范围",
+    text: "李尚武的行动表明，嫌疑人在他的叙述里尚未落网。",
+    source: "原文锚点：李尚武的面试房叙述",
+  },
+  {
+    id: "li-terminal",
+    storyId: "li",
+    kind: "事件",
+    label: "勒痕与重击",
+    text: "李尚武在震后被勒住并遭到重击，仍将之后说成“再醒来就是这里”。",
+    source: "原文锚点：李尚武的面试房叙述",
+  },
+  {
+    id: "lin-terminal",
+    storyId: "lin",
+    kind: "事件",
+    label: "高层工作室坍塌",
+    text: "林檎所处的高层工作室发生坍塌，她同样只说自己失去意识。",
+    source: "原文锚点：林檎的面试房叙述",
+  },
+  {
+    id: "qixia-money",
+    storyId: "qixia",
+    kind: "案件",
+    label: "齐夏手中的二百万元",
+    text: "齐夏承认自己正在处理手里的二百万元，最后到手一百四十万。",
+    source: "原文锚点：齐夏的面试房叙述",
+  },
+  {
+    id: "qixia-terminal",
+    storyId: "qixia",
+    kind: "事件",
+    label: "倒塌门廊",
+    text: "齐夏冲进房屋后被倒塌门廊压住，也将结局停在“失去意识”。",
+    source: "原文锚点：齐夏的面试房叙述",
+  },
+] as const;
+
+export const LIAR_DEDUCTIONS: readonly LiarDeduction[] = [
+  {
+    id: "money-chain",
+    title: "二百万元的共用链条",
+    description: "将债主、律师、刑警与齐夏的金额记录并置。",
+    requiredEvidence: ["qiao-money", "zhang-money", "li-money", "qixia-money"],
+    result: "四段叙述中的二百万元并非独立数字，它们指向同一条诈骗案件链。",
+  },
+  {
+    id: "case-timeline",
+    title: "案件进度矛盾",
+    description: "比较“准备开庭”与“仍在蹲守”是否能同时成立。",
+    requiredEvidence: ["zhang-trial", "li-stakeout"],
+    result: "同一名嫌疑人在章晨泽的叙述中可被审理，在李尚武的叙述中却仍未落网。",
+  },
+  {
+    id: "survival-wording",
+    title: "九人共同回避的结局",
+    description: "把每个人对灾难结尾的表述放进同一条记录。",
+    requiredEvidence: [
+      "tiantian-terminal",
+      "qiao-terminal",
+      "xiao-terminal",
+      "zhao-terminal",
+      "han-terminal",
+      "zhang-terminal",
+      "li-terminal",
+      "lin-terminal",
+      "qixia-terminal",
+    ],
+    result: "九段叙述都以不同方式遮蔽了死亡；“失去意识”并不能解释他们为何同时坐在面试房中。",
+  },
+  {
+    id: "rule-boundary",
+    title: "把规则写回讲述者范围",
+    description: "在九人的共同谎言与人羊的开场叙述之间，重新检查规则的主语。",
+    requiredEvidence: ["rule-exclusive-liar", "host-story"],
+    requiresDeductions: ["survival-wording"],
+    result: "当九位参与者的叙述都无法按表面成立时，唯一能被规则百分之百锁定的对象并不在九人之内。",
+  },
+] as const;
+
+export const LIAR_EVIDENCE_BY_ID = Object.freeze(
+  Object.fromEntries(LIAR_EVIDENCE.map((evidence) => [evidence.id, evidence])) as Record<string, LiarEvidence>,
+);
+
+export function evidenceForStory(storyId: string): readonly LiarEvidence[] {
+  return LIAR_EVIDENCE.filter((evidence) => evidence.storyId === storyId);
+}
+
+export function deductionIsSupported(
+  deduction: LiarDeduction,
+  recordedEvidence: ReadonlySet<string>,
+  completedDeductions: ReadonlySet<string>,
+) {
+  return deduction.requiredEvidence.every((id) => recordedEvidence.has(id))
+    && (deduction.requiresDeductions ?? []).every((id) => completedDeductions.has(id));
+}
 
 export function chamberVolume(): number {
   return LIAR_GAME.chamber.widthMeters * LIAR_GAME.chamber.lengthMeters * LIAR_GAME.chamber.heightMeters;

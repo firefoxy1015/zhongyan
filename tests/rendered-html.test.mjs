@@ -14,7 +14,7 @@ async function render(path = "/", env = { ASSETS: { fetch: async () => new Respo
   );
 }
 
-test("server-renders the solo liar archive entry", async () => {
+test("server-renders the solo liar investigation entry", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -22,10 +22,10 @@ test("server-renders the solo liar archive entry", async () => {
   const html = await response.text();
   assert.match(html, /<title>十日终焉：单机剧情 RPG<\/title>/i);
   assert.match(html, /说谎者/);
-  assert.match(html, /终焉之地\s*\/\s*玩家手册/);
-  assert.match(html, /玩家身份/);
-  assert.match(html, /进入游戏/);
-  assert.match(html, /规则卷宗/);
+  assert.match(html, /DAY 01\s*\/\s*INTERVIEW ROOM/);
+  assert.match(html, /自由访问九名叙述者/);
+  assert.match(html, /进入调查台/);
+  assert.match(html, /固定角色资产/);
   assert.doesNotMatch(html, /创建\s*\/\s*加入真人房/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Building your site/i);
 });

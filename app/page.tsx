@@ -2,11 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  CANONICAL_LIAR_TARGET,
+  LIAR_DEDUCTIONS,
+  LIAR_EVIDENCE,
   LIAR_GAME,
-  type LiarGamePhase,
   chamberVolume,
+  deductionIsSupported,
+  evidenceForStory,
   resolveCanonicalVote,
+  type LiarEvidenceKind,
 } from "./lib/liar-game";
 import { SuspenseBgm } from "./lib/suspense-bgm";
 import {
@@ -16,106 +19,93 @@ import {
   type VoiceLineKind,
 } from "./lib/testimony-speech";
 
-const PHASES: Array<{ id: LiarGamePhase; label: string }> = [
-  { id: "lobby", label: "入场" },
-  { id: "rules", label: "规则" },
-  { id: "identity", label: "身份牌" },
-  { id: "stories", label: "叙述" },
-  { id: "deduction", label: "调查" },
-  { id: "vote", label: "投票" },
-  { id: "result", label: "结算" },
-];
+type GameScreen = "entry" | "investigation" | "vote" | "result";
+type NotebookFilter = "全部" | LiarEvidenceKind;
 
-const PHASE_CLOCK: Record<LiarGamePhase, string> = {
-  lobby: "12:00",
-  rules: "12:00",
-  identity: "12:01",
-  stories: "12:20",
-  deduction: "12:47",
-  vote: "12:59",
-  result: "01:00",
+const INITIAL_EVIDENCE = new Set(
+  LIAR_EVIDENCE.filter((evidence) => evidence.availableAtStart).map((evidence) => evidence.id),
+);
+
+const NOTEBOOK_FILTERS: NotebookFilter[] = ["全部", "规则", "案件", "事件", "人物", "地点"];
+
+const FOLLOW_UP_REQUIREMENTS: Record<string, readonly string[]> = {
+  tiantian: [],
+  qiao: [],
+  xiao: [],
+  zhao: [],
+  han: [],
+  zhang: ["money-chain"],
+  li: ["money-chain"],
+  lin: [],
+  qixia: ["money-chain", "case-timeline"],
 };
 
-const ARCHIVE_SECTIONS = ["第一日", "规则卷宗", "参与者档案", "线索手账"];
-
-const INVESTIGATION_ACTIONS = [
-  {
-    id: "grid",
-    label: "踏查方格",
-    short: "空间",
-    description: "沿着墙、地面与天花板逐格测量面试房。",
-    result: "方格组成的房间是 4 × 4 × 3 米：这不是可以容纳漫长等待的正常空间。",
-  },
-  {
-    id: "cards",
-    label: "比对身份牌",
-    short: "规则",
-    description: "将九张“说谎者”身份牌与每段叙述并置。",
-    result: "每个人都在用“失去意识”遮蔽同一件事；身份牌不是唯一的谎言来源。",
-  },
-  {
-    id: "host",
-    label: "锁定主持者",
-    short: "人羊",
-    description: "把人羊的叙述放回规则的边界内检查。",
-    result: "九人都属于讲述者，只有人羊把自己排除在外；他的“造神”叙述无法成立。",
-  },
-] as const;
+function roomClock(turns: number) {
+  const totalMinutes = 20 + turns * 2;
+  const hour = 12 + Math.floor(totalMinutes / 60);
+  const minute = totalMinutes % 60;
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
 
 export default function Home() {
-  const [phase, setPhase] = useState<LiarGamePhase>("lobby");
-  const [identityRevealed, setIdentityRevealed] = useState(false);
-  const [storyIndex, setStoryIndex] = useState(0);
-  const [storyTake, setStoryTake] = useState(0);
-  const [storyQuestionOpen, setStoryQuestionOpen] = useState(false);
+  const [screen, setScreen] = useState<GameScreen>("entry");
+  const [activeStoryId, setActiveStoryId] = useState("tiantian");
+  const [recordedStories, setRecordedStories] = useState<Set<string>>(new Set());
+  const [recordedEvidence, setRecordedEvidence] = useState<Set<string>>(() => new Set(INITIAL_EVIDENCE));
+  const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<Set<string>>(new Set());
+  const [completedDeductions, setCompletedDeductions] = useState<Set<string>>(new Set());
+  const [askedFollowUps, setAskedFollowUps] = useState<Set<string>>(new Set());
   const [speakingLine, setSpeakingLine] = useState<VoiceLineKind | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
-  const [musicEnabled, setMusicEnabled] = useState(true);
-  const [musicStarted, setMusicStarted] = useState(false);
-  const [heardStories, setHeardStories] = useState<Set<string>>(new Set());
-  const [collectedEvidence, setCollectedEvidence] = useState<Set<string>>(new Set());
-  const [deductionRevealed, setDeductionRevealed] = useState(false);
+  const [notebookFilter, setNotebookFilter] = useState<NotebookFilter>("全部");
+  const [workbenchNotice, setWorkbenchNotice] = useState("先记录证词，再把事实拖进同一条推断。");
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [turns, setTurns] = useState(0);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+  const [musicStarted, setMusicStarted] = useState(false);
   const bgmRef = useRef<SuspenseBgm | null>(null);
   const speechRef = useRef<TestimonySpeech | null>(null);
 
-  const currentStory = LIAR_GAME.stories[storyIndex];
-  const testimonyVoice = CHARACTER_VOICE_PROFILES[currentStory.id as CharacterVoiceId];
-  const isSelfNarration = Boolean(currentStory.selfReflection);
-  const responseLine = currentStory.selfReflection ?? currentStory.followUp ?? "";
-  const responseTitle = isSelfNarration ? "齐夏内心推演" : "齐夏追问";
-  const responseSpeaker = isSelfNarration ? "齐夏（心声）" : "齐夏";
-  const responseAction = isSelfNarration ? "内心推演" : "追问";
-  const testimonyPlaying = speakingLine === "testimony";
-  const followUpPlaying = speakingLine === "followUp";
-  const phaseIndex = PHASES.findIndex((item) => item.id === phase);
-  const allStoriesHeard = heardStories.size === LIAR_GAME.stories.length;
-  const allEvidenceCollected = collectedEvidence.size === INVESTIGATION_ACTIONS.length;
-  const resolution = useMemo(
-    () => (phase === "result" ? resolveCanonicalVote(selectedTarget) : null),
-    [phase, selectedTarget],
+  const activeStory = LIAR_GAME.stories.find((story) => story.id === activeStoryId) ?? LIAR_GAME.stories[0];
+  const activeVoice = CHARACTER_VOICE_PROFILES[activeStory.id as CharacterVoiceId];
+  const activeEvidence = evidenceForStory(activeStory.id);
+  const completedCount = completedDeductions.size;
+  const allStoriesRecorded = recordedStories.size === LIAR_GAME.stories.length;
+  const voteUnlocked = completedDeductions.has("rule-boundary");
+  const activeFollowUp = activeStory.selfReflection ?? activeStory.followUp ?? "";
+  const activeFollowUpLabel = activeStory.selfReflection ? "齐夏内心推演" : "齐夏追问";
+  const activeFollowUpSpeaker = activeStory.selfReflection ? "齐夏（心声）" : "齐夏";
+  const activeFollowUpRequirements = FOLLOW_UP_REQUIREMENTS[activeStory.id] ?? [];
+  const followUpUnlocked = recordedStories.has(activeStory.id)
+    && activeFollowUpRequirements.every((id) => completedDeductions.has(id));
+  const isTestimonyPlaying = speakingLine === "testimony";
+  const isFollowUpPlaying = speakingLine === "followUp";
+  const visibleEvidence = useMemo(
+    () => LIAR_EVIDENCE.filter((evidence) => recordedEvidence.has(evidence.id)),
+    [recordedEvidence],
   );
+  const filteredEvidence = useMemo(
+    () => notebookFilter === "全部"
+      ? visibleEvidence
+      : visibleEvidence.filter((evidence) => evidence.kind === notebookFilter),
+    [notebookFilter, visibleEvidence],
+  );
+  const resolution = screen === "result" ? resolveCanonicalVote(selectedTarget) : null;
 
   useEffect(() => {
     const bgm = new SuspenseBgm();
     bgmRef.current = bgm;
-    return () => bgm.stop();
-  }, []);
-
-  useEffect(() => {
     const speech = new TestimonySpeech();
     speechRef.current = speech;
-    return () => speech.stop();
+    return () => {
+      bgm.stop();
+      speech.stop();
+    };
   }, []);
 
   const startMusic = () => {
     if (!musicEnabled) return;
-    void bgmRef.current?.start().then(setMusicStarted);
-  };
-
-  const activateMusic = () => {
-    setMusicEnabled(true);
-    void bgmRef.current?.start().then(setMusicStarted);
+    void bgmRef.current?.start().then((started) => setMusicStarted(Boolean(started)));
   };
 
   const toggleMusic = () => {
@@ -126,30 +116,20 @@ export default function Home() {
       return;
     }
 
-    activateMusic();
+    setMusicEnabled(true);
+    void bgmRef.current?.start().then((started) => setMusicStarted(Boolean(started)));
   };
 
-  const advanceTo = (nextPhase: LiarGamePhase) => {
-    startMusic();
-    setPhase(nextPhase);
-  };
-
-  const openStory = (index: number) => {
-    startMusic();
+  const openStory = (storyId: string) => {
     speechRef.current?.stop();
     bgmRef.current?.setDucked(false);
-    setStoryIndex(index);
-    setStoryTake((current) => current + 1);
-    setStoryQuestionOpen(false);
     setSpeakingLine(null);
     setVoiceError(null);
+    setActiveStoryId(storyId);
+    startMusic();
   };
 
-  const recordCurrentStory = () => {
-    setHeardStories((current) => new Set([...current, currentStory.id]));
-  };
-
-  const toggleCurrentSpeech = (kind: VoiceLineKind) => {
+  const speak = (kind: VoiceLineKind) => {
     if (speakingLine === kind) {
       speechRef.current?.stop();
       bgmRef.current?.setDucked(false);
@@ -157,12 +137,12 @@ export default function Home() {
       return;
     }
 
-    startMusic();
-    bgmRef.current?.setDucked(true);
     setVoiceError(null);
     setSpeakingLine(kind);
+    startMusic();
+    bgmRef.current?.setDucked(true);
     void speechRef.current?.speak(
-      currentStory.id as CharacterVoiceId,
+      activeStory.id as CharacterVoiceId,
       kind,
       () => undefined,
       () => {
@@ -172,404 +152,337 @@ export default function Home() {
       () => {
         bgmRef.current?.setDucked(false);
         setSpeakingLine(null);
-        setVoiceError("固定语音文件暂时无法播放。");
+        setVoiceError("该段固定语音暂时无法播放。请检查网络后重试；不会临时替换为其他音色。");
       },
     );
   };
 
+  const recordActiveStory = () => {
+    if (recordedStories.has(activeStory.id)) return;
+    setRecordedStories((current) => new Set([...current, activeStory.id]));
+    setRecordedEvidence((current) => new Set([
+      ...current,
+      ...activeEvidence.map((evidence) => evidence.id),
+    ]));
+    setTurns((current) => current + 1);
+    setWorkbenchNotice(`已收录 ${activeStory.name} 的原文锚点。现在可以在齐夏手账中选择事实。`);
+  };
+
   const askFollowUp = () => {
-    setStoryQuestionOpen(true);
-    toggleCurrentSpeech("followUp");
+    if (!followUpUnlocked || !activeFollowUp) return;
+    if (!askedFollowUps.has(activeStory.id)) {
+      setAskedFollowUps((current) => new Set([...current, activeStory.id]));
+      setTurns((current) => current + 1);
+      setWorkbenchNotice(`${activeFollowUpLabel}已写入调查记录。`);
+    }
+    speak("followUp");
   };
 
-  const collectEvidence = (id: string) => {
-    setCollectedEvidence((current) => new Set([...current, id]));
+  const toggleEvidenceSelection = (evidenceId: string) => {
+    setSelectedEvidenceIds((current) => {
+      const next = new Set(current);
+      if (next.has(evidenceId)) next.delete(evidenceId);
+      else next.add(evidenceId);
+      return next;
+    });
   };
 
-  const resetGame = () => {
-    setPhase("lobby");
-    setIdentityRevealed(false);
-    setStoryIndex(0);
-    setStoryTake(0);
-    setStoryQuestionOpen(false);
+  const buildDeduction = () => {
+    const candidate = LIAR_DEDUCTIONS.find((deduction) => (
+      !completedDeductions.has(deduction.id)
+      && deductionIsSupported(deduction, recordedEvidence, completedDeductions)
+      && deduction.requiredEvidence.every((evidenceId) => selectedEvidenceIds.has(evidenceId))
+    ));
+
+    if (!candidate) {
+      const readyDeduction = LIAR_DEDUCTIONS.find((deduction) => (
+        !completedDeductions.has(deduction.id)
+        && deductionIsSupported(deduction, recordedEvidence, completedDeductions)
+      ));
+      setWorkbenchNotice(
+        readyDeduction
+          ? `已有可闭合的推断：${readyDeduction.title}。请从手账中选中所有相关事实。`
+          : "没有可闭合的推断。继续调查，或检查尚未记录的证词。",
+      );
+      return;
+    }
+
+    setCompletedDeductions((current) => new Set([...current, candidate.id]));
+    setSelectedEvidenceIds(new Set());
+    setTurns((current) => current + 1);
+    setWorkbenchNotice(candidate.result);
+  };
+
+  const beginInvestigation = () => {
+    setScreen("investigation");
+    setMusicEnabled(true);
+    void bgmRef.current?.start().then((started) => setMusicStarted(Boolean(started)));
+  };
+
+  const restart = () => {
     speechRef.current?.stop();
     bgmRef.current?.setDucked(false);
+    setScreen("entry");
+    setActiveStoryId("tiantian");
+    setRecordedStories(new Set());
+    setRecordedEvidence(new Set(INITIAL_EVIDENCE));
+    setSelectedEvidenceIds(new Set());
+    setCompletedDeductions(new Set());
+    setAskedFollowUps(new Set());
     setSpeakingLine(null);
     setVoiceError(null);
-    setHeardStories(new Set());
-    setCollectedEvidence(new Set());
-    setDeductionRevealed(false);
+    setNotebookFilter("全部");
+    setWorkbenchNotice("先记录证词，再把事实拖进同一条推断。");
     setSelectedTarget(null);
+    setTurns(0);
   };
 
+  if (screen === "entry") {
+    return (
+      <main className="liar-casebook liar-casebook--entry">
+        <section className="case-entry" aria-label="说谎者首局入口">
+          <div className="case-entry__image" aria-hidden="true" />
+          <div className="case-entry__veil" aria-hidden="true" />
+          <article className="case-entry__copy">
+            <p className="case-kicker">DAY 01 / INTERVIEW ROOM</p>
+            <span className="case-entry__chapter">首场游戏</span>
+            <h1>说谎者</h1>
+            <p className="case-entry__lead">不是翻页剧情。你以齐夏的视角自由访问九名叙述者，将原文事实写进手账，再亲手建立矛盾与结论。</p>
+            <dl className="case-entry__facts">
+              <div><dt>场地</dt><dd>方格面试房 · {chamberVolume()} 立方米</dd></div>
+              <div><dt>规则</dt><dd>九人讲述；唯一说谎者必须被全部投中。</dd></div>
+              <div><dt>胜利条件</dt><dd>用已记录的事实，把规则写回正确的讲述者范围。</dd></div>
+            </dl>
+            <div className="case-entry__actions">
+              <button className="case-button case-button--primary" onClick={beginInvestigation}>进入调查台</button>
+              <button className="case-button case-button--quiet" onClick={toggleMusic}>
+                {musicStarted ? "关闭声场" : "试听紧迫声场"}
+              </button>
+            </div>
+            <p className="case-entry__note">立绘与语音均为固定角色资产；每一段追问均由齐夏的固定男声音色播放。</p>
+          </article>
+        </section>
+      </main>
+    );
+  }
+
+  if (screen === "vote") {
+    return (
+      <main className="liar-casebook">
+        <header className="case-topbar">
+          <a className="case-brand" href="#vote-table"><span>终</span><div><small>终焉之地 / 调查记录</small><strong>第一日 · 说谎者</strong></div></a>
+          <div className="case-topbar__tools"><span>座钟 {roomClock(turns)}</span><button onClick={toggleMusic}>{musicStarted ? "声场 ON" : "启动声场"}</button></div>
+        </header>
+        <section className="vote-desk" id="vote-table">
+          <p className="case-kicker">FINAL SUBMISSION / ONE NAME</p>
+          <h1>在白纸上写下一个名字</h1>
+          <p>你已完成“规则边界”推断。系统不会替你投票；错误的一票同样会进入结算。</p>
+          <div className="vote-desk__evidence">
+            <span>已闭合推断</span>
+            {LIAR_DEDUCTIONS.filter((deduction) => completedDeductions.has(deduction.id)).map((deduction) => <b key={deduction.id}>{deduction.title}</b>)}
+          </div>
+          <div className="vote-desk__targets">
+            {LIAR_GAME.suspects.map((suspect) => (
+              <button
+                className={selectedTarget === suspect.id ? "is-selected" : ""}
+                key={suspect.id}
+                onClick={() => setSelectedTarget(suspect.id)}
+              >
+                <span>{suspect.type === "host" ? "主持者" : "参与者"}</span>{suspect.name}
+              </button>
+            ))}
+          </div>
+          <div className="vote-desk__actions">
+            <button className="case-button case-button--quiet" onClick={() => setScreen("investigation")}>回到调查台</button>
+            <button className="case-button case-button--primary" disabled={!selectedTarget} onClick={() => setScreen("result")}>提交这一票</button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (screen === "result" && resolution) {
+    return (
+      <main className="liar-casebook">
+        <header className="case-topbar">
+          <a className="case-brand" href="#result"><span>终</span><div><small>终焉之地 / 调查记录</small><strong>第一日 · 说谎者</strong></div></a>
+          <div className="case-topbar__tools"><span>结算 {roomClock(turns)}</span></div>
+        </header>
+        <section className={`result-desk ${resolution.isCorrect ? "is-correct" : "is-wrong"}`} id="result">
+          <p className="case-kicker">ARCHIVE RESULT</p>
+          <h1>{resolution.isCorrect ? "规则被写回了正确的位置" : "这条推断没有闭合"}</h1>
+          <p className="result-desk__target">你写下的是：<strong>{resolution.target?.name ?? "无人"}</strong></p>
+          <p>{resolution.isCorrect
+            ? "你没有把表面矛盾当作唯一答案，而是把九人的共同谎言与人羊的叙述放回了规则的主语之中。"
+            : "表面上的案件矛盾只能制造嫌疑。回到手账，检查谁真正落在“讲故事的人”与“唯一说谎者”的规则边界上。"}</p>
+          <div className="result-desk__trail">
+            {LIAR_DEDUCTIONS.filter((deduction) => completedDeductions.has(deduction.id)).map((deduction) => (
+              <article key={deduction.id}><span>已验证</span><strong>{deduction.title}</strong><p>{deduction.result}</p></article>
+            ))}
+          </div>
+          <div className="result-desk__actions">
+            {!resolution.isCorrect && <button className="case-button case-button--quiet" onClick={() => setScreen("vote")}>改写投票</button>}
+            <button className="case-button case-button--primary" onClick={restart}>从头复盘</button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
-    <main className={`game-app ${phase === "lobby" ? "game-app--preamble" : "game-app--archive"}`}>
-      <header className="game-topbar">
-        <div className="game-brand">
-          <span className="game-brand-mark" aria-hidden="true">终</span>
-          <div>
-            <p>终焉之地 / 玩家手册</p>
-            <h1>第一日 · 说谎者</h1>
-          </div>
-        </div>
-        <div className="game-topbar__tools">
-          <button
-            aria-pressed={musicEnabled}
-            className={`music-control ${musicEnabled ? "is-enabled" : ""}`}
-            onClick={toggleMusic}
-          >
-            <i aria-hidden="true" />
-            <span>BGM</span>
-            <em>{musicEnabled ? (musicStarted ? "紧迫声场" : "点击剧情启动") : "静音"}</em>
-          </button>
-          <div className="game-clock" aria-label="游戏时间">
-            <span>座钟</span>
-            <strong>{PHASE_CLOCK[phase]}</strong>
-          </div>
+    <main className="liar-casebook">
+      <header className="case-topbar">
+        <a className="case-brand" href="#interview"><span>终</span><div><small>终焉之地 / 调查记录</small><strong>第一日 · 说谎者</strong></div></a>
+        <nav className="case-navigation" aria-label="调查台导航">
+          <a href="#people">人物</a>
+          <a href="#interview">证词</a>
+          <a href="#notebook">齐夏手账</a>
+          <a href="#deduction">推断</a>
+        </nav>
+        <div className="case-topbar__tools">
+          <span>座钟 <strong>{roomClock(turns)}</strong></span>
+          <button aria-pressed={musicStarted} onClick={toggleMusic}>{musicStarted ? "声场 ON" : "启动声场"}</button>
         </div>
       </header>
 
-      <nav className="game-site-nav" aria-label="游戏档案栏目">
-        {ARCHIVE_SECTIONS.map((section, index) => (
-          <span className={index === 0 ? "is-current" : ""} key={section}>{section}</span>
-        ))}
-        <small>档案编号 / DAY-01-LIAR</small>
-      </nav>
+      <section className="case-status" aria-label="调查状态">
+        <div><span>当前目标</span><strong>{voteUnlocked ? "规则边界已经闭合，可以提交投票。" : "记录九段叙述，并用手账自行闭合四条推断。"}</strong></div>
+        <dl>
+          <div><dt>证词</dt><dd>{recordedStories.size} / {LIAR_GAME.stories.length}</dd></div>
+          <div><dt>事实</dt><dd>{visibleEvidence.length}</dd></div>
+          <div><dt>推断</dt><dd>{completedCount} / {LIAR_DEDUCTIONS.length}</dd></div>
+        </dl>
+      </section>
 
-      <section className="game-frame" aria-label="说谎者单机桌游关卡">
-        <aside className="game-progress" aria-label="关卡阶段">
-          <p className="game-eyebrow">SOLO RPG FLOW</p>
-          <ol>
-            {PHASES.map((item, index) => (
-              <li className={index <= phaseIndex ? "is-reached" : ""} key={item.id}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {item.label}
-              </li>
-            ))}
-          </ol>
-
-          <div className="game-rule-card">
-            <p className="game-eyebrow">当前目标</p>
-            <strong>完成叙述与三次调查</strong>
-            <p>你以齐夏的视角读取规则、记录线索，并在最后落下唯一的一票。</p>
+      <section className="investigation-desk">
+        <aside className="people-panel case-panel" id="people">
+          <div className="panel-heading"><div><p className="case-kicker">SEAT MAP</p><h2>九位叙述者</h2></div><span>{recordedStories.size} 已入账</span></div>
+          <p className="people-panel__hint">点击任意座位调查。顺序由你决定，可随时回访。</p>
+          <div className="people-list">
+            {LIAR_GAME.stories.map((story, index) => {
+              const isActive = story.id === activeStory.id;
+              const isRecorded = recordedStories.has(story.id);
+              return (
+                <button
+                  aria-pressed={isActive}
+                  className={`${isActive ? "is-active" : ""} ${isRecorded ? "is-recorded" : ""}`}
+                  key={story.id}
+                  onClick={() => openStory(story.id)}
+                >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <b>{story.name}</b>
+                  <em>{isRecorded ? "已记录" : "未接触"}</em>
+                </button>
+              );
+            })}
+          </div>
+          <div className="people-panel__room">
+            <span>环境记录</span>
+            <strong>面试房 / 4 × 4 × 3 米</strong>
+            <p>{chamberVolume()} 立方米的密闭方格。空间本身也是一条必须被记录的事实。</p>
           </div>
         </aside>
 
-        <section className="game-table" aria-live="polite">
-          {phase === "lobby" && (
-            <section className="game-stage game-stage--entry">
-              <p className="game-kicker">序</p>
-              <h2>玩家身份</h2>
-              <div className="entry-copy">
-                <p>座钟停在十二点。你以齐夏的视角醒来，九个人被困在同一间方格面试房。</p>
-                <p>人羊宣布了第一场游戏：所有人必须叙述自己的经历，而唯一的说谎者将被投票处决。</p>
-                <p>这里没有自动结论。规则、人物叙述与矛盾都会被收进你的手账，最后一票由你亲手写下。</p>
-              </div>
-              <div className="entry-objective">
-                <span>任务</span>
-                <strong>找出唯一违反规则的人。</strong>
-                <p>进入面试房，听完九段叙述，完成调查，并锁定人羊。</p>
-              </div>
-              <div className="entry-actions">
-                <button className="game-primary" onClick={() => advanceTo("rules")}>进入游戏 ›</button>
-              </div>
-            </section>
-          )}
-
-          {phase === "rules" && (
-            <section className="game-stage game-stage--rules">
-              <p className="game-kicker">HOST: 人羊</p>
-              <h2>规则公布</h2>
-              <div className="host-showcase" aria-hidden="true">
-                <div className="host-showcase__portrait" />
-                <i className="host-showcase__glow" />
-              </div>
-              <div className="rule-list">
-                {LIAR_GAME.rules.map((rule, index) => (
-                  <article key={rule}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <p>{rule}</p>
-                  </article>
-                ))}
-              </div>
-              <div className="stage-footer">
-                <p>规则不是背景说明。它们会决定每一条叙述能否成立。</p>
-                <button className="game-primary" onClick={() => advanceTo("identity")}>抽取身份牌</button>
-              </div>
-            </section>
-          )}
-
-          {phase === "identity" && (
-            <section className="game-stage game-stage--identity">
-              <p className="game-kicker">PRIVATE INFORMATION / QI XIA</p>
-              <h2>翻开你的身份牌</h2>
-              <div className="identity-reveal-layout">
-                <div className="character-keyart character-keyart--qixia" aria-label="齐夏立绘">
-                  <span>齐夏 · 职业骗子</span>
-                </div>
-                <button
-                  aria-pressed={identityRevealed}
-                  className={`identity-card ${identityRevealed ? "is-revealed" : ""}`}
-                  onClick={() => setIdentityRevealed(true)}
-                >
-                  <span className="identity-card__back">女娲游戏</span>
-                  <span className="identity-card__front">
-                    <small>你的身份</small>
-                    <b>说谎者</b>
-                    <em>你必须说谎</em>
-                  </span>
+        <section className="interview-panel case-panel" id="interview" aria-live="polite">
+          <div className="interview-panel__header">
+            <div><p className="case-kicker">WITNESS {String(LIAR_GAME.stories.findIndex((story) => story.id === activeStory.id) + 1).padStart(2, "0")} / 09</p><h1>{activeStory.name}</h1><span>{activeStory.occupation}</span></div>
+            <div className={`record-seal ${recordedStories.has(activeStory.id) ? "is-stamped" : ""}`}>{recordedStories.has(activeStory.id) ? "已入齐夏手账" : "待记录"}</div>
+          </div>
+          <div className="interview-panel__scene" key={activeStory.id}>
+            <figure className="portrait-frame">
+              {/* The portrait is deliberately kept as a contained original asset; responsive cropping is forbidden here. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img alt={`${activeStory.name}固定角色立绘`} src={`/art/${activeVoice.portraitAsset}.png`} />
+              <figcaption><i />固定角色资产 · 不裁切头部与轮廓</figcaption>
+            </figure>
+            <article className="testimony-sheet">
+              <div className="testimony-sheet__meta"><span>当事人证词</span><em>{activeVoice.gender} · {activeVoice.timbre}</em></div>
+              <p className="testimony-sheet__speaker">{activeStory.name}</p>
+              <blockquote>“{activeStory.testimony}”</blockquote>
+              <div className="testimony-sheet__actions">
+                <button className={`case-button case-button--audio ${isTestimonyPlaying ? "is-playing" : ""}`} onClick={() => speak("testimony")}>
+                  <span>{isTestimonyPlaying ? "II" : "▶"}</span>{isTestimonyPlaying ? "停止固定证词音轨" : "播放固定证词音轨"}
+                </button>
+                <button className="case-button case-button--record" disabled={recordedStories.has(activeStory.id)} onClick={recordActiveStory}>
+                  {recordedStories.has(activeStory.id) ? "已记录本段事实" : "记录本段事实"}
                 </button>
               </div>
-              <p className="identity-note">
-                {identityRevealed
-                  ? "身份牌要求你说谎；但“说谎者”这个词是否只指身份牌，仍需由你在规则中判断。"
-                  : "身份牌只向持牌者公开。点击纸牌查看。"}
-              </p>
-              <div className="stage-footer">
-                <p>齐夏的第一条行动不是下结论，而是把每个人的叙述完整听完。</p>
-                <button
-                  className="game-primary"
-                  disabled={!identityRevealed}
-                  onClick={() => {
-                    openStory(0);
-                    advanceTo("stories");
-                  }}
-                >
-                  开始听取叙述
-                </button>
-              </div>
-            </section>
-          )}
+              {voiceError && <p className="audio-status is-error" role="status">{voiceError}</p>}
+              {isTestimonyPlaying && <p className="audio-status"><i />固定音轨播放中；背景声场已压低。</p>}
+            </article>
+          </div>
 
-          {phase === "stories" && (
-            <>
-              <section className="game-stage game-stage--testimony" aria-label="角色证词回合">
-                <div className="testimony-heading">
-                  <div>
-                    <p className="game-kicker">FIRST TRIAL / TESTIMONY {String(storyIndex + 1).padStart(2, "0")}</p>
-                    <h2>{currentStory.name}</h2>
-                    <span>{currentStory.occupation}</span>
-                  </div>
-                  <button
-                    className={`testimony-record ${heardStories.has(currentStory.id) ? "is-recorded" : ""}`}
-                    disabled={heardStories.has(currentStory.id)}
-                    onClick={recordCurrentStory}
-                  >
-                    {heardStories.has(currentStory.id) ? "矛盾已记录" : "记录矛盾"}
-                  </button>
-                </div>
-
-                <div className="testimony-layout">
-                  <article className="character-dossier">
-                    <div
-                      aria-label={`${currentStory.name}立绘`}
-                      className={`story-portrait story-portrait--${currentStory.id}`}
-                      key={`${currentStory.id}-${storyTake}`}
-                      role="img"
-                    />
-                    <div className="character-dossier__meta">
-                      <span>角色档案 / {String(storyIndex + 1).padStart(2, "0")}</span>
-                      <strong>{currentStory.name}</strong>
-                      <em>{currentStory.occupation}</em>
-                    </div>
-                  </article>
-
-                  <article className="testimony-card">
-                    <div className="testimony-card__topline">
-                      <span>{isSelfNarration ? "齐夏陈述 / 你的行动" : "当事人陈述"}</span>
-                      <em>{testimonyVoice.model === "speech-2.8" ? "海螺语音克隆 2.8 · 固定港普音色" : "豆包语音合成 2.0 · 固定角色音色"}</em>
-                    </div>
-                    <p className="testimony-card__speaker">{currentStory.name}：</p>
-                    <blockquote>“{currentStory.testimony}”</blockquote>
-                    <button
-                      aria-pressed={testimonyPlaying}
-                      className={`testimony-speak ${testimonyPlaying ? "is-speaking" : ""}`}
-                      onClick={() => toggleCurrentSpeech("testimony")}
-                    >
-                      <span aria-hidden="true">{testimonyPlaying ? "II" : "▶"}</span>
-                      {testimonyPlaying ? "停止本段证词" : "播放本段证词"}
-                    </button>
-                    {voiceError && <p className="voice-error" role="status">{voiceError}</p>}
-                  </article>
-                </div>
-
-                <div className="testimony-actions">
-                  <button
-                    aria-expanded={storyQuestionOpen}
-                    className="game-secondary"
-                    onClick={askFollowUp}
-                  >
-                    {followUpPlaying ? `停止${responseAction}语音` : isSelfNarration ? "回看齐夏的判断" : "追问细节"}
-                  </button>
-                  <p>先听证词，再将发现的矛盾写入手账。已记录 {heardStories.size} / {LIAR_GAME.stories.length}</p>
-                </div>
-
-                {storyQuestionOpen && (
-                  <aside className="testimony-question">
-                    <span>{responseTitle}</span>
-                    <p className="testimony-card__speaker">{responseSpeaker}：</p>
-                    <p>{responseLine}</p>
-                    <button
-                      aria-pressed={followUpPlaying}
-                      className={`testimony-speak testimony-speak--follow-up ${followUpPlaying ? "is-speaking" : ""}`}
-                      onClick={() => toggleCurrentSpeech("followUp")}
-                    >
-                      <span aria-hidden="true">{followUpPlaying ? "II" : "▶"}</span>
-                      {followUpPlaying ? `停止${responseAction}语音` : `播放${responseTitle}`}
-                    </button>
-                    <p className="testimony-question__clue">
-                      <span>{isSelfNarration ? "齐夏自证线索 / " : `齐夏手账 / ${currentStory.name} / `}</span>
-                      {currentStory.clue}
-                    </p>
-                  </aside>
-                )}
-
-                <div className={`story-clue ${heardStories.has(currentStory.id) ? "is-recorded" : ""}`}>
-                  <span>手账记录</span>
-                  <p>{heardStories.has(currentStory.id) ? currentStory.clue : "这段证词尚未入账。找到矛盾后点击“记录矛盾”。"}</p>
-                </div>
-
-                <div className="story-controls">
-                  <button className="game-secondary" disabled={storyIndex === 0} onClick={() => openStory(storyIndex - 1)}>上一位</button>
-                  {storyIndex < LIAR_GAME.stories.length - 1 ? (
-                    <button className="game-primary" onClick={() => openStory(storyIndex + 1)}>下一位叙述者</button>
-                  ) : (
-                    <button className="game-primary" disabled={!allStoriesHeard} onClick={() => advanceTo("deduction")}>进入调查回合</button>
-                  )}
-                </div>
-
-                <div className="story-seats" aria-label="叙述者列表">
-                  {LIAR_GAME.stories.map((story, index) => (
-                    <button
-                      aria-pressed={storyIndex === index}
-                      className={`${storyIndex === index ? "is-current" : ""} ${heardStories.has(story.id) ? "is-heard" : ""}`}
-                      key={story.id}
-                      onClick={() => openStory(index)}
-                    >
-                      <span>{String(index + 1).padStart(2, "0")}</span>{story.name}
-                    </button>
-                  ))}
-                </div>
-              </section>
-            </>
-          )}
-
-          {phase === "deduction" && (
-            <section className="game-stage game-stage--deduction">
-              <p className="game-kicker">RPG INVESTIGATION / 03 ACTIONS</p>
-              <h2>将线索落到棋盘上</h2>
-              <p className="game-lead investigation-lead">每次行动都会留下可以验证的记录。完成三次调查，才允许进入最终投票。</p>
-              <div className="investigation-board" aria-label="调查行动">
-                {INVESTIGATION_ACTIONS.map((action, index) => {
-                  const isCollected = collectedEvidence.has(action.id);
-                  return (
-                    <button
-                      aria-pressed={isCollected}
-                      className={isCollected ? "is-collected" : ""}
-                      key={action.id}
-                      onClick={() => collectEvidence(action.id)}
-                    >
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <strong>{action.label}</strong>
-                      <em>{action.short}</em>
-                      <p>{isCollected ? action.result : action.description}</p>
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="deduction-grid">
-                <article className={collectedEvidence.has("grid") ? "is-revealed" : ""}>
-                  <span>行动 01</span>
-                  <h3>密室与氧气</h3>
-                  <p>{collectedEvidence.has("grid") ? `房间体积只有 ${chamberVolume()} 立方米；时间、人数与空气的逻辑无法共存。` : "完成“踏查方格”后解锁。"}</p>
+          <section className="evidence-strip" aria-label="本段可记录事实">
+            <div><p className="case-kicker">FACTS FROM THIS TESTIMONY</p><h2>本段事实</h2></div>
+            <div className="evidence-strip__cards">
+              {activeEvidence.map((evidence) => (
+                <article className={recordedEvidence.has(evidence.id) ? "is-unlocked" : ""} key={evidence.id}>
+                  <span>{evidence.kind}</span><strong>{evidence.label}</strong><p>{recordedEvidence.has(evidence.id) ? evidence.text : "记录证词后解锁"}</p>
                 </article>
-                <article className={collectedEvidence.has("cards") ? "is-revealed" : ""}>
-                  <span>行动 02</span>
-                  <h3>九张身份牌</h3>
-                  <p>{collectedEvidence.has("cards") ? "所有人都说了谎，但其中只有一段叙述违反了规则本身。" : "完成“比对身份牌”后解锁。"}</p>
-                </article>
-                <article className={deductionRevealed ? "is-revealed" : ""}>
-                  <span>{deductionRevealed ? "已推演" : "待推演"}</span>
-                  <h3>唯一说谎者</h3>
-                  <p>{deductionRevealed ? "人羊将自己排除在讲述者之外；这正是规则允许被九票锁定的唯一谎言。" : "完成三次行动后，提交最终推演。"}</p>
-                  {!deductionRevealed && <button className="game-secondary" disabled={!allEvidenceCollected} onClick={() => setDeductionRevealed(true)}>提交推演</button>}
-                </article>
-              </div>
-              <div className="stage-footer">
-                <p>{deductionRevealed ? "推演成立：现在由你亲手写下最终一票。" : `已完成 ${collectedEvidence.size} / ${INVESTIGATION_ACTIONS.length} 次调查行动。`}</p>
-                <button className="game-primary" disabled={!deductionRevealed} onClick={() => advanceTo("vote")}>拿起投票纸</button>
-              </div>
-            </section>
-          )}
+              ))}
+            </div>
+          </section>
 
-          {phase === "vote" && (
-            <section className="game-stage game-stage--vote">
-              <p className="game-kicker">FINAL DECISION / ONE BALLOT</p>
-              <h2>在纸上写下一个名字。</h2>
-              <p className="game-lead">将所有线索还原到规则的边界：只有人羊将自己排除在叙述者之外。现在由你落下这一票。</p>
-              <div className="suspect-grid">
-                {LIAR_GAME.suspects.map((suspect) => (
-                  <button
-                    aria-pressed={selectedTarget === suspect.id}
-                    className={selectedTarget === suspect.id ? "is-selected" : ""}
-                    key={suspect.id}
-                    onClick={() => setSelectedTarget(suspect.id)}
-                  >
-                    <span>{suspect.type === "host" ? "主持者" : "参与者"}</span>
-                    {suspect.name}
-                  </button>
-                ))}
-              </div>
-              <div className="stage-footer">
-                <p>{selectedTarget ? `你的投票：${LIAR_GAME.suspects.find((suspect) => suspect.id === selectedTarget)?.name}` : "尚未落笔。"}</p>
-                <button className="game-danger" disabled={!selectedTarget} onClick={() => advanceTo("result")}>确认投票</button>
-              </div>
-            </section>
-          )}
-
-          {phase === "result" && resolution && (
-            <section className={`game-stage game-stage--result ${resolution.isCorrect ? "is-victory" : "is-failure"}`}>
-              <p className="game-kicker">CHAPTER RESULT / {resolution.isCorrect ? "CLEAR" : "FAILED"}</p>
-              <h2>{resolution.isCorrect ? "九票一致：人羊" : `投票偏差：${resolution.target?.name ?? "未知"}`}</h2>
-              <p className="result-copy">
-                {resolution.isCorrect
-                  ? "九张身份牌全部翻开后，九人均为“说谎者”。唯一能被规则证明的谎言来自人羊将自己排除在讲述者之外。面试房第一局结束。"
-                  : "规则没有留下容错。只要没有锁定唯一的说谎者，面试房就会回到座钟指向十二点的时刻。"}
-              </p>
-              <div className="result-record">
-                <span>你的投票</span><strong>{resolution.target?.name}</strong>
-                <span>正确目标</span><strong>{LIAR_GAME.suspects.find((suspect) => suspect.id === CANONICAL_LIAR_TARGET)?.name}</strong>
-              </div>
-              <button className="game-primary" onClick={resetGame}>重开本局</button>
-            </section>
-          )}
+          <section className={`follow-up-panel ${followUpUnlocked ? "is-unlocked" : ""}`}>
+            <div><p className="case-kicker">QI XIA / CONDITIONAL QUESTION</p><h2>{activeFollowUpLabel}</h2><span>{followUpUnlocked ? "已满足发问条件" : recordedStories.has(activeStory.id) ? "尚有前置推断未闭合" : "先记录当事人证词"}</span></div>
+            <div className="follow-up-panel__copy">
+              {followUpUnlocked ? <><p className="testimony-sheet__speaker">{activeFollowUpSpeaker}</p><blockquote>“{activeFollowUp}”</blockquote></> : <p>追问不会自动出现。它必须建立在已记录的原文事实与已完成的推断上。</p>}
+              <button className={`case-button case-button--audio ${isFollowUpPlaying ? "is-playing" : ""}`} disabled={!followUpUnlocked} onClick={askFollowUp}>
+                <span>{isFollowUpPlaying ? "II" : "▶"}</span>{isFollowUpPlaying ? "停止齐夏语音" : "播放齐夏追问"}
+              </button>
+            </div>
+          </section>
         </section>
 
-        <aside className="game-ledger" aria-label="本局记录">
-          <p className="game-eyebrow">玩家手账</p>
-          <h2>面试房</h2>
-          <dl>
-            <div><dt>视角角色</dt><dd>齐夏</dd></div>
-            <div><dt>主持者</dt><dd>{LIAR_GAME.host}</dd></div>
-            <div><dt>参与者</dt><dd>{LIAR_GAME.participantCount} 人</dd></div>
-            <div><dt>房间</dt><dd>{LIAR_GAME.chamber.lengthMeters} × {LIAR_GAME.chamber.widthMeters} × {LIAR_GAME.chamber.heightMeters} m</dd></div>
-          </dl>
-
-          <div className="ledger-section">
-            <p className="game-eyebrow">叙述记录</p>
-            <strong>{heardStories.size} / {LIAR_GAME.stories.length}</strong>
-            <div className="ledger-dots" aria-label="叙述收听进度">
-              {LIAR_GAME.stories.map((story) => <i className={heardStories.has(story.id) ? "is-heard" : ""} key={story.id} />)}
-            </div>
+        <aside className="notebook-panel case-panel" id="notebook">
+          <div className="panel-heading"><div><p className="case-kicker">QI XIA&apos;S NOTEBOOK</p><h2>齐夏手账</h2></div><span>{selectedEvidenceIds.size} 枚已选</span></div>
+          <p className="notebook-panel__hint">点击事实卡加入当前推断。系统只检验链条是否闭合，不替你选择答案。</p>
+          <div className="notebook-filters" aria-label="手账筛选">
+            {NOTEBOOK_FILTERS.map((filter) => <button className={notebookFilter === filter ? "is-active" : ""} key={filter} onClick={() => setNotebookFilter(filter)}>{filter}</button>)}
           </div>
-
-          <div className="ledger-section">
-            <p className="game-eyebrow">调查行动</p>
-            <strong>{collectedEvidence.size} / {INVESTIGATION_ACTIONS.length}</strong>
-            <p>桌游规则负责边界，RPG 行动负责把边界变成你的判断。</p>
+          <div className="notebook-cards">
+            {filteredEvidence.map((evidence) => (
+              <button
+                aria-pressed={selectedEvidenceIds.has(evidence.id)}
+                className={selectedEvidenceIds.has(evidence.id) ? "is-selected" : ""}
+                key={evidence.id}
+                onClick={() => toggleEvidenceSelection(evidence.id)}
+              >
+                <span>{evidence.kind} / {evidence.storyId === "renyang" ? "人羊" : LIAR_GAME.stories.find((story) => story.id === evidence.storyId)?.name}</span>
+                <strong>{evidence.label}</strong>
+                <p>{evidence.text}</p>
+                <em>{evidence.source}</em>
+              </button>
+            ))}
           </div>
+          {!filteredEvidence.length && <p className="notebook-empty">这个分类还没有已记录的事实。</p>}
         </aside>
       </section>
+
+      <section className="deduction-desk case-panel" id="deduction">
+        <div className="deduction-desk__heading"><div><p className="case-kicker">REASONING BENCH / NO AUTO ANSWERS</p><h2>证据连线</h2><p>先从手账选择事实，再提交一条推断。只有已听到的证词可以成为凭据。</p></div><button className="case-button case-button--primary" onClick={buildDeduction}>建立当前连线</button></div>
+        <div className="deduction-desk__grid">
+          {LIAR_DEDUCTIONS.map((deduction) => {
+            const isComplete = completedDeductions.has(deduction.id);
+            const isSupported = deductionIsSupported(deduction, recordedEvidence, completedDeductions);
+            return (
+              <article className={`${isComplete ? "is-complete" : ""} ${isSupported ? "is-ready" : ""}`} key={deduction.id}>
+                <span>{isComplete ? "已闭合" : isSupported ? "凭据已齐" : "线索不足"}</span>
+                <h3>{deduction.title}</h3>
+                <p>{deduction.description}</p>
+                <footer>{isComplete ? deduction.result : `需要 ${deduction.requiredEvidence.length} 枚原文事实${deduction.requiresDeductions?.length ? "，以及前置推断" : ""}`}</footer>
+              </article>
+            );
+          })}
+        </div>
+        <div className="deduction-desk__notice"><i />{workbenchNotice}</div>
+        <div className="deduction-desk__footer">
+          <span>{allStoriesRecorded ? "九段证词已完整记录。" : `还有 ${LIAR_GAME.stories.length - recordedStories.size} 段证词未记录。`}</span>
+          <button className="case-button case-button--primary" disabled={!voteUnlocked} onClick={() => setScreen("vote")}>{voteUnlocked ? "前往投票台" : "完成规则边界后解锁投票"}</button>
+        </div>
+      </section>
+
+      <footer className="case-footer">原文优先 · 固定角色立绘 · 静态语音资产 · 单机调查竖切</footer>
     </main>
   );
 }

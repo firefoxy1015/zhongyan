@@ -3,8 +3,12 @@ import test from "node:test";
 
 import {
   CANONICAL_LIAR_TARGET,
+  LIAR_DEDUCTIONS,
+  LIAR_EVIDENCE,
   LIAR_GAME,
   chamberVolume,
+  deductionIsSupported,
+  evidenceForStory,
   resolveCanonicalVote,
 } from "../app/lib/liar-game.ts";
 import { CHARACTER_VOICE_PROFILES, FOLLOW_UP_SPEAKER_ID } from "../app/lib/testimony-speech.ts";
@@ -85,4 +89,31 @@ test("ships every fixed line as a pre-rendered audio asset", () => {
   for (const story of LIAR_GAME.stories) {
     assert.equal(VOICE_ASSET_SPEAKERS[`${story.id}:followUp`], "qixia");
   }
+});
+
+test("keeps investigation facts gated behind their source testimony", () => {
+  const initial = LIAR_EVIDENCE.filter((evidence) => evidence.availableAtStart);
+  assert.deepEqual(initial.map((evidence) => evidence.id).sort(), ["host-story", "rule-exclusive-liar"]);
+  assert.deepEqual(evidenceForStory("qiao").map((evidence) => evidence.id).sort(), ["qiao-money", "qiao-terminal"]);
+
+  for (const story of LIAR_GAME.stories) {
+    assert.ok(evidenceForStory(story.id).length > 0, `${story.name} must unlock at least one fact card`);
+  }
+});
+
+test("requires player-recorded evidence before a deduction can be closed", () => {
+  const moneyChain = LIAR_DEDUCTIONS.find((deduction) => deduction.id === "money-chain");
+  const ruleBoundary = LIAR_DEDUCTIONS.find((deduction) => deduction.id === "rule-boundary");
+  assert.ok(moneyChain);
+  assert.ok(ruleBoundary);
+
+  const initialEvidence = new Set(["rule-exclusive-liar", "host-story"]);
+  assert.equal(deductionIsSupported(moneyChain, initialEvidence, new Set()), false);
+
+  const moneyEvidence = new Set([...initialEvidence, ...moneyChain.requiredEvidence]);
+  assert.equal(deductionIsSupported(moneyChain, moneyEvidence, new Set()), true);
+  assert.equal(deductionIsSupported(ruleBoundary, moneyEvidence, new Set()), false);
+
+  const fullEvidence = new Set(LIAR_EVIDENCE.map((evidence) => evidence.id));
+  assert.equal(deductionIsSupported(ruleBoundary, fullEvidence, new Set(["survival-wording"])), true);
 });
