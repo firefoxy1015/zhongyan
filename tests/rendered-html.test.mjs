@@ -22,10 +22,10 @@ test("server-renders the solo liar investigation entry", async () => {
   const html = await response.text();
   assert.match(html, /<title>十日终焉：单机剧情 RPG<\/title>/i);
   assert.match(html, /说谎者/);
-  assert.match(html, /DAY 01\s*\/\s*INTERVIEW ROOM/);
-  assert.match(html, /自由访问九名叙述者/);
-  assert.match(html, /进入调查台/);
-  assert.match(html, /固定角色资产/);
+  assert.match(html, /女娲游戏\s*\/\s*第一场/);
+  assert.match(html, /九个人依次讲述最后发生的事/);
+  assert.match(html, /翻开身份牌/);
+  assert.match(html, /有且只有一个说谎者/);
   assert.doesNotMatch(html, /创建\s*\/\s*加入真人房/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Building your site/i);
 });

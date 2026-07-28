@@ -8,7 +8,7 @@ export const VOICE_ASSET_URLS: Readonly<Partial<Record<VoiceAssetKey, string>>> 
   "tiantian:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175519_18c53132528d14ea067e.mp3",
   "tiantian:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175532_18c531354d78ea356e9b.mp3",
   "qiao:testimony": "https://cos.lingkeai.vip/uploads/2026.07/26/20260726080020_18c5ade38e088ab014f8.mp3",
-  "qiao:followUp": "https://cos.lingkeai.vip/uploads/2026.07/26/20260726080033_18c5ade6b71c8a6a0838.mp3",
+  "qiao:followUp": "https://cos.lingkeai.vip/uploads/2026.07/28/20260728155528_18c664fa4e557d39a276.mp3",
   "xiao:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175609_18c5313de461781e240c.mp3",
   "xiao:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175619_18c5314042ef4fbd4d83.mp3",
   "zhao:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175631_18c531430a749f072f5e.mp3",
@@ -16,13 +16,13 @@ export const VOICE_ASSET_URLS: Readonly<Partial<Record<VoiceAssetKey, string>>> 
   "han:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175703_18c5314a788865ec063c.mp3",
   "han:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175715_18c5314d5a5ef49d2f26.mp3",
   "zhang:testimony": "https://cos.lingkeai.vip/uploads/2026.07/26/20260726080047_18c5ade9eaab215f49ec.mp3",
-  "zhang:followUp": "https://cos.lingkeai.vip/uploads/2026.07/26/20260726080059_18c5adecb2b424763c84.mp3",
+  "zhang:followUp": "https://cos.lingkeai.vip/uploads/2026.07/28/20260728155543_18c664fdd1f1b3798c62.mp3",
   "li:testimony": "https://cos.lingkeai.vip/uploads/2026.07/26/20260726080110_18c5adef38d9386bd230.mp3",
-  "li:followUp": "https://cos.lingkeai.vip/uploads/2026.07/26/20260726080120_18c5adf1acfc1978d10c.mp3",
+  "li:followUp": "https://cos.lingkeai.vip/uploads/2026.07/28/20260728155555_18c66500a052a8b6d8b3.mp3",
   "lin:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175809_18c53159e1c15a597551.mp3",
   "lin:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175820_18c5315c6e2f7d99b6b5.mp3",
   "qixia:testimony": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175831_18c5315f0169c8fb6c48.mp3",
-  "qixia:followUp": "https://cos.lingkeai.vip/uploads/2026.07/24/20260724175843_18c53161b6942ade9e1c.mp3"
+  "qixia:followUp": "https://cos.lingkeai.vip/uploads/2026.07/28/20260728155607_18c665037875620eaca9.mp3"
 });
 
 export const VOICE_ASSET_MODELS: Readonly<Partial<Record<VoiceAssetKey, string>>> = Object.freeze({

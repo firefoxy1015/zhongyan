@@ -11,6 +11,12 @@ import {
   evidenceForStory,
   resolveCanonicalVote,
 } from "../app/lib/liar-game.ts";
+import {
+  CROSS_EXAMINATIONS,
+  PUZZLE_BY_ID,
+  ROOM_CLUES,
+  puzzleErrorCount,
+} from "../app/lib/deduction-game.ts";
 import { CHARACTER_VOICE_PROFILES, FOLLOW_UP_SPEAKER_ID } from "../app/lib/testimony-speech.ts";
 import { VOICE_ASSET_MODEL, VOICE_ASSET_MODELS, VOICE_ASSET_SPEAKERS, VOICE_ASSET_URLS } from "../app/lib/voice-assets.ts";
 
@@ -32,7 +38,7 @@ test("keeps Qixia's own turn distinct from questioning another participant", () 
   const qixia = LIAR_GAME.stories.find((story) => story.id === "qixia");
   assert.match(qixia?.testimony ?? "", /一百四十万/);
   assert.equal(qixia?.followUp, undefined);
-  assert.match(qixia?.selfReflection ?? "", /化名“李明”/);
+  assert.match(qixia?.selfReflection ?? "", /倒塌的门廊/);
   assert.match(qixia?.clue ?? "", /没有承认抽到“说谎者”/);
 });
 
@@ -41,7 +47,10 @@ test("surfaces the two-million fraud link in every canonical testimony", () => {
     const story = LIAR_GAME.stories.find((item) => item.id === id);
     assert.match(story?.testimony ?? "", /二百(?:万|万元)/);
   }
-  assert.match(LIAR_GAME.stories.find((story) => story.id === "qixia")?.selfReflection ?? "", /乔家劲、章晨泽、李尚武/);
+  assert.deepEqual(
+    PUZZLE_BY_ID["case-thread"].slots.slice(0, 4).map((slot) => slot.id),
+    ["qiao", "zhang", "li", "qixia"],
+  );
 });
 
 test("locks every first-trial character to one unique permanent voice", () => {
@@ -116,4 +125,38 @@ test("requires player-recorded evidence before a deduction can be closed", () =>
 
   const fullEvidence = new Set(LIAR_EVIDENCE.map((evidence) => evidence.id));
   assert.equal(deductionIsSupported(ruleBoundary, fullEvidence, new Set(["survival-wording"])), true);
+});
+
+test("builds the canonical room-air deduction instead of exposing a checklist answer", () => {
+  const notes = Object.fromEntries(ROOM_CLUES.map((clue) => [clue.id, clue.note]));
+  assert.match(notes["wall-grid"], /4 米、4 米、3 米/);
+  assert.match(notes["clock"], /13 小时/);
+  assert.match(notes["air-rate"], /0\.42/);
+
+  const puzzle = PUZZLE_BY_ID["air-ledger"];
+  const correct = Object.fromEntries(puzzle.slots.map((slot) => [slot.id, slot.answer]));
+  assert.equal(puzzleErrorCount(puzzle, correct), 0);
+  assert.equal(4 * 4 * 3, 48);
+  assert.equal(10 * 13 * 0.42, 54.6);
+  assert.equal(9 * 13 * 0.42, 49.14);
+});
+
+test("requires one story-specific cross-examination for every narrator", () => {
+  assert.deepEqual(
+    CROSS_EXAMINATIONS.map((challenge) => challenge.storyId),
+    LIAR_GAME.stories.map((story) => story.id),
+  );
+  assert.equal(new Set(CROSS_EXAMINATIONS.map((challenge) => challenge.answer)).size, LIAR_GAME.stories.length);
+  for (const challenge of CROSS_EXAMINATIONS) {
+    assert.ok(challenge.options.includes(challenge.answer));
+    assert.equal(challenge.options.length, 3);
+  }
+});
+
+test("keeps the two-million chain as a tempting but non-decisive side deduction", () => {
+  const puzzle = PUZZLE_BY_ID["case-thread"];
+  const correct = Object.fromEntries(puzzle.slots.map((slot) => [slot.id, slot.answer]));
+  assert.equal(puzzleErrorCount(puzzle, correct), 0);
+  assert.match(correct.timeline, /不能百分百定罪/);
+  assert.match(PUZZLE_BY_ID["rule-reversal"].success, /人羊/);
 });
