@@ -14,7 +14,11 @@ import {
   WEDGE_IDS,
   WEDGE_SLOT_IDS,
 } from "../../lib/chapter-two/canon.ts";
-import { ChapterTwoAudioDirector, type ChapterTwoBgmId } from "../../lib/chapter-two/audio.ts";
+import {
+  ChapterTwoAudioDirector,
+  nextChapterTwoAudioState,
+  type ChapterTwoBgmId,
+} from "../../lib/chapter-two/audio.ts";
 import { ANIMATION_SPECS, animationDuration } from "../../lib/chapter-two/animation.ts";
 import { assetFor, SCENE_BACKGROUND_ASSET } from "../../lib/chapter-two/assets.ts";
 import { chapterTwoReducer, initialChapterTwoState } from "../../lib/chapter-two/engine.ts";
@@ -212,10 +216,11 @@ export default function ChapterTwoGame() {
   }, [beginAudio]);
 
   const toggleMuted = () => {
-    const nextMuted = !muted;
-    setMuted(nextMuted);
-    if (!audioEnabled && !nextMuted) beginAudio();
-    audioRef.current?.setMuted(nextMuted);
+    const next = nextChapterTwoAudioState(audioEnabled, muted);
+    setAudioEnabled(next.audioEnabled);
+    setMuted(next.muted);
+    audioRef.current?.setMuted(next.muted);
+    if (!next.muted) void audioRef.current?.start(bgmForScene(state.scene));
   };
 
   const playVoiceLine = (lineId: ChapterTwoVoiceLineId) => {
@@ -294,7 +299,9 @@ export default function ChapterTwoGame() {
           {view.hud.questionLabel && <span>{view.hud.questionLabel}</span>}
           {view.hud.daoCount > 0 && <span>道 × {view.hud.daoCount}</span>}
           {lastAnimationId && state.status.kind !== "animating" && <button onClick={() => { beginAudio(); setReplayAnimationId(lastAnimationId); }}>重看动画</button>}
-          <button aria-pressed={!muted} onClick={toggleMuted}>{muted ? "开启声场" : audioEnabled ? "声场开启" : "开启声场"}</button>
+          <button aria-pressed={audioEnabled && !muted} onClick={toggleMuted}>
+            {muted || !audioEnabled ? "开启声场" : "声场开启"}
+          </button>
         </div>
       </header>
 

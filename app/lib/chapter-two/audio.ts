@@ -9,6 +9,11 @@ import type { ChapterTwoVoiceLineId } from "./voice-lines.ts";
 
 export type { ChapterTwoBgmId, ChapterTwoSfxId } from "./audio-assets.ts";
 
+export function nextChapterTwoAudioState(audioEnabled: boolean, muted: boolean) {
+  if (!audioEnabled) return { audioEnabled: true, muted: false } as const;
+  return { audioEnabled: true, muted: !muted } as const;
+}
+
 export class ChapterTwoAudioDirector {
   private bgm: HTMLAudioElement | null = null;
   private voice: HTMLAudioElement | null = null;

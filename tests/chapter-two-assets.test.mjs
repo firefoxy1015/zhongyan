@@ -10,6 +10,7 @@ import {
   CHAPTER_TWO_BGM_ASSETS,
   CHAPTER_TWO_SFX_ASSETS,
 } from "../app/lib/chapter-two/audio-assets.ts";
+import { nextChapterTwoAudioState } from "../app/lib/chapter-two/audio.ts";
 import {
   CHAPTER_TWO_VOICE_LINES,
   CHAPTER_TWO_VOICE_PROFILES,
@@ -126,4 +127,10 @@ test("renders all fourteen planned animation IDs and never calls runtime TTS", a
   assert.match(overlay, /unoptimized/);
   assert.match(runtimeSources[0], /unoptimized/);
   assert.doesNotMatch(runtimeSources.join("\n"), /\/api\/voice|api\.lk888|https?:\/\/.+\.mp3/);
+});
+
+test("first sound-control click starts audio instead of muting it", () => {
+  assert.deepEqual(nextChapterTwoAudioState(false, false), { audioEnabled: true, muted: false });
+  assert.deepEqual(nextChapterTwoAudioState(true, false), { audioEnabled: true, muted: true });
+  assert.deepEqual(nextChapterTwoAudioState(true, true), { audioEnabled: true, muted: false });
 });
