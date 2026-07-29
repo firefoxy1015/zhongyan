@@ -466,7 +466,7 @@ export default function Home() {
 
       <aside className="thought-ticker" aria-label="齐夏的即时思路">
         <p className="diegetic-kicker">齐夏 / 脑内记录</p>
-        <div>
+        <div aria-label="可滚动的脑内记录" role="log" tabIndex={0}>
           {history.slice(-3).map((line, index) => <p key={`${line}-${index}`}>{line}</p>)}
         </div>
       </aside>

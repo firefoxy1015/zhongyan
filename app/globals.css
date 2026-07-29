@@ -595,7 +595,26 @@
 
 .thought-ticker > div {
   max-height: 74px;
-  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 7px;
+  scrollbar-color: rgba(195, 160, 100, 0.58) rgba(195, 160, 100, 0.08);
+  scrollbar-width: thin;
+  touch-action: pan-y;
+}
+
+.thought-ticker > div::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thought-ticker > div::-webkit-scrollbar-track {
+  background: rgba(195, 160, 100, 0.08);
+}
+
+.thought-ticker > div::-webkit-scrollbar-thumb {
+  background: rgba(195, 160, 100, 0.58);
+  border-radius: 4px;
 }
 
 .thought-ticker > div p {
@@ -1573,7 +1592,7 @@
   }
 
   .thought-ticker > div {
-    max-height: 48px;
+    max-height: min(18svh, 88px);
   }
 
   .thought-ticker > div p {
