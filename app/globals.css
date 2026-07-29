@@ -1290,6 +1290,27 @@
   outline-offset: 2px;
 }
 
+.thought-slot.is-wrong select {
+  background:
+    linear-gradient(180deg, rgba(145, 35, 29, 0.3), rgba(79, 17, 15, 0.18)),
+    #0e0b09;
+  border-bottom-color: #e06450;
+  color: #f08b72;
+  outline: 1px solid rgba(224, 100, 80, 0.7);
+  outline-offset: 2px;
+}
+
+.thought-slot__error {
+  color: #e06b57;
+  display: block;
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  margin-top: 3px;
+  text-align: left;
+}
+
 .formula-line {
   align-items: center;
   border-bottom: 1px dashed rgba(195, 160, 100, 0.16);

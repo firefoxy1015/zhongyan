@@ -71,5 +71,6 @@ test("explains the investigation order and action clock before play", async () =
   assert.match(pageSource, /观察房间里的六个发光点/);
   assert.match(pageSource, /它<strong>不会随现实时间流逝<\/strong>/);
   assert.match(pageSource, /错误追问.*\+3分钟/);
-  assert.match(pageSource, /错误提交.*4 分钟/);
+  assert.match(pageSource, /检查草稿.*不扣时间并标错/);
+  assert.match(pageSource, /此项错误/);
 });

@@ -6,7 +6,6 @@ import {
   DEDUCTION_PUZZLES,
   PUZZLE_BY_ID,
   ROOM_CLUES,
-  puzzleErrorCount,
   type DeductionPuzzleId,
   type RoomClueId,
 } from "./lib/deduction-game";
@@ -23,6 +22,7 @@ type GameScreen = "identity" | "room" | "vote" | "ending";
 type Drawer = "witness" | "observation" | "notebook" | "rules" | null;
 type EndingReason = "success" | "wrong-vote" | "timeout" | null;
 type PuzzleAnswers = Record<DeductionPuzzleId, Record<string, string>>;
+type PuzzleErrors = Record<DeductionPuzzleId, Set<string>>;
 
 const ROOM_HOTSPOTS: readonly RoomClueId[] = [
   "host-account",
@@ -49,6 +49,15 @@ function cloneAnswers(): PuzzleAnswers {
   };
 }
 
+function clonePuzzleErrors(): PuzzleErrors {
+  return {
+    "case-thread": new Set(),
+    "air-ledger": new Set(),
+    "last-moment": new Set(),
+    "rule-reversal": new Set(),
+  };
+}
+
 export default function Home() {
   const [screen, setScreen] = useState<GameScreen>("identity");
   const [cardRevealed, setCardRevealed] = useState(false);
@@ -61,6 +70,7 @@ export default function Home() {
   const [wrongChallenges, setWrongChallenges] = useState<Set<string>>(new Set());
   const [solvedPuzzles, setSolvedPuzzles] = useState<Set<DeductionPuzzleId>>(new Set());
   const [answers, setAnswers] = useState<PuzzleAnswers>(cloneAnswers);
+  const [puzzleErrors, setPuzzleErrors] = useState<PuzzleErrors>(clonePuzzleErrors);
   const [activePuzzleId, setActivePuzzleId] = useState<DeductionPuzzleId>("case-thread");
   const [minutesUsed, setMinutesUsed] = useState(0);
   const [notice, setNotice] = useState("先看房间，不要急着相信任何人的故事。");
@@ -266,6 +276,12 @@ export default function Home() {
         [slotId]: value,
       },
     }));
+    setPuzzleErrors((current) => {
+      if (!current[puzzleId].has(slotId)) return current;
+      const nextErrors = new Set(current[puzzleId]);
+      nextErrors.delete(slotId);
+      return { ...current, [puzzleId]: nextErrors };
+    });
   };
 
   const validateActivePuzzle = () => {
@@ -273,17 +289,21 @@ export default function Home() {
       setNotice("纸上的条件还不够。回到房间继续观察。");
       return;
     }
-    const errors = puzzleErrorCount(activePuzzle, answers[activePuzzle.id]);
-    if (errors > 0) {
-      advanceTime(4);
-      const feedback = errors <= 2
-        ? "整条推演里只剩不超过两处不稳，但草稿不会告诉你是哪两处。"
-        : "这条推演无法闭合。你把诱饵当成了结论。";
+    const invalidSlotIds = activePuzzle.slots
+      .filter((slotItem) => answers[activePuzzle.id][slotItem.id] !== slotItem.answer)
+      .map((slotItem) => slotItem.id);
+    if (invalidSlotIds.length > 0) {
+      setPuzzleErrors((current) => ({
+        ...current,
+        [activePuzzle.id]: new Set(invalidSlotIds),
+      }));
+      const feedback = `${invalidSlotIds.length}项不正确，已经在草稿上标红。本次检查不扣时间。`;
       setNotice(feedback);
       appendHistory(`推演失败：${feedback}`);
       return;
     }
 
+    setPuzzleErrors((current) => ({ ...current, [activePuzzle.id]: new Set() }));
     setSolvedPuzzles((current) => new Set([...current, activePuzzle.id]));
     setNotice(activePuzzle.success);
     appendHistory(`推演成立：${activePuzzle.success}`);
@@ -310,6 +330,7 @@ export default function Home() {
     setWrongChallenges(new Set());
     setSolvedPuzzles(new Set());
     setAnswers(cloneAnswers());
+    setPuzzleErrors(clonePuzzleErrors());
     setActivePuzzleId("case-thread");
     setMinutesUsed(0);
     setNotice("先看房间，不要急着相信任何人的故事。");
@@ -322,10 +343,12 @@ export default function Home() {
 
   const slot = (puzzleId: DeductionPuzzleId, slotId: string, label: string) => {
     const puzzleSlot = PUZZLE_BY_ID[puzzleId].slots.find((item) => item.id === slotId)!;
+    const hasError = puzzleErrors[puzzleId].has(slotId);
     return (
-      <label className="thought-slot">
+      <label className={`thought-slot ${hasError ? "is-wrong" : ""}`}>
         <span className="sr-only">{label}</span>
         <select
+          aria-invalid={hasError}
           aria-label={label}
           value={answers[puzzleId][slotId] ?? ""}
           onChange={(event) => updateAnswer(puzzleId, slotId, event.target.value)}
@@ -333,6 +356,7 @@ export default function Home() {
           <option value="">选择词条</option>
           {puzzleSlot.options.map((option) => <option key={option} value={option}>{option}</option>)}
         </select>
+        {hasError && <span className="thought-slot__error">此项错误</span>}
       </label>
     );
   };
@@ -604,7 +628,7 @@ export default function Home() {
               <div><dt>记录线索或证词</dt><dd>+1分钟</dd></div>
               <div><dt>正确追问</dt><dd>+1分钟</dd></div>
               <div><dt>错误追问</dt><dd>+3分钟</dd></div>
-              <div><dt>错误提交草稿</dt><dd>+4分钟</dd></div>
+              <div><dt>检查草稿</dt><dd>不扣时间并标错</dd></div>
             </dl>
           </section>
 
@@ -707,9 +731,9 @@ export default function Home() {
                 )}
 
                 <footer className="notebook-page__footer">
-                  <p>{solvedPuzzles.has(activePuzzle.id) ? activePuzzle.success : "系统只检查整条推演，不会指出具体哪个词填错。"}</p>
+                  <p>{solvedPuzzles.has(activePuzzle.id) ? activePuzzle.success : "提交后，错误词条会逐项标红；修改后可以重新检查，不扣时间。"}</p>
                   <div className="notebook-submit">
-                    {!solvedPuzzles.has(activePuzzle.id) && <span>错误提交会使座钟前进 4 分钟</span>}
+                    {!solvedPuzzles.has(activePuzzle.id) && <span>检查草稿不扣时间，错误项会直接标红</span>}
                     <button className="blood-button" disabled={solvedPuzzles.has(activePuzzle.id)} onClick={validateActivePuzzle}>
                       {solvedPuzzles.has(activePuzzle.id) ? "这条已经成立" : "压下这条推演"}
                     </button>
