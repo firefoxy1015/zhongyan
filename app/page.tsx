@@ -33,8 +33,10 @@ const ROOM_HOTSPOTS: readonly RoomClueId[] = [
   "headless-body",
 ];
 
+const TOTAL_MINUTES = 60;
+
 function clockAt(minutes: number) {
-  const safeMinutes = Math.min(60, minutes);
+  const safeMinutes = Math.min(TOTAL_MINUTES, minutes);
   return `${String(12 + Math.floor(safeMinutes / 60)).padStart(2, "0")}:${String(safeMinutes % 60).padStart(2, "0")}`;
 }
 
@@ -81,13 +83,29 @@ export default function Home() {
   const isFollowUpPlaying = speakingLine === "followUp";
 
   const roomClueReady = useMemo(
-    () => ["host-account", "wall-grid", "clock", "occupants", "air-rate"].every((id) => observedClues.has(id as RoomClueId)),
+    () => ROOM_HOTSPOTS.every((id) => observedClues.has(id)),
     [observedClues],
   );
   const caseThreadReady = useMemo(
     () => ["qiao", "zhang", "li", "qixia"].every((id) => recordedStories.has(id)),
     [recordedStories],
   );
+  const observedRoomClueCount = ROOM_HOTSPOTS.filter((id) => observedClues.has(id)).length;
+  const remainingMinutes = Math.max(0, TOTAL_MINUTES - minutesUsed);
+  const currentStep = !roomClueReady
+    ? 1
+    : challengedStories.size < LIAR_GAME.stories.length
+      ? 2
+      : solvedPuzzles.size < DEDUCTION_PUZZLES.length
+        ? 3
+        : 4;
+  const currentObjective = currentStep === 1
+    ? `观察房间里的六个发光点（${observedRoomClueCount}/6）`
+    : currentStep === 2
+      ? `记录并追问九位讲述者（${challengedStories.size}/9）`
+      : currentStep === 3
+        ? `在草稿纸闭合四条推演（${solvedPuzzles.size}/4）`
+        : "拿起白纸，投给唯一能百分百确认的说谎者";
 
   useEffect(() => {
     const speech = new TestimonySpeech();
@@ -106,8 +124,8 @@ export default function Home() {
 
   const advanceTime = (amount: number) => {
     setMinutesUsed((current) => {
-      const next = Math.min(60, current + amount);
-      if (next >= 60) {
+      const next = Math.min(TOTAL_MINUTES, current + amount);
+      if (next >= TOTAL_MINUTES) {
         setEndingReason("timeout");
         setScreen("ending");
         setDrawer(null);
@@ -164,7 +182,8 @@ export default function Home() {
   const enterRoom = () => {
     setObservedClues(new Set(["identity"]));
     setScreen("room");
-    setNotice("身份牌必须扣住。先观察房间，再盘问桌边的人。");
+    setDrawer("rules");
+    setNotice("先阅读行动顺序和座钟规则，再开始观察房间。");
     appendHistory("齐夏把「说谎者」身份牌扣在桌面上。");
     startMusic();
   };
@@ -235,7 +254,7 @@ export default function Home() {
   const puzzleIsAvailable = (puzzleId: DeductionPuzzleId) => {
     if (puzzleId === "case-thread") return caseThreadReady;
     if (puzzleId === "air-ledger") return roomClueReady;
-    if (puzzleId === "last-moment") return challengedStories.size >= 3;
+    if (puzzleId === "last-moment") return challengedStories.size === LIAR_GAME.stories.length;
     return solvedPuzzles.has("air-ledger") && solvedPuzzles.has("last-moment");
   };
 
@@ -254,12 +273,6 @@ export default function Home() {
       setNotice("纸上的条件还不够。回到房间继续观察。");
       return;
     }
-    if (activePuzzle.id === "last-moment" && challengedStories.size < LIAR_GAME.stories.length) {
-      advanceTime(4);
-      setNotice("你还没资格替所有人下结论。至少还有人的最后一刻没有被击穿。");
-      return;
-    }
-
     const errors = puzzleErrorCount(activePuzzle, answers[activePuzzle.id]);
     if (errors > 0) {
       advanceTime(4);
@@ -333,6 +346,7 @@ export default function Home() {
           <p className="diegetic-kicker">女娲游戏 / 第一场</p>
           <h1>说谎者</h1>
           <p className="identity-table__rule">九个人依次讲述最后发生的事。所有讲故事的人中，有且只有一个说谎者。</p>
+          <p className="identity-time-rule">座钟不是现实倒计时，只会在记录、追问和错误推演时前进。</p>
           <button
             aria-label={cardRevealed ? "身份牌：说谎者" : "翻开身份牌"}
             className={`identity-card ${cardRevealed ? "is-revealed" : ""}`}
@@ -413,8 +427,16 @@ export default function Home() {
     <main className="deduction-game room-game">
       <header className="diegetic-hud">
         <div><span>女娲游戏</span><strong>说谎者</strong></div>
-        <p className="hud-notice">{notice}</p>
-        <time className={minutesUsed >= 45 ? "is-urgent" : ""}>{clockAt(minutesUsed)}</time>
+        <div className="hud-brief">
+          <strong>当前目标 · 第 {currentStep}/4 步</strong>
+          <span>{currentObjective}</span>
+          <small>{notice}</small>
+        </div>
+        <div className={`hud-clock ${minutesUsed >= 45 ? "is-urgent" : ""}`}>
+          <span>剩余行动时间</span>
+          <time>{remainingMinutes} 分钟</time>
+          <small>座钟 {clockAt(minutesUsed)}</small>
+        </div>
         <div className="hud-actions">
           <button onClick={toggleMusic}>{musicStarted ? "声场开" : "声场关"}</button>
           <button onClick={() => setDrawer("rules")}>规则</button>
@@ -490,7 +512,7 @@ export default function Home() {
                 {isTestimonyPlaying ? "■ 停止证词" : "▶ 播放固定证词"}
               </button>
               <button disabled={recordedStories.has(activeStory.id)} onClick={recordStory}>
-                {recordedStories.has(activeStory.id) ? "已写入草稿" : "记下这段话"}
+                {recordedStories.has(activeStory.id) ? "已写入草稿" : "记下这段话 · +1分钟"}
               </button>
             </div>
             {voiceError && <p className="voice-error">{voiceError}</p>}
@@ -498,7 +520,7 @@ export default function Home() {
             <div className={`cross-exam ${recordedStories.has(activeStory.id) ? "is-open" : ""}`}>
               <div>
                 <p className="diegetic-kicker">{activeStory.id === "qixia" ? "反问自己" : "选择追问焦点"}</p>
-                <span>错误的方向会让座钟继续走。系统不会标出答案。</span>
+                <span>追问每个人抵达前的“最后一刻”。正确 +1分钟，错误 +3分钟。</span>
               </div>
               <div className="cross-exam__options">
                 {activeChallenge.options.map((option) => {
@@ -539,7 +561,7 @@ export default function Home() {
             <h2>{activeClue.label}</h2>
             <p>{activeClue.observation}</p>
             <button className="blood-button" disabled={observedClues.has(activeClue.id)} onClick={recordObservation}>
-              {observedClues.has(activeClue.id) ? "已经记住" : "记在草稿边缘"}
+              {observedClues.has(activeClue.id) ? "已经记住" : "记在草稿边缘 · +1分钟"}
             </button>
           </article>
         </section>
@@ -548,12 +570,50 @@ export default function Home() {
       {drawer === "rules" && (
         <section className="game-drawer rules-drawer" aria-label="说谎者规则">
           <button aria-label="关闭规则" className="drawer-close" onClick={closeDrawer}>×</button>
-          <p className="diegetic-kicker">人羊公布的规则</p>
-          <h2>规则是绝对的</h2>
-          <ol>
+          <p className="diegetic-kicker">游戏说明 / 不剧透答案</p>
+          <h2>60分钟内完成四步</h2>
+          <p className="rules-lead">目标不是找“最可疑的人”，而是找出唯一能够用现有事实百分之百确认的说谎者。</p>
+
+          <ol className="rules-flow">
+            <li className={roomClueReady ? "is-done" : ""}>
+              <span>01</span>
+              <div><strong>观察房间</strong><p>点击六个发光点，每个观察窗口都要按“记在草稿边缘”。</p></div>
+              <em>{observedRoomClueCount}/6</em>
+            </li>
+            <li className={challengedStories.size === LIAR_GAME.stories.length ? "is-done" : ""}>
+              <span>02</span>
+              <div><strong>盘问九人</strong><p>点底部姓名，记录证词，再追问他们抵达前的“最后一刻”。</p></div>
+              <em>{challengedStories.size}/9</em>
+            </li>
+            <li className={solvedPuzzles.size === DEDUCTION_PUZZLES.length ? "is-done" : ""}>
+              <span>03</span>
+              <div><strong>闭合草稿</strong><p>打开右上角“草稿纸”，依次完成甲、乙、丙、丁四页。</p></div>
+              <em>{solvedPuzzles.size}/4</em>
+            </li>
+            <li className={voteUnlocked ? "is-ready" : ""}>
+              <span>04</span>
+              <div><strong>全员投票</strong><p>四页成立后，写下唯一能被百分之百确认的名字。</p></div>
+              <em>{voteUnlocked ? "可投票" : "未解锁"}</em>
+            </li>
+          </ol>
+
+          <section className="rules-clock-guide" aria-label="座钟计时方式">
+            <h3>座钟如何前进</h3>
+            <p>它<strong>不会随现实时间流逝</strong>，只按你的操作结算。走到 1:00 才会失败。</p>
+            <dl>
+              <div><dt>记录线索或证词</dt><dd>+1分钟</dd></div>
+              <div><dt>正确追问</dt><dd>+1分钟</dd></div>
+              <div><dt>错误追问</dt><dd>+3分钟</dd></div>
+              <div><dt>错误提交草稿</dt><dd>+4分钟</dd></div>
+            </dl>
+          </section>
+
+          <p className="diegetic-kicker rules-original-kicker">人羊公布的原始规则</p>
+          <ol className="official-rules">
             {LIAR_GAME.rules.map((rule) => <li key={rule}>{rule}</li>)}
           </ol>
           <div className="rules-card"><span>你的身份牌</span><strong>说谎者</strong><p>牌是真的。人羊的话未必都是真的。</p></div>
+          <button className="blood-button rules-start" onClick={closeDrawer}>明白，开始第1步</button>
         </section>
       )}
 
@@ -582,12 +642,12 @@ export default function Home() {
               <div className="folded-thought">
                 <span>墨迹还没有连起来。</span>
                 <p>{activePuzzle.id === "case-thread"
-                  ? "二百万不止出现了一次。先把相关的讲述听完整。"
+                  ? "先记录乔家劲、章晨泽、李尚武和齐夏四人的证词。"
                   : activePuzzle.id === "air-ledger"
-                    ? "房间里有答案。墙、钟、人、呼吸——缺一眼都不行。"
+                    ? "先观察房间里的六个发光点，并把每条观察记在草稿边缘。"
                     : activePuzzle.id === "last-moment"
-                      ? "不要只找故事之间的矛盾，去问他们最后发生了什么。"
-                      : "先证明眼前的现实和九个人的故事，再回头重读规则。"}</p>
+                      ? "先记录九人的证词，并分别完成一次正确追问。"
+                      : "先完成草稿乙“空气账”和草稿丙“最后一刻”。"}</p>
               </div>
             ) : (
               <>
@@ -648,9 +708,12 @@ export default function Home() {
 
                 <footer className="notebook-page__footer">
                   <p>{solvedPuzzles.has(activePuzzle.id) ? activePuzzle.success : "系统只检查整条推演，不会指出具体哪个词填错。"}</p>
-                  <button className="blood-button" disabled={solvedPuzzles.has(activePuzzle.id)} onClick={validateActivePuzzle}>
-                    {solvedPuzzles.has(activePuzzle.id) ? "这条已经成立" : "压下这条推演"}
-                  </button>
+                  <div className="notebook-submit">
+                    {!solvedPuzzles.has(activePuzzle.id) && <span>错误提交会使座钟前进 4 分钟</span>}
+                    <button className="blood-button" disabled={solvedPuzzles.has(activePuzzle.id)} onClick={validateActivePuzzle}>
+                      {solvedPuzzles.has(activePuzzle.id) ? "这条已经成立" : "压下这条推演"}
+                    </button>
+                  </div>
                 </footer>
               </>
             )}

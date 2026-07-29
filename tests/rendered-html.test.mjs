@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render(path = "/", env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }) {
@@ -62,4 +62,14 @@ test("ships the full first-trial visual set", async () => {
   ];
 
   await Promise.all(assets.map((asset) => access(new URL(`../public/art/${asset}`, import.meta.url))));
+});
+
+test("explains the investigation order and action clock before play", async () => {
+  const pageSource = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+
+  assert.match(pageSource, /60分钟内完成四步/);
+  assert.match(pageSource, /观察房间里的六个发光点/);
+  assert.match(pageSource, /它<strong>不会随现实时间流逝<\/strong>/);
+  assert.match(pageSource, /错误追问.*\+3分钟/);
+  assert.match(pageSource, /错误提交.*4 分钟/);
 });
