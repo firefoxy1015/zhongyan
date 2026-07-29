@@ -34,36 +34,36 @@ export const ROOM_CLUES: readonly RoomClue[] = [
     id: "wall-grid",
     label: "墙面与地板刻线",
     eyebrow: "ROOM GEOMETRY",
-    observation: "每格边长约一米。墙面是三乘四，地面与屋顶是四乘四。",
-    note: "房间长宽高约为 4 米、4 米、3 米。",
+    observation: "刻线间距几乎相同，每格边长约一米。墙面竖向三格、横向四格；地面相邻的两条边各有四格。",
+    note: "每格约一米；墙面竖三横四，地面相邻两边各四格。",
   },
   {
     id: "clock",
     label: "桌中央的座钟",
     eyebrow: "ELAPSED TIME",
-    observation: "游戏从十二点开始，指针正向一点逼近。连同沉睡，众人在密室中已接近十三小时。",
-    note: "密闭时间约 13 小时。",
+    observation: "人羊宣布游戏开始时是十二点。现在分针已经转过大半圈，时针正向一点逼近。",
+    note: "游戏从十二点开始，座钟正在逼近一点；还要结合人羊声称的沉睡时间。",
   },
   {
     id: "occupants",
     label: "桌边的人数",
     eyebrow: "HEAD COUNT",
-    observation: "九名参与者，加上人羊，共有十个仍在呼吸、说话的对象。",
-    note: "按十人计算；即使排除人羊，也仍有九人。",
+    observation: "沿桌边逐一数去，参与游戏的共有九人；人羊站在桌外，同样一直在呼吸和说话。",
+    note: "桌边有九名参与者；桌外还站着人羊。",
   },
   {
     id: "air-rate",
     label: "齐夏的常识",
     eyebrow: "MENTAL NOTE",
-    observation: "正常人每分钟约消耗 0.007 立方米空气，即每小时 0.42 立方米。",
-    note: "空气消耗率：0.42 立方米 / 人 / 小时。",
+    observation: "齐夏记得，正常人每分钟大约需要消耗 0.007 立方米空气。草稿要求的是每小时用量。",
+    note: "正常人每分钟约消耗 0.007 立方米空气；需要自行换算成每小时。",
   },
   {
     id: "headless-body",
     label: "桌边的无头尸体",
     eyebrow: "PHYSICAL IMPOSSIBILITY",
     observation: "人羊曾单手击碎人的头骨。这样的力量不属于正常人类。",
-    note: "人羊可能不是人；计算空气时应同时验证十人与九人两种情况。",
+    note: "人羊单手击碎过人的头骨；他是否属于正常人类需要单独验证。",
   },
 ] as const;
 
@@ -217,4 +217,3 @@ export const PUZZLE_BY_ID = Object.freeze(
 export function puzzleErrorCount(puzzle: DeductionPuzzle, answers: Readonly<Record<string, string>>) {
   return puzzle.slots.reduce((errors, slot) => errors + (answers[slot.id] === slot.answer ? 0 : 1), 0);
 }
-

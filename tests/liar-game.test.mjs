@@ -129,9 +129,14 @@ test("requires player-recorded evidence before a deduction can be closed", () =>
 
 test("builds the canonical room-air deduction instead of exposing a checklist answer", () => {
   const notes = Object.fromEntries(ROOM_CLUES.map((clue) => [clue.id, clue.note]));
-  assert.match(notes["wall-grid"], /4 米、4 米、3 米/);
-  assert.match(notes["clock"], /13 小时/);
-  assert.match(notes["air-rate"], /0\.42/);
+  assert.match(notes["wall-grid"], /竖三横四/);
+  assert.doesNotMatch(notes["wall-grid"], /长宽高|4 米、4 米、3 米/);
+  assert.match(notes["clock"], /十二点|一点/);
+  assert.doesNotMatch(notes["clock"], /13 小时/);
+  assert.match(notes["occupants"], /九名参与者.*人羊/);
+  assert.doesNotMatch(notes["occupants"], /十人|九人两种/);
+  assert.match(notes["air-rate"], /0\.007/);
+  assert.doesNotMatch(notes["air-rate"], /0\.42/);
 
   const puzzle = PUZZLE_BY_ID["air-ledger"];
   const correct = Object.fromEntries(puzzle.slots.map((slot) => [slot.id, slot.answer]));

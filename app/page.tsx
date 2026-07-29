@@ -700,7 +700,8 @@ export default function Home() {
                     </div>
                     <div className="formula-line">
                       <span>排除人羊</span>
-                      {slot("air-ledger", "withoutHost", "排除人羊后的人数")} × 13 × 0.42
+                      {slot("air-ledger", "withoutHost", "排除人羊后的人数")}
+                      × {answers["air-ledger"].hours || "?"} × {answers["air-ledger"].rate || "?"}
                       <strong>= {solvedPuzzles.has("air-ledger") ? "49.14 m³" : "?"}</strong>
                     </div>
                     <p>如果这些数字成立，为什么没有任何人缺氧？</p>
