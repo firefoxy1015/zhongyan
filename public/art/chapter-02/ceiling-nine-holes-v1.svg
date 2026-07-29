@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700">
+  <defs><radialGradient id="stone"><stop stop-color="#594631"/><stop offset="1" stop-color="#15100c"/></radialGradient><filter id="depth"><feDropShadow dx="0" dy="14" stdDeviation="10" flood-color="#000" flood-opacity=".9"/></filter></defs>
+  <rect width="900" height="700" fill="url(#stone)"/>
+  <g fill="#040404" stroke="#9a7142" stroke-width="8" filter="url(#depth)">
+    <rect x="160" y="100" width="150" height="100"/><rect x="375" y="100" width="150" height="100"/><rect x="590" y="100" width="150" height="100"/>
+    <rect x="160" y="300" width="150" height="100"/><rect x="375" y="300" width="150" height="100"/><rect x="590" y="300" width="150" height="100"/>
+    <rect x="160" y="500" width="150" height="100"/><rect x="375" y="500" width="150" height="100"/><rect x="590" y="500" width="150" height="100"/>
+  </g>
+</svg>

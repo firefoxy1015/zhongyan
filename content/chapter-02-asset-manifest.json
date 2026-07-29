@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "policy": "Official materials define direction only. All project assets are original companion art or deterministic source-text diagrams and are not official frames.",
+  "referenceFile": "content/official-visual-reference.json",
+  "characterLock": {
+    "returningCharacters": "chapter-one-locked-v2",
+    "renshe": "renshe-v1",
+    "renlong": "renlong-v1"
+  },
+  "assetsModule": "app/lib/chapter-two/assets.ts",
+  "requiredAssetIds": [
+    "interview-room-damaged",
+    "renyang-mask-inner",
+    "harpoon-wall-rig",
+    "hometown-map-board",
+    "table-wedges",
+    "bamboo-cone",
+    "harpoon-rain-fx",
+    "square-handle-board",
+    "ceiling-nine-holes",
+    "collapse-shaft",
+    "renshe",
+    "renlong",
+    "zodiac-corridor",
+    "dao-token",
+    "termination-plaza",
+    "termination-city"
+  ]
+}

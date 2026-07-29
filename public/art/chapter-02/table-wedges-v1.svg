@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#674225"/><stop offset="1" stop-color="#21130c"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="8" flood-opacity=".65"/></filter>
+    <path id="wedge" d="M368 263L315 76Q400 42 485 76L432 263Z"/>
+  </defs>
+  <rect width="800" height="800" fill="#0e0b09"/>
+  <g fill="url(#wood)" stroke="#ba8649" stroke-width="4" filter="url(#shadow)">
+    <use href="#wedge" transform="rotate(0 400 400)"/><use href="#wedge" transform="rotate(40 400 400)"/><use href="#wedge" transform="rotate(80 400 400)"/>
+    <use href="#wedge" transform="rotate(120 400 400)"/><use href="#wedge" transform="rotate(160 400 400)"/><use href="#wedge" transform="rotate(200 400 400)"/>
+    <use href="#wedge" transform="rotate(240 400 400)"/><use href="#wedge" transform="rotate(280 400 400)"/><use href="#wedge" transform="rotate(320 400 400)"/>
+    <circle cx="400" cy="400" r="118"/>
+  </g>
+  <g fill="none" stroke="#d2a45f" stroke-width="7"><path d="M372 393q28-25 56 0v30h-56z"/></g>
+</svg>

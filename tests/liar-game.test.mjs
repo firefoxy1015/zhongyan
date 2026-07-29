@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -18,7 +21,15 @@ import {
   puzzleErrorCount,
 } from "../app/lib/deduction-game.ts";
 import { CHARACTER_VOICE_PROFILES, FOLLOW_UP_SPEAKER_ID } from "../app/lib/testimony-speech.ts";
-import { VOICE_ASSET_MODEL, VOICE_ASSET_MODELS, VOICE_ASSET_SPEAKERS, VOICE_ASSET_URLS } from "../app/lib/voice-assets.ts";
+import {
+  VOICE_ASSET_HASHES,
+  VOICE_ASSET_MODEL,
+  VOICE_ASSET_MODELS,
+  VOICE_ASSET_SPEAKERS,
+  VOICE_ASSET_URLS,
+} from "../app/lib/voice-assets.ts";
+
+const root = path.resolve(import.meta.dirname, "..");
 
 test("resolves the canonical liar vote", () => {
   assert.equal(CANONICAL_LIAR_TARGET, "renyang");
@@ -83,14 +94,17 @@ test("locks every first-trial character to one unique permanent voice", () => {
   );
 });
 
-test("ships every fixed line as a pre-rendered audio asset", () => {
+test("ships every fixed line as a pre-rendered local audio asset", async () => {
   const expectedKeys = LIAR_GAME.stories.flatMap((story) => [
     `${story.id}:testimony`,
     `${story.id}:followUp`,
   ]);
   assert.deepEqual(Object.keys(VOICE_ASSET_URLS).sort(), expectedKeys.sort());
-  for (const url of Object.values(VOICE_ASSET_URLS)) {
-    assert.match(url ?? "", /^https:\/\/.*\.mp3$/);
+  for (const [key, url] of Object.entries(VOICE_ASSET_URLS)) {
+    assert.match(url ?? "", /^\/audio\/chapter-01\/voice\/.+\.[a-f0-9]{12}\.mp3$/);
+    const file = path.join(root, "public", ...url.slice(1).split("/"));
+    const hash = createHash("sha256").update(await readFile(file)).digest("hex");
+    assert.equal(hash, VOICE_ASSET_HASHES[key]);
   }
   assert.equal(VOICE_ASSET_MODEL, "mixed-static");
   assert.equal(VOICE_ASSET_MODELS["qiao:testimony"], "speech-2.8");

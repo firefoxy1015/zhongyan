@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CROSS_EXAMINATIONS,
@@ -10,6 +11,7 @@ import {
   type RoomClueId,
 } from "./lib/deduction-game";
 import { LIAR_GAME, resolveCanonicalVote } from "./lib/liar-game";
+import { createFreshChapterTwoSave, markChapterOneComplete } from "./lib/chapter-two/save";
 import { SuspenseBgm } from "./lib/suspense-bgm";
 import {
   CHARACTER_VOICE_PROFILES,
@@ -56,6 +58,33 @@ function clonePuzzleErrors(): PuzzleErrors {
     "last-moment": new Set(),
     "rule-reversal": new Set(),
   };
+}
+
+function ChapterDebugPortal() {
+  const enterChapter = (chapter: 1 | 2) => {
+    if (typeof window === "undefined") return;
+    if (chapter === 1) {
+      window.location.assign("/");
+      return;
+    }
+    markChapterOneComplete(window.localStorage);
+    createFreshChapterTwoSave(window.localStorage);
+    window.location.assign("/chapter/2");
+  };
+
+  return (
+    <details className="chapter-debug-portal">
+      <summary>
+        <strong>测试人员调试入口</strong>
+        <span>普通用户请勿点击</span>
+      </summary>
+      <div>
+        <p>绕过正常章节门禁，仅用于逐章验收。不会显示谜底，也不会上传测试档。</p>
+        <button onClick={() => enterChapter(1)}>直接进入第一章</button>
+        <button onClick={() => enterChapter(2)}>直接进入第二章</button>
+      </div>
+    </details>
+  );
 }
 
 export default function Home() {
@@ -312,6 +341,9 @@ export default function Home() {
 
   const submitVote = () => {
     const resolution = resolveCanonicalVote(selectedTarget);
+    if (resolution.isCorrect && typeof window !== "undefined") {
+      markChapterOneComplete(window.localStorage);
+    }
     setEndingReason(resolution.isCorrect ? "success" : "wrong-vote");
     setScreen("ending");
   };
@@ -387,6 +419,7 @@ export default function Home() {
             <i />{musicStarted ? "紧迫声场已开启" : "点此开启紧迫声场"}
           </button>
         </section>
+        <ChapterDebugPortal />
       </main>
     );
   }
@@ -420,6 +453,7 @@ export default function Home() {
             <button className="blood-button" disabled={!selectedTarget} onClick={submitVote}>落笔</button>
           </div>
         </section>
+        <ChapterDebugPortal />
       </main>
     );
   }
@@ -442,8 +476,14 @@ export default function Home() {
               “在这个游戏中，唯一能从已知线索里百分之百确认的说谎者，只有一个。”
             </blockquote>
           )}
-          <button className="blood-button" onClick={restart}>{success ? "重新复盘" : "回到抽牌前"}</button>
+          {success ? (
+            <div className="ending-actions">
+              <Link className="blood-button" href="/chapter/2">进入第二章：四面杀机</Link>
+              <button className="ghost-button" onClick={restart}>重新复盘</button>
+            </div>
+          ) : <button className="blood-button" onClick={restart}>回到抽牌前</button>}
         </section>
+        <ChapterDebugPortal />
       </main>
     );
   }
@@ -752,6 +792,7 @@ export default function Home() {
           </footer>
         </section>
       )}
+      <ChapterDebugPortal />
     </main>
   );
 }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs><radialGradient id="gold" cx="38%" cy="32%"><stop stop-color="#fff0a8"/><stop offset=".36" stop-color="#d3a52d"/><stop offset="1" stop-color="#6c3f0c"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <rect width="640" height="640" fill="none"/>
+  <circle cx="320" cy="320" r="218" fill="#e8e2d4" stroke="#8f8065" stroke-width="18" filter="url(#glow)"/>
+  <circle cx="320" cy="320" r="158" fill="url(#gold)" stroke="#f3d36b" stroke-width="12"/>
+  <path d="M320 196c-62 0-112 50-112 112s50 112 112 112 112-50 112-112-50-112-112-112zm0 58a54 54 0 110 108 54 54 0 010-108z" fill="#fff4c0" opacity=".3"/>
+</svg>

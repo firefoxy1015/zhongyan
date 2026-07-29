@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs><linearGradient id="wood" x2="0" y2="1"><stop stop-color="#6f4a28"/><stop offset="1" stop-color="#1e120b"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="24" stdDeviation="18" flood-opacity=".75"/></filter></defs>
+  <rect width="800" height="800" fill="#0c0a08"/>
+  <rect x="140" y="140" width="520" height="520" rx="18" fill="url(#wood)" stroke="#be8e50" stroke-width="9" filter="url(#shadow)"/>
+  <path d="M300 350v-68q0-52 52-52h96q52 0 52 52v68" fill="none" stroke="#d3aa68" stroke-width="28"/>
+  <path d="M176 236h448M176 356h448M176 476h448M176 596h448" stroke="#2a180e" stroke-width="5" opacity=".75"/>
+</svg>

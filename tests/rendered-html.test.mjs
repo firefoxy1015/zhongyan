@@ -41,6 +41,28 @@ test("self-hosted solo entry renders without Cloudflare bindings", async () => {
   assert.equal(response.status, 200);
 });
 
+test("keeps a clearly warned chapter debug portal on the homepage", async () => {
+  const response = await render("/");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  const pageSource = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+
+  assert.match(html, /测试人员调试入口/);
+  assert.match(html, /普通用户请勿点击/);
+  assert.match(html, /直接进入第一章/);
+  assert.match(html, /直接进入第二章/);
+  assert.match(pageSource, /markChapterOneComplete\(window\.localStorage\)/);
+  assert.match(pageSource, /createFreshChapterTwoSave\(window\.localStorage\)/);
+  assert.doesNotMatch(html, /假如我的下一个问题是你会不会拉下拉杆/);
+});
+
+test("server-renders the second chapter entry before the local solo save is hydrated", async () => {
+  const response = await render("/chapter/2");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /正在读取单机档案/);
+});
+
 test("ships the full first-trial visual set", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   await access(new URL("../content/official-visual-reference.json", import.meta.url));

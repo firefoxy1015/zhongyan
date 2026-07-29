@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680">
+  <defs><linearGradient id="steel" x2="1"><stop stop-color="#2d3030"/><stop offset=".45" stop-color="#d0b47e"/><stop offset="1" stop-color="#32302b"/><animate attributeName="x1" values="0;1;0" dur="1.2s" repeatCount="indefinite"/></linearGradient><filter id="blur"><feGaussianBlur stdDeviation="5"/></filter></defs>
+  <rect width="1200" height="680" fill="none"/>
+  <g stroke="url(#steel)" stroke-width="13" stroke-linecap="round">
+    <path d="M0 90L470 310"/><path d="M0 230L472 334"/><path d="M1200 80L730 310"/><path d="M1200 245L728 340"/>
+    <path d="M370 0L542 282"/><path d="M600 0V272"/><path d="M830 0L658 282"/>
+    <path d="M80 680L486 405"/><path d="M1120 680L714 405"/>
+  </g>
+  <g fill="#c9a66f"><path d="M470 310l-54-48 14 73-68 25 78 6z"/><path d="M730 310l54-48-14 73 68 25-78 6z"/><path d="M600 272l-34-69 34 21 34-21z"/></g>
+  <g stroke="#b73c2f" stroke-width="6" opacity=".3" filter="url(#blur)"><path d="M0 90L470 310"/><path d="M1200 80L730 310"/><path d="M600 0V272"/></g>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560">
+  <defs>
+    <radialGradient id="hide" cx="50%" cy="42%" r="62%">
+      <stop offset="0" stop-color="#9a7951"/>
+      <stop offset=".6" stop-color="#5d432e"/>
+      <stop offset="1" stop-color="#1a100c"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence baseFrequency=".7" numOctaves="3" seed="17" type="fractalNoise"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </defs>
+  <path d="M112 136C195 38 332 18 480 48c148-30 285-10 368 88l-54 323c-93 70-198 81-314 47-116 34-221 23-314-47z" fill="url(#hide)" stroke="#bb9157" stroke-width="8" filter="url(#grain)"/>
+  <path d="M480 49v458M161 185c103 40 208 51 319 34m319-34c-103 40-208 51-319 34" fill="none" stroke="#291811" stroke-width="5" opacity=".6"/>
+</svg>

@@ -1,0 +1,52 @@
+{
+  "source": {
+    "canonicalFile": "十日终焉 1--1496 完结 杀虫队队员.txt",
+    "startLine": 1237,
+    "endLine": 2927,
+    "chapters": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+  },
+  "beats": [
+    {
+      "id": "mask-inside-text",
+      "chapter": 11,
+      "lineStart": 1281,
+      "lineEnd": 1309,
+      "facts": ["人羊射中心脏以保护面具", "面具内写着我是人狗"]
+    },
+    {
+      "id": "hometown-map",
+      "chapter": 12,
+      "lineStart": 1515,
+      "lineEnd": 1565,
+      "facts": ["九人地点构成右字", "圆桌向右转动一百次"]
+    },
+    {
+      "id": "bamboo-shield",
+      "chapter": 13,
+      "lineStart": 1649,
+      "lineEnd": 1789,
+      "facts": ["九小一大桌板", "九小板形成棱锥"]
+    },
+    {
+      "id": "save-han",
+      "chapter": 15,
+      "lineStart": 1969,
+      "lineEnd": 2089,
+      "facts": ["林檎绳结自动分离", "李尚武切断韩一墨绳索"]
+    },
+    {
+      "id": "yes-no",
+      "chapter": 18,
+      "lineStart": 2465,
+      "lineEnd": 2557,
+      "facts": ["三问且只答是或否", "肖冉耗掉第一问"]
+    },
+    {
+      "id": "termination-reveal",
+      "chapter": 21,
+      "lineStart": 2885,
+      "lineEnd": 2927,
+      "facts": ["暗红天空和土色太阳", "电子屏显示招灾的回响"]
+    }
+  ]
+}

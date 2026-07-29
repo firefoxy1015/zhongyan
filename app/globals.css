@@ -1549,6 +1549,18 @@
   padding: 24px;
 }
 
+.ending-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.ending-actions .blood-button,
+.ending-actions .ghost-button {
+  text-decoration: none;
+}
+
 .ending-scene.is-failure .ending-card {
   border-color: rgba(139, 43, 35, 0.55);
   box-shadow: 0 30px 110px rgba(96, 16, 13, 0.35);
@@ -2050,6 +2062,16 @@
   .ballot-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .ending-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ending-actions .blood-button,
+  .ending-actions .ghost-button {
+    width: 100%;
   }
 }
 
@@ -6323,6 +6345,96 @@ button:focus-visible {
   font-size: 12px;
   letter-spacing: 0.2em;
   margin-top: 20px;
+}
+
+.chapter-debug-portal {
+  position: fixed;
+  z-index: 120;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 12px;
+  width: min(330px, calc(100vw - 24px));
+  border: 1px solid rgba(190, 139, 68, 0.72);
+  color: #e6d5b7;
+  background: rgba(13, 10, 8, 0.96);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.68);
+  font-family: "Microsoft YaHei", sans-serif;
+  backdrop-filter: blur(12px);
+}
+
+.chapter-debug-portal summary {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 13px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.chapter-debug-portal summary::-webkit-details-marker {
+  display: none;
+}
+
+.chapter-debug-portal summary::before {
+  content: "⚠";
+  flex: 0 0 auto;
+  color: #d8503f;
+}
+
+.chapter-debug-portal summary strong {
+  margin-right: auto;
+  color: #e8c987;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.chapter-debug-portal summary span {
+  color: #d66b5b;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.chapter-debug-portal > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid rgba(190, 139, 68, 0.25);
+}
+
+.chapter-debug-portal p {
+  grid-column: 1 / -1;
+  margin: 0 0 3px;
+  color: #9f9483;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.chapter-debug-portal button {
+  min-height: 42px;
+  border: 1px solid rgba(190, 139, 68, 0.55);
+  color: #e7d3ad;
+  background: #21140f;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.chapter-debug-portal button:hover,
+.chapter-debug-portal button:focus-visible {
+  border-color: #c06d42;
+  background: #402018;
+  outline: none;
+}
+
+@media (max-width: 520px) {
+  .chapter-debug-portal {
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left: 10px;
+    width: auto;
+  }
 }
 
 .case-entry h1 {
