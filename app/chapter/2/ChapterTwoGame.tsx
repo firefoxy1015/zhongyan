@@ -45,7 +45,7 @@ import type {
   WedgeSlotId,
 } from "../../lib/chapter-two/types.ts";
 import CinematicOverlay from "./CinematicOverlay";
-import VoiceDock from "./VoiceDock";
+import SceneDialogue from "./SceneDialogue";
 import styles from "./chapter-two.module.css";
 
 type StageCharacterId = CharacterId | "renshe" | "renlong";
@@ -310,6 +310,7 @@ export default function ChapterTwoGame() {
         <CharacterLayer state={state} />
         <article className={styles.storyPanel}>
           <SceneTitle scene={state.scene} />
+          <SceneDialogue activeLineId={activeVoiceLineId} error={voiceError} onPlay={playVoiceLine} state={state} />
           <SceneBody state={state} act={act} />
         </article>
         {visibleAnimationId && <CinematicOverlay animationId={visibleAnimationId} key={`${visibleAnimationId}-${liveAnimationId ? "live" : "replay"}`} replaying={!liveAnimationId} onSkip={skipVisibleAnimation} />}
@@ -327,7 +328,6 @@ export default function ChapterTwoGame() {
           {view.activeErrors.map((item) => <p key={`${item.fieldId}-${item.code}`} className={styles.log_error}>错误：{item.message}</p>)}
         </div>
       </aside>
-      <VoiceDock activeLineId={activeVoiceLineId} error={voiceError} onPlay={playVoiceLine} state={state} />
     </main>
   );
 }

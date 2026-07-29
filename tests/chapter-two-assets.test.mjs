@@ -112,9 +112,10 @@ test("renders all fourteen planned animation IDs and never calls runtime TTS", a
   const animationIds = Object.keys(ANIMATION_SPECS);
   assert.equal(animationIds.length, 14);
   const overlay = await readFile(path.join(root, "app/chapter/2/CinematicOverlay.tsx"), "utf8");
+  const dialogue = await readFile(path.join(root, "app/chapter/2/SceneDialogue.tsx"), "utf8");
   const runtimeSources = await Promise.all([
     "app/chapter/2/ChapterTwoGame.tsx",
-    "app/chapter/2/VoiceDock.tsx",
+    "app/chapter/2/SceneDialogue.tsx",
     "app/lib/chapter-two/audio.ts",
     "app/lib/chapter-two/voice-assets.ts",
     "app/lib/voice-assets.ts",
@@ -127,6 +128,8 @@ test("renders all fourteen planned animation IDs and never calls runtime TTS", a
   assert.match(overlay, /unoptimized/);
   assert.match(runtimeSources[0], /unoptimized/);
   assert.doesNotMatch(runtimeSources.join("\n"), /\/api\/voice|api\.lk888|https?:\/\/.+\.mp3/);
+  assert.match(dialogue, /aria-label="剧情对白"/);
+  assert.doesNotMatch(dialogue, /固定语音档案|一人一音色|音色|模型|voiceVersion/);
 });
 
 test("first sound-control click starts audio instead of muting it", () => {

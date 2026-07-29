@@ -221,23 +221,29 @@
 .complete span { display: block; color: #bcae98; line-height: 1.8; }
 .complete a { margin-top: 25px; }
 
-.voiceDock {
-  margin: 0 clamp(16px, 4vw, 56px) 54px;
-  border: 1px solid rgba(181, 130, 48, .34);
-  background: rgba(11, 8, 7, .92);
+.sceneDialogue {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  margin: 0 0 24px;
+  padding: 15px 17px;
+  border: 1px solid rgba(190, 139, 61, .4);
+  border-left: 3px solid #b44931;
+  background: linear-gradient(100deg, rgba(57, 22, 17, .8), rgba(13, 10, 8, .92));
+  box-shadow: inset 0 0 28px rgba(120, 41, 28, .12);
 }
-.voiceDock > header { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 14px 18px; border-bottom: 1px solid rgba(181, 130, 48, .2); }
-.voiceDock > header p { margin: 0; color: #d0ac63; font-size: 13px; letter-spacing: .12em; }
-.voiceDock > header span { color: #867b6b; font-size: 11px; }
-.voiceDock > header em { color: #b59760; font-style: normal; font-size: 12px; }
-.voiceScroll { display: flex; gap: 9px; overflow-x: auto; padding: 12px; scroll-snap-type: x proximity; scrollbar-color: #7e5631 #17100d; }
-.voiceScroll button { flex: 0 0 min(330px, 78vw); display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: start; min-height: 112px; padding: 13px; border: 1px solid rgba(187, 137, 62, .28); color: #d9c7aa; background: #17110d; font: inherit; text-align: left; scroll-snap-align: start; cursor: pointer; }
-.voiceScroll button > span { color: #aa884e; font-size: 11px; }
-.voiceScroll button > strong { grid-column: 1 / -1; font-weight: 400; font-size: 13px; line-height: 1.65; }
-.voiceScroll button > em { grid-column: 2; color: #d2a65b; font-style: normal; font-size: 11px; }
-.voiceScroll button:disabled { opacity: .42; cursor: not-allowed; }
-.voiceScroll .voicePlaying { border-color: #d6a35d; background: #422217; box-shadow: inset 0 0 30px rgba(188, 62, 39, .15); }
-.voiceError { margin: 0; padding: 8px 16px 14px; color: #e5937d; font-size: 12px; }
+.dialogueSpeaker { display: grid; place-items: center; gap: 7px; min-width: 58px; color: #d7ad5e; font-size: 13px; letter-spacing: .1em; }
+.dialogueSpeaker i { width: 28px; height: 1px; background: linear-gradient(90deg, transparent, #bd7542, transparent); }
+.dialogueLine p { margin: 0; color: #eee0c6; font-size: 15px; line-height: 1.8; }
+.dialogueControls { display: grid; justify-items: end; gap: 8px; }
+.dialogueControls > div { display: flex; gap: 7px; align-items: center; color: #99876d; font-size: 10px; }
+.dialogueControls button { min-height: 32px; padding: 0 10px; border: 1px solid #785630; color: #d9b873; background: rgba(21, 14, 10, .82); font: inherit; font-size: 11px; cursor: pointer; }
+.dialogueControls > div button { min-width: 30px; padding: 0; font-size: 18px; line-height: 1; }
+.dialogueControls button:disabled { opacity: .35; cursor: not-allowed; }
+.dialogueControls .voicePlaying { border-color: #d6a35d; color: #ffe0a2; background: #54251a; }
+.voiceError { display: block; margin-top: 7px; color: #e5937d; font-size: 11px; }
 
 .cinematic {
   position: fixed;
@@ -390,10 +396,10 @@
   .caseLog { grid-template-columns: 1fr; gap: 10px; margin: 0 12px 22px; padding: 14px; }
   .caseLogScroll { max-height: 145px; flex-direction: column; }
   .caseLogScroll p { flex-basis: auto; }
-  .voiceDock { margin: 0 12px 24px; }
-  .voiceDock > header { align-items: flex-start; padding: 12px; }
-  .voiceDock > header span { display: block; margin-top: 3px; }
-  .voiceScroll { padding: 9px; }
+  .sceneDialogue { grid-template-columns: 1fr auto; gap: 10px; padding: 13px; }
+  .dialogueSpeaker { grid-column: 1 / -1; grid-template-columns: auto 1fr; justify-content: start; justify-items: start; min-width: 0; }
+  .dialogueSpeaker i { width: 48px; }
+  .dialogueLine p { font-size: 14px; line-height: 1.7; }
   .cinematic footer { align-items: stretch; flex-direction: column; gap: 9px; padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
   .cinematic footer button { width: 100%; }
   .maskReveal > img { padding: 2vh 1vw 12vh; }
