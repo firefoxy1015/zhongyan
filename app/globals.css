@@ -6480,13 +6480,56 @@ button:focus-visible {
 }
 
 .deduction-game .identity-card__front {
-  background:
+  align-items: center;
+  background-color: #120e0c !important;
+  background-image:
     radial-gradient(circle at 50% 36%, rgba(160, 36, 28, 0.32), transparent 44%),
-    #120e0c;
+    linear-gradient(160deg, #17110e, #090706) !important;
+  color: #f0d29a;
+  justify-content: center;
+  padding: 18px 10px;
 }
 
 .deduction-game .identity-card__front strong {
+  color: #f1cd82;
   font-size: 29px;
+  text-shadow: 0 0 15px rgba(229, 183, 94, 0.18);
+}
+
+.deduction-game .identity-card__front small {
+  color: #bca27a;
+}
+
+.deduction-game.identity-scene .identity-sound-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #8e806c;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 11px;
+  gap: 8px;
+  letter-spacing: 0.08em;
+  margin-top: 12px;
+  padding: 6px 9px;
+}
+
+.deduction-game.identity-scene .identity-sound-toggle i {
+  background: #5d4d39;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(195, 160, 100, 0.06);
+  height: 7px;
+  width: 7px;
+}
+
+.deduction-game.identity-scene .identity-sound-toggle[aria-pressed="true"] {
+  color: #d4b675;
+}
+
+.deduction-game.identity-scene .identity-sound-toggle[aria-pressed="true"] i {
+  animation: ready-pulse 1.2s ease-in-out infinite;
+  background: #bd604d;
+  box-shadow: 0 0 10px rgba(189, 96, 77, 0.48);
 }
 
 @media (max-width: 680px) {

@@ -25,6 +25,7 @@ test("server-renders the solo liar investigation entry", async () => {
   assert.match(html, /女娲游戏\s*\/\s*第一场/);
   assert.match(html, /九个人依次讲述最后发生的事/);
   assert.match(html, /翻开身份牌/);
+  assert.match(html, /点此开启紧迫声场/);
   assert.match(html, /有且只有一个说谎者/);
   assert.doesNotMatch(html, /创建\s*\/\s*加入真人房/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Building your site/i);

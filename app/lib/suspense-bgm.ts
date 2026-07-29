@@ -20,8 +20,9 @@ export class SuspenseBgm {
 
       this.context = context;
       this.master = master;
-      this.addDrone(55, "sine", 0.31);
-      this.addDrone(82.41, "triangle", 0.1);
+      this.addDrone(55, "sine", 0.24);
+      this.addDrone(110, "sine", 0.085);
+      this.addDrone(146.83, "triangle", 0.04);
     }
 
     try {
@@ -92,10 +93,10 @@ export class SuspenseBgm {
     if (!context) return;
 
     const start = context.currentTime + 0.03;
-    this.hit(55, start, 0.31, 0.33, "triangle");
-    this.hit(55, start + 0.25, 0.21, 0.23, "triangle");
-    this.hit(110, start + 0.76, 0.08, 0.08, "sine");
-    this.hit(82.41, start + 1.1, 0.13, 0.11, "sine");
+    this.hit(110, start, 0.28, 0.2, "triangle");
+    this.hit(98, start + 0.25, 0.2, 0.15, "triangle");
+    this.hit(220, start + 0.76, 0.1, 0.075, "sine");
+    this.hit(146.83, start + 1.1, 0.15, 0.1, "triangle");
   }
 
   private hit(frequency: number, start: number, duration: number, volume: number, type: OscillatorType) {
@@ -108,7 +109,7 @@ export class SuspenseBgm {
     oscillator.frequency.setValueAtTime(frequency, start);
     oscillator.frequency.exponentialRampToValueAtTime(Math.max(30, frequency * 0.72), start + duration);
     filter.type = "lowpass";
-    filter.frequency.value = type === "triangle" ? 190 : 720;
+    filter.frequency.value = type === "triangle" ? 420 : 820;
     gain.gain.setValueAtTime(0.0001, start);
     gain.gain.exponentialRampToValueAtTime(volume, start + 0.014);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);

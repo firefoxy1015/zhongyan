@@ -129,6 +129,11 @@ export default function Home() {
     startMusic();
   };
 
+  const revealIdentity = () => {
+    setCardRevealed(true);
+    startMusic();
+  };
+
   const speak = (kind: VoiceLineKind) => {
     if (speakingLine === kind) {
       speechRef.current?.stop();
@@ -331,7 +336,7 @@ export default function Home() {
           <button
             aria-label={cardRevealed ? "身份牌：说谎者" : "翻开身份牌"}
             className={`identity-card ${cardRevealed ? "is-revealed" : ""}`}
-            onClick={() => setCardRevealed(true)}
+            onClick={revealIdentity}
           >
             <span className="identity-card__back">女娲游戏</span>
             <span className="identity-card__front"><small>你的身份</small><strong>说谎者</strong></span>
@@ -339,6 +344,9 @@ export default function Home() {
           {!cardRevealed
             ? <p className="identity-table__instruction">人羊正在看着你。翻牌。</p>
             : <button className="blood-button" onClick={enterRoom}>扣住卡片，开始游戏</button>}
+          <button className="identity-sound-toggle" aria-pressed={musicStarted} onClick={toggleMusic}>
+            <i />{musicStarted ? "紧迫声场已开启" : "点此开启紧迫声场"}
+          </button>
         </section>
       </main>
     );
