@@ -297,7 +297,8 @@ export default function Home() {
         ...current,
         [activePuzzle.id]: new Set(invalidSlotIds),
       }));
-      const feedback = `${invalidSlotIds.length}项不正确，已经在草稿上标红。本次检查不扣时间。`;
+      advanceTime(4);
+      const feedback = `${invalidSlotIds.length}项不正确，已经在草稿上标红。座钟前进4分钟。`;
       setNotice(feedback);
       appendHistory(`推演失败：${feedback}`);
       return;
@@ -628,7 +629,7 @@ export default function Home() {
               <div><dt>记录线索或证词</dt><dd>+1分钟</dd></div>
               <div><dt>正确追问</dt><dd>+1分钟</dd></div>
               <div><dt>错误追问</dt><dd>+3分钟</dd></div>
-              <div><dt>检查草稿</dt><dd>不扣时间并标错</dd></div>
+              <div><dt>错误提交草稿</dt><dd>+4分钟并标错</dd></div>
             </dl>
           </section>
 
@@ -731,9 +732,9 @@ export default function Home() {
                 )}
 
                 <footer className="notebook-page__footer">
-                  <p>{solvedPuzzles.has(activePuzzle.id) ? activePuzzle.success : "提交后，错误词条会逐项标红；修改后可以重新检查，不扣时间。"}</p>
+                  <p>{solvedPuzzles.has(activePuzzle.id) ? activePuzzle.success : "提交后，错误词条会逐项标红；错误提交会使座钟前进4分钟。"}</p>
                   <div className="notebook-submit">
-                    {!solvedPuzzles.has(activePuzzle.id) && <span>检查草稿不扣时间，错误项会直接标红</span>}
+                    {!solvedPuzzles.has(activePuzzle.id) && <span>错误项会直接标红，同时座钟前进4分钟</span>}
                     <button className="blood-button" disabled={solvedPuzzles.has(activePuzzle.id)} onClick={validateActivePuzzle}>
                       {solvedPuzzles.has(activePuzzle.id) ? "这条已经成立" : "压下这条推演"}
                     </button>
