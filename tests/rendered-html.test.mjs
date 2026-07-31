@@ -53,6 +53,11 @@ test("keeps a clearly warned chapter debug portal on the homepage", async () => 
   assert.match(html, /直接进入第二章/);
   assert.match(pageSource, /markChapterOneComplete\(window\.localStorage\)/);
   assert.match(pageSource, /createFreshChapterTwoSave\(window\.localStorage\)/);
+  assert.equal((pageSource.match(/<ChapterDebugPortal \/>/g) ?? []).length, 1);
+  assert.match(
+    pageSource,
+    /if \(screen === "identity"\)[\s\S]*?<ChapterDebugPortal \/>[\s\S]*?if \(screen === "vote"\)/,
+  );
   assert.doesNotMatch(html, /假如我的下一个问题是你会不会拉下拉杆/);
 });
 

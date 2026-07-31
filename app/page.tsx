@@ -453,7 +453,6 @@ export default function Home() {
             <button className="blood-button" disabled={!selectedTarget} onClick={submitVote}>落笔</button>
           </div>
         </section>
-        <ChapterDebugPortal />
       </main>
     );
   }
@@ -483,7 +482,6 @@ export default function Home() {
             </div>
           ) : <button className="blood-button" onClick={restart}>回到抽牌前</button>}
         </section>
-        <ChapterDebugPortal />
       </main>
     );
   }
@@ -801,7 +799,6 @@ export default function Home() {
           </footer>
         </section>
       )}
-      <ChapterDebugPortal />
     </main>
   );
 }
