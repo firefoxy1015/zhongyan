@@ -84,6 +84,20 @@ test("ships the full first-trial visual set", async () => {
   ];
 
   await Promise.all(assets.map((asset) => access(new URL(`../public/art/${asset}`, import.meta.url))));
+
+  const pageSource = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const globalCss = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const voiceProfiles = await readFile(new URL("../app/lib/testimony-speech.ts", import.meta.url), "utf8");
+
+  assert.match(pageSource, /fetchPriority="high"/);
+  assert.match(pageSource, /height=\{activeVoice\.portraitHeight\}/);
+  assert.match(pageSource, /width=\{activeVoice\.portraitWidth\}/);
+  assert.match(globalCss, /\.witness-portrait\s*\{[\s\S]*?grid-template-rows:\s*minmax\(0,\s*1fr\)\s+auto;/);
+  const portraitImageBlocks = [...globalCss.matchAll(/\.witness-portrait img\s*\{([^}]*)\}/g)];
+  assert.ok(portraitImageBlocks.length >= 2);
+  for (const [, block] of portraitImageBlocks) assert.doesNotMatch(block, /(?:^|\n)\s*height:\s*0;/);
+  assert.equal((voiceProfiles.match(/portraitWidth:/g) ?? []).length, 9);
+  assert.equal((voiceProfiles.match(/portraitHeight:/g) ?? []).length, 9);
 });
 
 test("explains the investigation order and action clock before play", async () => {

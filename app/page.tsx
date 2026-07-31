@@ -566,7 +566,16 @@ export default function Home() {
           <figure className="witness-portrait">
             {/* Fixed portraits are never cropped; every breakpoint preserves the complete asset. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt={`${activeStory.name}固定立绘`} src={`/art/${activeVoice.portraitAsset}.png`} />
+            <img
+              alt={`${activeStory.name}固定立绘`}
+              decoding="async"
+              fetchPriority="high"
+              height={activeVoice.portraitHeight}
+              key={activeVoice.portraitAsset}
+              loading="eager"
+              src={`/art/${activeVoice.portraitAsset}.png`}
+              width={activeVoice.portraitWidth}
+            />
             <figcaption>{activeStory.name}<span>{activeStory.occupation}</span></figcaption>
           </figure>
           <div className="witness-copy">

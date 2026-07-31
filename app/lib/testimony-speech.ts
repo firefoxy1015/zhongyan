@@ -4,6 +4,8 @@ export const CHARACTER_VOICE_PROFILES = {
   tiantian: {
     label: "甜甜",
     portraitAsset: "tiantian-v2",
+    portraitWidth: 1086,
+    portraitHeight: 1448,
     model: "doubao-tts-2.0",
     voiceId: "zh_female_tianmeitaozi_uranus_bigtts",
     gender: "女",
@@ -13,6 +15,8 @@ export const CHARACTER_VOICE_PROFILES = {
   qiao: {
     label: "乔家劲",
     portraitAsset: "qiaojiajin-v1",
+    portraitWidth: 1024,
+    portraitHeight: 1536,
     model: "speech-2.8",
     voiceId: "LK_9011036_1784973101",
     gender: "男",
@@ -30,6 +34,8 @@ export const CHARACTER_VOICE_PROFILES = {
   xiao: {
     label: "肖冉",
     portraitAsset: "xiaoran-v1",
+    portraitWidth: 864,
+    portraitHeight: 1821,
     model: "doubao-tts-2.0",
     voiceId: "zh_female_linjianvhai_uranus_bigtts",
     gender: "女",
@@ -39,6 +45,8 @@ export const CHARACTER_VOICE_PROFILES = {
   zhao: {
     label: "赵海博",
     portraitAsset: "zhaohaibo-v1",
+    portraitWidth: 1024,
+    portraitHeight: 1536,
     model: "doubao-tts-2.0",
     voiceId: "zh_male_dayi_uranus_bigtts",
     gender: "男",
@@ -48,6 +56,8 @@ export const CHARACTER_VOICE_PROFILES = {
   han: {
     label: "韩一墨",
     portraitAsset: "hanyimo-v1",
+    portraitWidth: 1023,
+    portraitHeight: 1537,
     model: "doubao-tts-2.0",
     voiceId: "zh_male_ruyayichen_uranus_bigtts",
     gender: "男",
@@ -57,6 +67,8 @@ export const CHARACTER_VOICE_PROFILES = {
   zhang: {
     label: "章晨泽",
     portraitAsset: "zhangchenze-v1",
+    portraitWidth: 1024,
+    portraitHeight: 1536,
     model: "doubao-tts-2.0",
     voiceId: "zh_female_cancan_uranus_bigtts",
     gender: "女",
@@ -66,6 +78,8 @@ export const CHARACTER_VOICE_PROFILES = {
   li: {
     label: "李尚武",
     portraitAsset: "lishangwu-v1",
+    portraitWidth: 864,
+    portraitHeight: 1821,
     model: "doubao-tts-2.0",
     voiceId: "zh_male_liufei_uranus_bigtts",
     gender: "男",
@@ -75,6 +89,8 @@ export const CHARACTER_VOICE_PROFILES = {
   lin: {
     label: "林檎",
     portraitAsset: "linqin-v1",
+    portraitWidth: 1024,
+    portraitHeight: 1536,
     model: "doubao-tts-2.0",
     voiceId: "saturn_zh_female_wenwanshanshan_cs_tob",
     gender: "女",
@@ -84,6 +100,8 @@ export const CHARACTER_VOICE_PROFILES = {
   qixia: {
     label: "齐夏",
     portraitAsset: "qixia-v1",
+    portraitWidth: 1024,
+    portraitHeight: 1536,
     model: "doubao-tts-2.0",
     voiceId: "zh_male_m191_uranus_bigtts",
     gender: "男",
