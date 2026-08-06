@@ -31,6 +31,15 @@ import {
 
 const root = path.resolve(import.meta.dirname, "..");
 
+test("ships the exact canonical source inside the repository", async () => {
+  const sourceFile = path.join(root, "reference", "canon", "十日终焉 1--1496 完结 杀虫队队员.txt");
+  const source = await readFile(sourceFile);
+  const hash = createHash("sha256").update(source).digest("hex").toUpperCase();
+
+  assert.equal(source.byteLength, 9_879_825);
+  assert.equal(hash, "CE65EEC84123E2DAB72EDE9C13A0E91C7F7B1A803356A701148A178FEFE892E1");
+});
+
 test("resolves the canonical liar vote", () => {
   assert.equal(CANONICAL_LIAR_TARGET, "renyang");
   assert.equal(LIAR_GAME.participantCount, 9);

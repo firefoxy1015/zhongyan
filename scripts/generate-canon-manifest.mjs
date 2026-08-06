@@ -4,8 +4,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sourcePath = process.env.CANON_SOURCE ??
-  "C:\\Users\\Firefoxy\\Documents\\005 十日终焉 1--1496 完结 杀虫队队员\\十日终焉 1--1496 完结 杀虫队队员.txt";
+const sourcePath = process.env.CANON_SOURCE ?? path.join(
+  projectRoot,
+  "reference",
+  "canon",
+  "十日终焉 1--1496 完结 杀虫队队员.txt",
+);
 const outputPath = path.join(projectRoot, "content", "canon-manifest.json");
 
 const volumeBoundaries = [

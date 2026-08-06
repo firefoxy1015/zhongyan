@@ -2847,7 +2847,8 @@ test("server-renders chapter two without promoting multiplayer", async () => {
 ```powershell
 npm.cmd test
 npm.cmd run lint
-git -c safe.directory='C:/Users/Firefoxy/Documents/New project/zhongyan-online-tabletop' diff --check
+$repo = (Resolve-Path ".").Path.Replace("\", "/")
+git -c "safe.directory=$repo" diff --check
 ```
 
 再做桌面、手机、Sites和Render线上实机验证。

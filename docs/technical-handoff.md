@@ -1,11 +1,11 @@
 # 《十日终焉》单机剧情桌游技术交接文档
 
-最后核对日期：2026-08-06  
-项目目录：`C:\Users\Firefoxy\Documents\New project\zhongyan-online-tabletop`  
-代码仓库：`https://github.com/firefoxy1015/zhongyan`  
-生产环境：`https://zhongyan.onrender.com`  
-当前主分支：`main`  
-本交接对应的游戏代码基线：`61175c4`（第一章立绘与调试入口修复完成）
+- 最后核对日期：2026-08-06
+- 项目目录：克隆仓库后的项目根目录
+- 代码仓库：`https://github.com/firefoxy1015/zhongyan`
+- 生产环境：`https://zhongyan.onrender.com`
+- 当前主分支：`main`
+- 本交接对应的游戏代码基线：`61175c4`（第一章立绘与调试入口修复完成）
 
 > 这是一份给下一位技术人员直接接手的实施说明，不是宣传稿。凡是本文与实际运行结果冲突，按“线上运行行为 > 当前代码 > 清单与测试 > 本文 > 旧计划”的顺序回查。
 
@@ -42,9 +42,11 @@
 
 ### 2.1 唯一主底稿
 
-本地原文：
+原文已提交到仓库，所有工作人员克隆后可直接读取：
 
-`C:\Users\Firefoxy\Documents\005 十日终焉 1--1496 完结 杀虫队队员\十日终焉 1--1496 完结 杀虫队队员.txt`
+`reference/canon/十日终焉 1--1496 完结 杀虫队队员.txt`
+
+禁止再把某台电脑上的绝对路径当作交接依赖。
 
 当前锁定信息：
 
@@ -67,14 +69,20 @@
 
 ### 2.2 相关文件
 
-- `scripts/generate-canon-manifest.mjs`：从本地原文生成清单。
+- `scripts/generate-canon-manifest.mjs`：默认从仓库内原文生成清单。
 - `content/canon-manifest.json`：正篇、番外、分卷、行号与源文件哈希。
 - `content/chapter-02-canon-audit.json`：第二章已使用的原文锚点。
 - `content/official-visual-reference.json`：官方视觉参考来源和使用边界。
 - `content/visual-asset-manifest.json`：第一章项目资产来源、状态和用途。
 - `content/chapter-02-asset-manifest.json`：第二章 16 个视觉资产的锁定清单。
 
-重新生成正史清单：
+默认直接使用仓库内原文重新生成正史清单：
+
+```powershell
+npm.cmd run canon:manifest
+```
+
+只有在对比另一份原文版本时才覆盖路径：
 
 ```powershell
 $env:CANON_SOURCE = "C:\path\to\十日终焉.txt"
@@ -109,7 +117,7 @@ npm.cmd run canon:manifest
 - 第二章 6 个主要推理/操作模块、检查点死亡和完整成功路线。
 - 第二章 16 个视觉资产、14 段动画、3 条 BGM、14 个 SFX、23 个固定对白文件。
 - 首页测试人员调试入口，可直接进入第一章或写入合法单机档后进入第二章。
-- 自动测试 40 项，覆盖正史、引擎、存档、素材哈希、语音锁、SSR 和联机房纯逻辑。
+- 自动测试 41 项，覆盖仓库原文哈希、正史、引擎、存档、素材哈希、语音锁、SSR 和联机房纯逻辑。
 - Render 生产站点已建立并从 GitHub `main` 部署。
 
 ### 3.2 尚未完成
@@ -145,7 +153,7 @@ Node 版本要求：`>=22.13.0`。
 首次运行：
 
 ```powershell
-cd "C:\Users\Firefoxy\Documents\New project\zhongyan-online-tabletop"
+cd <克隆后的 zhongyan 项目目录>
 npm.cmd install
 npm.cmd run dev
 ```
@@ -163,7 +171,8 @@ git diff --check
 如果 Git 报 `dubious ownership`，不要修改全局 Git 配置；使用单次命令：
 
 ```powershell
-git -c "safe.directory=C:/Users/Firefoxy/Documents/New project/zhongyan-online-tabletop" status
+$repo = (Resolve-Path ".").Path.Replace("\", "/")
+git -c "safe.directory=$repo" status
 ```
 
 ---
@@ -203,7 +212,7 @@ public/art/                        第一章固定图
 public/art/chapter-02/             第二章固定图和解谜 SVG
 public/audio/                      固定语音、BGM、SFX
 scripts/                           正史清单与离线音频生成脚本
-tests/                             40 项回归测试
+tests/                             41 项回归测试
 docs/chapter-02-plan.md            第二章实现契约
 ```
 
@@ -832,11 +841,11 @@ interface SoloSaveEnvelope {
 
 ## 14. 自动测试
 
-当前 40 项测试分组：
+当前 41 项测试分组：
 
 | 文件 | 重点 |
 |---|---|
-| `tests/liar-game.test.mjs` | 第一章答案、人物、二百万链、音色锁、静态音频、证据门禁、空气账、九次追问 |
+| `tests/liar-game.test.mjs` | 仓库原文文件与哈希、第一章答案、人物、二百万链、音色锁、静态音频、证据门禁、空气账、九次追问 |
 | `tests/rendered-html.test.mjs` | SSR、首页、调试入口、第一章视觉资产、立绘尺寸、教程和惩罚文案 |
 | `tests/room-logic.test.mjs` | 联机阶段顺序和九票结算 |
 | `tests/chapter-two-canon.test.mjs` | 第二章范围、固定伤情、赵海博地点、观察不泄题 |
@@ -901,16 +910,17 @@ interface SoloSaveEnvelope {
 ## 16. Git 与 Render 发布流程
 
 ```powershell
-cd "C:\Users\Firefoxy\Documents\New project\zhongyan-online-tabletop"
+cd <克隆后的 zhongyan 项目目录>
 
-git -c "safe.directory=C:/Users/Firefoxy/Documents/New project/zhongyan-online-tabletop" status --short
+$repo = (Resolve-Path ".").Path.Replace("\", "/")
+git -c "safe.directory=$repo" status --short
 npm.cmd run lint
 npm.cmd test
 git diff --check
 
 git add -- <明确的文件列表>
 git commit -m "<说明真实变更>"
-git -c "safe.directory=C:/Users/Firefoxy/Documents/New project/zhongyan-online-tabletop" push origin main
+git -c "safe.directory=$repo" push origin main
 ```
 
 发布后访问：
@@ -1063,7 +1073,7 @@ app/lib/chapter-three/save.ts 或统一存档迁移
 ### P0：交接后先验证，不立即扩章
 
 1. 拉取 `main`。
-2. 跑 lint、40 项测试和 `git diff --check`。
+2. 跑 lint、41 项测试和 `git diff --check`。
 3. 本地走第一章和第二章入口。
 4. 确认 Render 当前包与 `main` 一致。
 5. 修复第一章“四页草稿可跳过草稿甲”的技术债并补测试。
@@ -1103,10 +1113,10 @@ app/lib/characters.ts
 
 - [ ] 工作目录是 `zhongyan-online-tabletop`，不是 boardgame 项目。
 - [ ] 当前分支是 `main`。
-- [ ] 已确认原文文件和 SHA-256。
+- [ ] 仓库内 `reference/canon/` 原文存在，且已确认 SHA-256。
 - [ ] 已阅读本文件和 `docs/chapter-02-plan.md`。
 - [ ] `npm.cmd run lint` 通过。
-- [ ] `npm.cmd test` 40/40 通过。
+- [ ] `npm.cmd test` 41/41 通过。
 - [ ] `git diff --check` 通过。
 - [ ] 第一章身份牌 -> 规则 -> 6 观察 -> 角色证词可操作。
 - [ ] 第一章九张立绘在桌面和 390px 手机均不裁头。
@@ -1123,4 +1133,3 @@ app/lib/characters.ts
 - [ ] 没有把任何真实 API key 提交进仓库。
 
 完成以上检查后，再开始新章节。
-
