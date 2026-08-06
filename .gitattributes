@@ -1,0 +1,2 @@
+# Preserve the canonical source byte-for-byte across platforms.
+reference/canon/*.txt -text
