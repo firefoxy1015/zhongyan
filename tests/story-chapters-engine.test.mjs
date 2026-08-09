@@ -33,6 +33,12 @@ test("completes all three canonical routes with the exact Dao ledgers", () => {
   assert.equal(canonicalRun(5).daoCount, 96);
 });
 
+test("repairs stale completed saves to the canonical final Dao ledger", () => {
+  const stale = { ...initialStoryChapterState(5), status: { kind: "complete" }, daoCount: 5 };
+  const restored = storyChapterReducer(initialStoryChapterState(5), { type: "RESTORE", state: stale });
+  assert.equal(restored.daoCount, 96);
+});
+
 test("reports field-specific errors before charging pressure", () => {
   let state = initialStoryChapterState(3);
   state = storyChapterReducer(state, { type: "SUBMIT_PUZZLE" });

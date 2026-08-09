@@ -145,7 +145,7 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
         <span>第{chapterId}章完成</span>
         <h1>{spec.completionTitle}</h1>
         <p>{spec.completionText}</p>
-        <div className={styles.completeStats}><b>{state.daoCount}</b><span>当前队伍持有“道”</span></div>
+        <div className={styles.completeStats}><b>{spec.completionDaoCount}</b><span>{spec.completionDaoLabel}</span></div>
         <div className={styles.completeActions}>
           {spec.nextChapterId && <Link href={`/chapter/${spec.nextChapterId}`}>进入第{spec.nextChapterId}章</Link>}
           <Link href="/">返回章节目录</Link>

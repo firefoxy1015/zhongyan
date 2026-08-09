@@ -140,6 +140,7 @@ export function unlockStoryChapterForTesting(storage: StorageLike, chapterId: St
   for (const id of [3, 4, 5] as const) {
     if (id <= chapterId && !chapters[id]) chapters[id] = initialStoryChapterState(id);
   }
+  chapters[chapterId] = initialStoryChapterState(chapterId);
   saveStoryEnvelope(storage, { ...current, completedChapters, activeChapter: chapterId, chapters });
 }
 

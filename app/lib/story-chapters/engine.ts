@@ -82,7 +82,7 @@ function advance(state: StoryChapterState, spec: StoryChapterSpec) {
   if (currentIndex >= spec.scenes.length - 1) {
     return {
       ...state,
-      daoCount,
+      daoCount: spec.completionDaoCount,
       status: { kind: "complete" } as const,
       history: [...state.history, { id: entryId("complete", current.id, String(state.history.length)), kind: "result" as const, text: spec.completionText }],
     };
@@ -126,7 +126,9 @@ export function sanitizeStoryChapterState(value: StoryChapterState, chapterId: S
   if (!spec.scenes.some((scene) => scene.id === value.sceneId)) return initialStoryChapterState(chapterId);
   return {
     ...value,
-    daoCount: Number.isFinite(value.daoCount) ? Math.max(0, Math.floor(value.daoCount)) : spec.initialDao,
+    daoCount: value.status?.kind === "complete"
+      ? spec.completionDaoCount
+      : Number.isFinite(value.daoCount) ? Math.max(0, Math.floor(value.daoCount)) : spec.initialDao,
     pressure: Number.isFinite(value.pressure) ? Math.max(0, Math.floor(value.pressure)) : 0,
     observedIds: Array.isArray(value.observedIds) ? value.observedIds.filter((id): id is string => typeof id === "string") : [],
     solvedSceneIds: Array.isArray(value.solvedSceneIds) ? value.solvedSceneIds.filter((id): id is string => typeof id === "string") : [],

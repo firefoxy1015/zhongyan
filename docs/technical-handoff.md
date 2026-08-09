@@ -120,7 +120,7 @@ npm.cmd run canon:manifest
 - 第 3 至 5 章共享数据驱动 reducer、明确错项、死亡检查点、版本 3 存档迁移和逐章门禁。
 - 第 3 至 5 章新增 8 张锁定视觉图、15 段事件动画、3 条 BGM、13 个 SFX、34 个固定对白文件。
 - 首页测试人员调试入口，可直接进入第一至第五章，并写入不含答案的合法测试档。
-- 自动测试 57 项，覆盖仓库原文哈希、正史、引擎、存档、素材哈希、语音锁、SSR 和联机房纯逻辑。
+- 自动测试 59 项，覆盖仓库原文哈希、正史、引擎、存档、素材哈希、语音锁、SSR 和联机房纯逻辑。
 - Render 生产站点已建立并从 GitHub `main` 部署。
 
 ### 3.2 尚未完成
@@ -216,7 +216,7 @@ public/art/chapter-02/             第二章固定图和解谜 SVG
 public/art/chapter-03..05/         第三至第五章固定场景和角色图
 public/audio/                      固定语音、BGM、SFX
 scripts/                           正史清单与离线音频生成脚本
-tests/                             57 项回归测试
+tests/                             59 项回归测试
 docs/chapter-02-plan.md            第二章实现契约
 docs/chapter-03-05-plan.md         第三至第五章实现契约
 ```
@@ -891,7 +891,7 @@ interface StorySaveEnvelope {
 
 ## 15. 自动测试
 
-当前 57 项测试分组：
+当前 59 项测试分组：
 
 | 文件 | 重点 |
 |---|---|
@@ -1126,7 +1126,7 @@ app/chapter/StoryChapterGame.tsx
 ### P0：交接后先验证，不立即扩章
 
 1. 拉取 `main`。
-2. 跑 lint、57 项测试和 `git diff --check`。
+2. 跑 lint、59 项测试和 `git diff --check`。
 3. 本地走第一章、第二章以及第三至第五章调试入口。
 4. 确认 Render 当前包与 `main` 一致。
 5. 修复第一章“四页草稿可跳过草稿甲”的技术债并补测试。
@@ -1169,7 +1169,7 @@ app/lib/characters.ts
 - [ ] 仓库内 `reference/canon/` 原文存在，且已确认 SHA-256。
 - [ ] 已阅读本文件、`docs/chapter-02-plan.md` 和 `docs/chapter-03-05-plan.md`。
 - [ ] `npm.cmd run lint` 通过。
-- [ ] `npm.cmd test` 57/57 通过。
+- [ ] `npm.cmd test` 59/59 通过。
 - [ ] `git diff --check` 通过。
 - [ ] 第一章身份牌 -> 规则 -> 6 观察 -> 角色证词可操作。
 - [ ] 第一章九张立绘在桌面和 390px 手机均不裁头。

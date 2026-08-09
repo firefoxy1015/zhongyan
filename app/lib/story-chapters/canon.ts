@@ -44,6 +44,8 @@ const chapterThree: StoryChapterSpec = {
   initialDao: 4,
   completionTitle: "队伍分开了",
   completionText: "齐夏、乔家劲、甜甜和林檎走向人鼠的仓库。李尚武留在便利店，手里保存着一颗“道”。",
+  completionDaoCount: 3,
+  completionDaoLabel: "全队账面共有“道”（探索队带走两颗）",
   nextChapterId: 4,
   scenes: [
     {
@@ -202,6 +204,8 @@ const chapterFour: StoryChapterSpec = {
   initialDao: 2,
   completionTitle: "先探规则，再赌命",
   completionText: "队伍拒绝杀人夺道。齐夏冻结新的战术：同伴先确认规则，他在有把握后赌命。",
+  completionDaoCount: 5,
+  completionDaoLabel: "探索队当前持有“道”",
   nextChapterId: 5,
   scenes: [
     {
@@ -352,6 +356,8 @@ const chapterFive: StoryChapterSpec = {
   initialDao: 5,
   completionTitle: "大脑与拳头",
   completionText: "四人带着九十六颗“道”和一条熊臂离开。张山留下逃离者笔记的地址，而可疑的独行女子在背后露出真实神色。",
+  completionDaoCount: 96,
+  completionDaoLabel: "四人完成全部交易后持有“道”",
   scenes: [
     {
       id: "c5-entry",

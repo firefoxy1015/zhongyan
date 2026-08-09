@@ -47,6 +47,17 @@ test("unlocks debug chapters without writing answers", () => {
   assert.equal(canEnterStoryChapter(storage, 5), true);
 });
 
+test("debug entry resets a previously completed chapter instead of reopening stale settlement data", () => {
+  const storage = new MemoryStorage();
+  unlockStoryChapterForTesting(storage, 5);
+  saveStoryChapter(storage, { ...initialStoryChapterState(5), status: { kind: "complete" }, daoCount: 5, answers: { stale: "answer" } });
+  unlockStoryChapterForTesting(storage, 5);
+  const state = loadStorySave(storage).chapters[5];
+  assert.equal(state.status.kind, "playing");
+  assert.equal(state.daoCount, 5);
+  assert.deepEqual(state.answers, {});
+});
+
 test("marks a completed chapter and unlocks the next one", () => {
   const storage = new MemoryStorage();
   unlockStoryChapterForTesting(storage, 3);

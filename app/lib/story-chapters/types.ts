@@ -105,6 +105,8 @@ export interface StoryChapterSpec {
   scenes: readonly StoryScene[];
   completionTitle: string;
   completionText: string;
+  completionDaoCount: number;
+  completionDaoLabel: string;
   nextChapterId?: StoryChapterId;
 }
 
