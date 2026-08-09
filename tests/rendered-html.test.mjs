@@ -51,6 +51,9 @@ test("keeps a clearly warned chapter debug portal on the homepage", async () => 
   assert.match(html, /普通用户请勿点击/);
   assert.match(html, /直接进入第一章/);
   assert.match(html, /直接进入第二章/);
+  assert.match(html, /直接进入第三章/);
+  assert.match(html, /直接进入第四章/);
+  assert.match(html, /直接进入第五章/);
   assert.match(pageSource, /markChapterOneComplete\(window\.localStorage\)/);
   assert.match(pageSource, /createFreshChapterTwoSave\(window\.localStorage\)/);
   assert.equal((pageSource.match(/<ChapterDebugPortal \/>/g) ?? []).length, 1);
@@ -66,6 +69,14 @@ test("server-renders the second chapter entry before the local solo save is hydr
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /正在读取单机档案/);
+});
+
+test("server-renders chapters three through five before local saves hydrate", async () => {
+  for (const path of ["/chapter/3", "/chapter/4", "/chapter/5"]) {
+    const response = await render(path);
+    assert.equal(response.status, 200);
+    assert.match(await response.text(), /正在读取单机档案/);
+  }
 });
 
 test("ships the full first-trial visual set", async () => {

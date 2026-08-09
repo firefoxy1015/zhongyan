@@ -1,0 +1,278 @@
+{
+  "version": 1,
+  "generatedBy": "scripts/render-story-voices.mjs",
+  "assets": {
+    "c03-qixia-001": {
+      "src": "/audio/story-chapters/voice/c03-qixia-001.0956d0acb227.mp3",
+      "sha256": "0956d0acb2272f269d9b7039f804df51d5bad51c6226c66a8d4ab7c44777ee6c",
+      "inputHash": "0695a16004ef8f213182ea924048119e0a812d73427b8479bbadec608c86cd6f",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-clerk-001": {
+      "src": "/audio/story-chapters/voice/c03-clerk-001.e3f580f1fd6a.mp3",
+      "sha256": "e3f580f1fd6a52ae8955be0922764b66dd6f2d9b6f295ab59f7d8f23d56c6c14",
+      "inputHash": "852751d18430ec1b03d515c5102d2cc8c1a68e3b819f2d275c600cb48d06b6e4",
+      "speakerId": "store-clerk",
+      "voiceVersion": "store-clerk-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-han-001": {
+      "src": "/audio/story-chapters/voice/c03-han-001.0f706e576c84.mp3",
+      "sha256": "0f706e576c8403aa3c93e65f63b6cb1193fab5caadffd825bd5f315dcd23f3ce",
+      "inputHash": "d648b44ec80bd5c32ae8b6809d1bad76278c46b84ef6e07b46b8c26df2f6abac",
+      "speakerId": "han",
+      "voiceVersion": "han-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-qixia-002": {
+      "src": "/audio/story-chapters/voice/c03-qixia-002.efa707de5259.mp3",
+      "sha256": "efa707de525948ca4852ea50302c6ed474b1385d67273513d0397f93b5a44541",
+      "inputHash": "41bc49bad0d759c8c310e8d80fd4efde2f3be936def9735fa41f528d626e26a6",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-han-002": {
+      "src": "/audio/story-chapters/voice/c03-han-002.082b9af62acb.mp3",
+      "sha256": "082b9af62acbe21e549d4bd4f248d4dd2c4eaa2d3cc9f8fa6dc1ef68013ba9c1",
+      "inputHash": "9c1acfaf5be9e0548fcd2037d1fdba1134924fa910b9e0e5f528631f148990a1",
+      "speakerId": "han",
+      "voiceVersion": "han-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-qixia-003": {
+      "src": "/audio/story-chapters/voice/c03-qixia-003.5a3d2158a3c1.mp3",
+      "sha256": "5a3d2158a3c1667d6a08faac3d6675ca8174a48cc4da62b23464fad345a0c343",
+      "inputHash": "620740025fda580ee3056183f3fb749e8f541f1d50d26866d6910d6d1ebc846e",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-tiantian-001": {
+      "src": "/audio/story-chapters/voice/c03-tiantian-001.68ed83c355c6.mp3",
+      "sha256": "68ed83c355c66a34818a69758425759ef0b85f6e2f4748ffa79949aaf0cafe2d",
+      "inputHash": "e1676eb4c189835d626c086c7982f2801799a7f3b50a863e11e642c3a6b1fdad",
+      "speakerId": "tiantian",
+      "voiceVersion": "tiantian-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-qixia-004": {
+      "src": "/audio/story-chapters/voice/c03-qixia-004.f477f876766b.mp3",
+      "sha256": "f477f876766b27fcc63ea2976c1b4a39116dffc56523fb4abdbc020d504f78eb",
+      "inputHash": "06093f11503b1898b6b4033238ded42e76e0e146997f6a43e8f3aba5eb12a54e",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c03-qiao-001": {
+      "src": "/audio/story-chapters/voice/c03-qiao-001.04d4dfa5386e.mp3",
+      "sha256": "04d4dfa5386e30e4b72271143eafbbe0797a10b38f34d29bec0784fa1ed9c6f7",
+      "inputHash": "fa6329667fa5c6cdf35797a4f405efa910fdad883366f2f253e80244ea3b9178",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c04-rat-001": {
+      "src": "/audio/story-chapters/voice/c04-rat-001.41de996310f6.mp3",
+      "sha256": "41de996310f6f933a1033d21ec6d218a3b159e877c7f31529d3db6df563eb79c",
+      "inputHash": "f05fb55fb16a3e29f7acaad97eafb0be88d7d5e29dfeee0e899057983b49263e",
+      "speakerId": "human-rat",
+      "voiceVersion": "human-rat-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-tiantian-001": {
+      "src": "/audio/story-chapters/voice/c04-tiantian-001.c3a069a402f7.mp3",
+      "sha256": "c3a069a402f71e88fa6113302d645e0caacbb42de1b9ce573b195950810ac600",
+      "inputHash": "71a6353125b88db3af19dcf93d024ba9161b3fe91853361c7c05c7406716307e",
+      "speakerId": "tiantian",
+      "voiceVersion": "tiantian-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-qixia-001": {
+      "src": "/audio/story-chapters/voice/c04-qixia-001.951e854f0a70.mp3",
+      "sha256": "951e854f0a70f9f641f358a675c7065651c1fb36e754a2ead36dc4aefa362a7f",
+      "inputHash": "93ab506499fcff7a73cead09c951bfa17e583431793884ece44f88c47112c015",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-qixia-002": {
+      "src": "/audio/story-chapters/voice/c04-qixia-002.470e5fc26e26.mp3",
+      "sha256": "470e5fc26e26ff7b751be834fd2e3b3687717f73a51f418d9b9d813c0f7a3c0e",
+      "inputHash": "7c8270c82ccb91e0159c41a120e5212a7d66522cda5b5f4b92dc195c5691fff7",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-zhuque-001": {
+      "src": "/audio/story-chapters/voice/c04-zhuque-001.d6f81b6ad3dc.mp3",
+      "sha256": "d6f81b6ad3dc47df3e9b34e56582fb075cf192e80d8d9bf038dfe740d2282b85",
+      "inputHash": "554c07256bb63aba098be860632b9aab9765954d8d55a2ac874bdb6452acd440",
+      "speakerId": "zhuque",
+      "voiceVersion": "zhuque-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-rat-002": {
+      "src": "/audio/story-chapters/voice/c04-rat-002.bc419730cede.mp3",
+      "sha256": "bc419730cedee975fea97df398cea7d64c95e4375c2406945764e95bdcd8887f",
+      "inputHash": "7da19881a5738bf29c25754ebf44ac45000023dad1b64bce38fdb35bb620b295",
+      "speakerId": "human-rat",
+      "voiceVersion": "human-rat-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-qiao-001": {
+      "src": "/audio/story-chapters/voice/c04-qiao-001.35cfc734a561.mp3",
+      "sha256": "35cfc734a56117fb2fe3dd914b56435040a39388714126d1bd8877ea88b9563e",
+      "inputHash": "7537f0dd4d01fc53834bad86f5cfcf6dfe690ec5a9c9e46129b28d8dcc3a0149",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c04-qixia-003": {
+      "src": "/audio/story-chapters/voice/c04-qixia-003.1a30099eab6d.mp3",
+      "sha256": "1a30099eab6df5e228b57cdbd6a2b855c84a10d359f2998e281d7ce692a3dbbf",
+      "inputHash": "b834ce0ebf77cb40ad83d03ece510ffeba720da6d9cf88fb11de43b6dd6336ce",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-lin-001": {
+      "src": "/audio/story-chapters/voice/c04-lin-001.811fbb70d202.mp3",
+      "sha256": "811fbb70d20215777ce303ac1af5b6b26e8f546dee66541f1acf47edb1f3d989",
+      "inputHash": "c894fefa9e031a6f092edbefdacb400b1e80ce0766955e75bdb7b28fa893bd75",
+      "speakerId": "lin",
+      "voiceVersion": "lin-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c04-glasses-001": {
+      "src": "/audio/story-chapters/voice/c04-glasses-001.1d9a69e0e72f.mp3",
+      "sha256": "1d9a69e0e72f57c55acff524823a118588e7cf369d8709b63fc60aec0749ba3c",
+      "inputHash": "a1e474c7c18c0a211d4e1e62b0ffb9363d53552b7fc21c293a4a30bf83e59478",
+      "speakerId": "little-glasses",
+      "voiceVersion": "little-glasses-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-ox-001": {
+      "src": "/audio/story-chapters/voice/c05-ox-001.9f75bf2f0fc9.mp3",
+      "sha256": "9f75bf2f0fc9bf830e6fe9f5fb3f7d2f2e02519cba29aa7fd769e58218b49455",
+      "inputHash": "c2f99aa36affed7f39fa9b61bacf3062f1577039112a68284edfaf00ad6ca0eb",
+      "speakerId": "ground-ox",
+      "voiceVersion": "ground-ox-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-qiao-001": {
+      "src": "/audio/story-chapters/voice/c05-qiao-001.86becfec1dc6.mp3",
+      "sha256": "86becfec1dc61f96918b058c363523529d21db5c15759a39775e815dda21a7de",
+      "inputHash": "8f63c8ac3794899213ec29971fab3923f4b6c0b351f57d5edf7d35c346b44526",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c05-qixia-001": {
+      "src": "/audio/story-chapters/voice/c05-qixia-001.977a8e0d6d62.mp3",
+      "sha256": "977a8e0d6d62f82bcb93e2e9ec5d9572ee81f75168e92151924986db69518860",
+      "inputHash": "6dc28b85346e6198d990bbcbfc43df3ca57e93fdd38c49b79eee2572805f59bc",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-qiao-002": {
+      "src": "/audio/story-chapters/voice/c05-qiao-002.0f0100b7326e.mp3",
+      "sha256": "0f0100b7326ebf5177c88d34d8df1c4648991e61a4e15cce4092f9af78596df8",
+      "inputHash": "f60b49923ecc98d215ef8d217eeb7a5d2815d41290c4ca83c75b1172a8985f1c",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c05-qixia-002": {
+      "src": "/audio/story-chapters/voice/c05-qixia-002.31cecb4f39aa.mp3",
+      "sha256": "31cecb4f39aa773cb231008bf15c8bad1eb54437cc80490b76b757a7d96c7ca1",
+      "inputHash": "3a4f8da5f835e9f34cc7817c0624f506b781b442d6a269e2e54d9ed7dc8d655b",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-qiao-003": {
+      "src": "/audio/story-chapters/voice/c05-qiao-003.d8c841992ad0.mp3",
+      "sha256": "d8c841992ad0bcadf4fb7ebc5781c3514fca47b69fd70198ff0094c580f3326f",
+      "inputHash": "3efad2e90712d78380a0a9c3d17e6e154ba0a48d4d2dee0096065f8fab55ed1f",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c05-qixia-003": {
+      "src": "/audio/story-chapters/voice/c05-qixia-003.289f1c904a3e.mp3",
+      "sha256": "289f1c904a3e6dcd8cfb510f594d301bab3f7a1355adf1e83612b24925dcbcd9",
+      "inputHash": "d9ad14634e195dc2c8ed3573ffdc8629a81465fc101b5c6fbbd169b2decf975c",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-glasses-001": {
+      "src": "/audio/story-chapters/voice/c05-glasses-001.eb13fefdb812.mp3",
+      "sha256": "eb13fefdb8125ff43eb080ab6976fa340e239f109cba5803c0de4d06ed9e0d67",
+      "inputHash": "5e4e3b99b509f9e46dd1323d73792fc49af78d2687739f9712d778da888cc8ad",
+      "speakerId": "little-glasses",
+      "voiceVersion": "little-glasses-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-qiao-004": {
+      "src": "/audio/story-chapters/voice/c05-qiao-004.7431cb92be22.mp3",
+      "sha256": "7431cb92be2222b6465a7a49d015a500505202f7d5e64344ab23387e0aaf10e5",
+      "inputHash": "48dd3154558e3f45ede558549b46bc54c064531874735a6b44f2e20f55e64a31",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c05-ox-002": {
+      "src": "/audio/story-chapters/voice/c05-ox-002.1b59171d8b8d.mp3",
+      "sha256": "1b59171d8b8d8785cff034e750f15380f5fb64f481f666d330bf8c570de20cfc",
+      "inputHash": "07d1847564682d0cc6610049e92eac9e332d4ca5388338a48ec509d8411a78ac",
+      "speakerId": "ground-ox",
+      "voiceVersion": "ground-ox-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-zhang-001": {
+      "src": "/audio/story-chapters/voice/c05-zhang-001.d054482bc4cd.mp3",
+      "sha256": "d054482bc4cd32dda84f78a88527b3580bbb92edccc759d71ac604239579793f",
+      "inputHash": "37ee3c391c9337aec1eebd69c8b7cb95f5e56c347b3a55ee2f7fd17df19758e4",
+      "speakerId": "zhang-shan",
+      "voiceVersion": "zhang-shan-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-qiao-005": {
+      "src": "/audio/story-chapters/voice/c05-qiao-005.be3678848765.mp3",
+      "sha256": "be36788487650fde256c039c9150e5d42192e7aaf9331049fc5118cde24ecd9e",
+      "inputHash": "b5ad0944bd255547204dcf5a61c6bfd8e6282804166405cb05f2b33f32c072b2",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c05-qiao-006": {
+      "src": "/audio/story-chapters/voice/c05-qiao-006.58a764d8ace7.mp3",
+      "sha256": "58a764d8ace737f71ebff4697cd971c8b5bf86bf6516546479ce57538c04c6d1",
+      "inputHash": "57ee58dd2750e22e6dfc300f9ca86b31212bb07ed65f853a0e33396cf57e47e8",
+      "speakerId": "qiao",
+      "voiceVersion": "qiao-hk-clone-v1",
+      "model": "speech-2.8"
+    },
+    "c05-zhang-002": {
+      "src": "/audio/story-chapters/voice/c05-zhang-002.5862e385b859.mp3",
+      "sha256": "5862e385b8598a201e13f21bd41a1cd9c8b90fbad38c297eee7343a1344c9a14",
+      "inputHash": "8eab10c84093bb503832c0f37b197d6cac1c592569bce6abc7c04623f0014e00",
+      "speakerId": "zhang-shan",
+      "voiceVersion": "zhang-shan-locked-v1",
+      "model": "doubao-tts-2.0"
+    },
+    "c05-qixia-004": {
+      "src": "/audio/story-chapters/voice/c05-qixia-004.a7a5f773842e.mp3",
+      "sha256": "a7a5f773842eb2a9e996fa85ed00e1951753d867f3ef4d6b5f36c618e01cfe5f",
+      "inputHash": "22b2a2a169f8d4e4a306ef599b1eb459d9703d4e3899779400636b7ada38eacb",
+      "speakerId": "qixia",
+      "voiceVersion": "qixia-locked-v2",
+      "model": "doubao-tts-2.0"
+    }
+  }
+}

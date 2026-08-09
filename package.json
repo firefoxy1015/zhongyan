@@ -9,11 +9,14 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "start": "vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/liar-game.test.mjs tests/room-logic.test.mjs tests/chapter-two-canon.test.mjs tests/chapter-two-engine.test.mjs tests/chapter-two-save.test.mjs tests/chapter-two-assets.test.mjs",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/liar-game.test.mjs tests/room-logic.test.mjs tests/chapter-two-canon.test.mjs tests/chapter-two-engine.test.mjs tests/chapter-two-save.test.mjs tests/chapter-two-assets.test.mjs tests/story-chapters-canon.test.mjs tests/story-chapters-engine.test.mjs tests/story-chapters-save.test.mjs tests/story-chapters-assets.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "canon:manifest": "node scripts/generate-canon-manifest.mjs",
-    "voice:warm": "node scripts/warm-voice-assets.mjs"
+    "voice:warm": "node scripts/warm-voice-assets.mjs",
+    "story:audio": "node scripts/render-story-audio.mjs",
+    "story:voices": "node scripts/render-story-voices.mjs",
+    "story:assets": "node scripts/build-story-asset-manifest.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

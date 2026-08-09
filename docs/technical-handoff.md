@@ -1,11 +1,11 @@
 # 《十日终焉》单机剧情桌游技术交接文档
 
-- 最后核对日期：2026-08-06
+- 最后核对日期：2026-08-09
 - 项目目录：克隆仓库后的项目根目录
 - 代码仓库：`https://github.com/firefoxy1015/zhongyan`
 - 生产环境：`https://zhongyan.onrender.com`
 - 当前主分支：`main`
-- 本交接对应的游戏代码基线：`61175c4`（第一章立绘与调试入口修复完成）
+- 本交接对应的游戏代码基线：本次第 3、4、5 章提交（以最新 `main` commit 为准）
 
 > 这是一份给下一位技术人员直接接手的实施说明，不是宣传稿。凡是本文与实际运行结果冲突，按“线上运行行为 > 当前代码 > 清单与测试 > 本文 > 旧计划”的顺序回查。
 
@@ -116,22 +116,25 @@ npm.cmd run canon:manifest
 - 第二章“四面杀机”从原著第 11 章衔接至第 21 章前半。
 - 第二章 6 个主要推理/操作模块、检查点死亡和完整成功路线。
 - 第二章 16 个视觉资产、14 段动画、3 条 BGM、14 个 SFX、23 个固定对白文件。
-- 首页测试人员调试入口，可直接进入第一章或写入合法单机档后进入第二章。
-- 自动测试 41 项，覆盖仓库原文哈希、正史、引擎、存档、素材哈希、语音锁、SSR 和联机房纯逻辑。
+- 第三章“七黑剑”、第四章“仓库寻道”、第五章“地牛”共 18 个可操作场景和完整正史成功路线。
+- 第 3 至 5 章共享数据驱动 reducer、明确错项、死亡检查点、版本 3 存档迁移和逐章门禁。
+- 第 3 至 5 章新增 8 张锁定视觉图、15 段事件动画、3 条 BGM、13 个 SFX、34 个固定对白文件。
+- 首页测试人员调试入口，可直接进入第一至第五章，并写入不含答案的合法测试档。
+- 自动测试 57 项，覆盖仓库原文哈希、正史、引擎、存档、素材哈希、语音锁、SSR 和联机房纯逻辑。
 - Render 生产站点已建立并从 GitHub `main` 部署。
 
 ### 3.2 尚未完成
 
-- 第三章及后续正史章节。
+- 第六章及后续正史章节。
 - 全剧情数据引擎。目前第一章主要由 React 局部状态驱动，第二章已有独立 reducer；两章架构尚未完全统一。
 - 完整角色圣经文件。目前角色锁分散在 `liar-game.ts`、`testimony-speech.ts`、`chapter-two/canon.ts`、语音清单和资产清单中。
 - 自动化浏览器端到端测试。目前主要是 Node 测试加人工浏览器验收。
-- 单机存档迁移框架。目前只有版本 2 envelope 和第二章 schemaVersion 1。
-- 第三章的原文范围、玩法和正式素材，必须重新做 PLAN，不能从第二章直接猜。
+- 第一、二章尚未迁入第 3 至 5 章使用的通用章节 UI；不要为了统一架构先破坏已验收章节。
+- 自动化浏览器 E2E 脚本仍未固化进仓库；本次使用 Playwright CLI 做了桌面、390px、音频请求和动画实机验收。
 
 ### 3.3 已知文档状态
 
-`docs/chapter-02-plan.md` 是第二章的详细实现契约，仍然非常有用，但文件开头“等待发布”的状态已经过时。第二章代码、资产和语音已经进入主分支；判断现状应以当前代码、测试和线上版本为准。
+`docs/chapter-02-plan.md` 和 `docs/chapter-03-05-plan.md` 是已实现章节的详细契约。判断现状仍以当前代码、测试和线上版本为准。
 
 ---
 
@@ -210,10 +213,12 @@ app/
 content/                           正史、视觉、声音和资产审计清单
 public/art/                        第一章固定图
 public/art/chapter-02/             第二章固定图和解谜 SVG
+public/art/chapter-03..05/         第三至第五章固定场景和角色图
 public/audio/                      固定语音、BGM、SFX
 scripts/                           正史清单与离线音频生成脚本
-tests/                             41 项回归测试
+tests/                             57 项回归测试
 docs/chapter-02-plan.md            第二章实现契约
+docs/chapter-03-05-plan.md         第三至第五章实现契约
 ```
 
 ### 5.1 推荐依赖方向
@@ -233,7 +238,7 @@ flowchart LR
   Tests --> Assets
 ```
 
-第三章不要继续把全部规则堆进页面组件。应沿用第二章的方向：**正史数据 -> 纯 reducer -> selectors -> UI**。
+第六章继续沿用第 3 至 5 章方向：**正史数据 -> 纯 reducer -> UI 投影**，不要把规则堆进页面组件。
 
 ---
 
@@ -571,9 +576,57 @@ insertion = vertical-then-horizontal
 
 ---
 
-## 8. 角色连续性与伤情
+## 8. 第三至第五章：七黑剑、仓库寻道、地牛
 
-### 8.1 角色状态必须跨章节继承
+### 8.1 正史范围与场景数
+
+| 游戏章 | 原文章节 | 原文行 | 场景 | 正史结算 |
+|---|---|---:|---:|---|
+| 第三章“七黑剑” | 22-29 | 3001-4142 | 5 | 韩一墨死亡；探索队带两颗“道”，李尚武留一颗 |
+| 第四章“仓库寻道” | 30-35 | 4143-4986 | 5 | 人鼠赌命失败后返还门票并赔三颗，探索队共五颗 |
+| 第五章“地牛” | 36-48 | 4987-6744 | 8 | 十九人通关；四人队按交易与归还结算为九十六颗 |
+
+实现契约：`docs/chapter-03-05-plan.md`。正史数据与逐行来源：`app/lib/story-chapters/canon.ts`。
+
+### 8.2 通用章节架构
+
+```text
+app/chapter/StoryChapterGame.tsx       第3至5章共享UI和音频编排
+app/chapter/story-chapter.module.css   桌面/390px布局和事件动画
+app/lib/story-chapters/types.ts        通用场景、谜题、观察、失败和状态类型
+app/lib/story-chapters/canon.ts        三章正史、对白、观察、答案和行号
+app/lib/story-chapters/engine.ts       纯reducer、错项、动画、死亡、检查点
+app/lib/story-chapters/save.ts         v3存档、v2迁移、门禁、调试解锁
+app/lib/story-chapters/audio.ts        BGM/SFX/静态对白播放器
+app/lib/story-chapters/voice-assets.ts 34条本地固定语音及哈希
+content/chapter-03-05-asset-manifest.json 视觉和声音总锁定清单
+```
+
+页面只传 `chapterId`，不复制规则：`/chapter/3`、`/chapter/4`、`/chapter/5` 都渲染 `StoryChapterGame`。
+
+### 8.3 玩家规则
+
+- 先点现场观察；未观察就提交会逐项提示“先检查什么”，同时增加压力。
+- 每个单选字段有独立错误文本，不能只显示“答案错误”。
+- 正确推演触发对应事件动画和 SFX，动画结束后才允许推进。
+- 非谜题正史事件也必须先播放动画，再自动进入下一幕。
+- 明确的致死选择保留死亡：第三章独自跟店员进里屋、第四章赌命后找错位置、第五章黑熊前装死等。
+- 死亡页必须显示失败 ID、具体原因和返回检查点；重试重建该检查点之前的正史账面。
+
+### 8.4 资产、语音和动画锁
+
+- 新图：`public/art/chapter-03/` 到 `public/art/chapter-05/`，8 张，全部锁 SHA-256 与尺寸。
+- 静态对白：34 条，路径 `public/audio/story-chapters/voice/`，运行时不调用 TTS。
+- 乔家劲继续使用 `qiao-hk-clone-v1`；齐夏继续使用固定成年男声；甜甜继续使用固定甜美女声。
+- 三章 BGM：`urban-dread`、`warehouse-deception`、`bear-pressure`。
+- 15 段动画不是统一占位：巨剑落地、仓库熄灯、口袋取道、朱雀红羽、分队灯、熊门、圆板、鞋子诱敌、倒计时、道散落等都有独立 CSS 运动和 SFX。
+- 语音重新生成命令只用于离线制作；执行需要本机环境变量，API key 禁止进入代码、manifest、日志文档或 Git。
+
+---
+
+## 9. 角色连续性与伤情
+
+### 9.1 角色状态必须跨章节继承
 
 新章节 PLAN 至少要冻结：
 
@@ -594,7 +647,7 @@ interface CharacterContinuity {
 
 不要只保存“角色活着”，否则伤情、道具、认知和关系会在后续章节断裂。
 
-### 8.2 第二章结束时的关键状态
+### 9.2 第二章结束时的关键状态
 
 - 九人全部存活。
 - 甜甜右手掌有伤。
@@ -608,9 +661,9 @@ interface CharacterContinuity {
 
 ---
 
-## 9. 视觉资产规则
+## 10. 视觉资产规则
 
-### 9.1 来源和表述
+### 10.1 来源和表述
 
 - 官方物料决定方向、色板、气质和世界观尺度。
 - 仓库内现有图片是项目原创伴生资产或确定性谜题图，不是官方动画帧或剧集剧照。
@@ -618,7 +671,7 @@ interface CharacterContinuity {
 - 不使用无来源二传图、其他同人图或演员肖像复制。
 - 新视觉必须先登记来源、用途、版本和状态，再接入 UI。
 
-### 9.2 第一章资产
+### 10.2 第一章资产
 
 - `public/art/` 下 13 个一级图片文件。
 - `content/visual-asset-manifest.json` 标记 active/superseded。
@@ -642,7 +695,7 @@ object-position: center bottom;
 第一章关键 CSS：`.witness-portrait`。  
 移动端已验证基准：390×844 视口，甜甜图自然尺寸 1086×1448，渲染 375×439，横向溢出为 0。
 
-### 9.3 第二章资产
+### 10.3 第二章资产
 
 `public/art/chapter-02/` 有 16 个锁定资产，包括：
 
@@ -660,9 +713,9 @@ object-position: center bottom;
 
 ---
 
-## 10. 语音、BGM、音效和动画
+## 11. 语音、BGM、音效和动画
 
-### 10.1 固定语音总原则
+### 11.1 固定语音总原则
 
 - 一人一固定音色。
 - 一句一文件。
@@ -671,7 +724,7 @@ object-position: center bottom;
 - 运行时只播放本地文件。
 - 文件缺失时显示错误，不得调用 TTS 补生成，也不得换成浏览器系统音色。
 
-### 10.2 第一章语音
+### 11.2 第一章语音
 
 - 目录：`public/audio/chapter-01/voice/`。
 - 文件数：18。
@@ -686,7 +739,7 @@ object-position: center bottom;
 - 授权记录：`public/voice-references/ATTRIBUTION.md`。
 - 不能改回北方普通话或普通男声占位。
 
-### 10.3 第二章语音
+### 11.3 第二章语音
 
 - 目录：`public/audio/chapter-02/voice/`。
 - 文件数：23。
@@ -702,7 +755,7 @@ object-position: center bottom;
 - 人蛇：`renshe-locked-v1`。
 - 人龙：`renlong-locked-v1`。
 
-### 10.4 离线生成脚本
+### 11.4 离线生成脚本
 
 - 第一章：`scripts/warm-voice-assets.mjs`。
 - 第二章：`scripts/render-chapter-two-voices.mjs`。
@@ -710,7 +763,7 @@ object-position: center bottom;
 
 真实 API key 不能提交、不能写进文档、不能放在前端。生成只在新增或经批准重做台词时执行。
 
-### 10.5 第二章 BGM 与 SFX
+### 11.5 第二章 BGM 与 SFX
 
 - 3 条 BGM：`room-tension`、`harpoon-crisis`、`termination-reveal`。
 - 14 个 SFX：面具、墙体、链条、座钟光束、木裂、盾牌闭合、鱼叉雨、受伤、断绳、地板升降/坍塌、拉杆、门、钟声。
@@ -719,7 +772,7 @@ object-position: center bottom;
 
 浏览器自动播放限制要求：第一次用户点击必须真正启动声音。不能在首次点击时因为状态反转而变成“静音”。
 
-### 10.6 14 段动画
+### 11.6 第二章 14 段动画
 
 动画 ID：
 
@@ -751,23 +804,24 @@ city-reveal
 
 ---
 
-## 11. 单机存档
+## 12. 单机存档
 
 存档键：
 
 ```text
-zhongyan:solo-save:v2
+zhongyan:solo-save:v2  第一、二章旧档，继续读取
+zhongyan:solo-save:v3  第三至第五章主档
 ```
 
 envelope：
 
 ```ts
-interface SoloSaveEnvelope {
-  version: 2;
+interface StorySaveEnvelope {
+  version: 3;
   updatedAt: string;
   completedChapters: number[];
-  activeChapter: 1 | 2;
-  chapterTwo?: ChapterTwoState;
+  activeChapter: 1 | 2 | 3 | 4 | 5;
+  chapters: Partial<Record<3 | 4 | 5, StoryChapterState>>;
   lockedAssetVersions: {
     portraits: string;
     voices: string;
@@ -779,28 +833,24 @@ interface SoloSaveEnvelope {
 
 - 第一章正确结算后 `completedChapters` 加入 `1`。
 - 第二章只允许在 `canEnterChapterTwo()` 为真时进入。
-- 首页调试入口通过 `markChapterOneComplete()` + `createFreshChapterTwoSave()` 写入合法测试档，不是直接绕过组件判断。
-- 畸形 JSON 或不匹配的 schema 会被忽略。
-
-新增第三章时：
-
-1. 不要直接把 `activeChapter` 联合类型改完就结束。
-2. 设计版本 3 的迁移函数。
-3. 保留已有玩家第一、二章进度。
-4. 给损坏、旧版、缺字段和新字段写测试。
-5. 把立绘/音色版本继续写进存档，防止内容更新后角色漂移。
+- `loadStorySave()` 会迁移并持续合并 v2 的第一、二章完成标记，避免先创建 v3 后丢失旧进度。
+- 第三至第五章分别要求前一章出现在 `completedChapters`。
+- `saveStoryChapter()` 只在章节状态为 `complete` 时写入完成标记。
+- 调试解锁会写入合法章节状态和前置完成标记，但不写答案。
+- 畸形 JSON、未知场景或不匹配 schema 会回退到安全初始状态。
+- 第六章扩展时必须迁移版本或向后兼容，不能直接覆盖旧玩家档案。
 
 ---
 
-## 12. 首页调试入口
+## 13. 首页调试入口
 
 实现：`ChapterDebugPortal`，位于 `app/page.tsx`。
 
 要求：
 
 - 首页显示“测试人员调试入口 / 普通用户请勿点击”。
-- 可直接进入第一章。
-- 可写入合法第一章完成标记并直接进入第二章。
+- 可直接进入第一至第五章。
+- 第二章沿用 v2 测试档；第三至第五章调用 `unlockStoryChapterForTesting()` 写入 v3 合法测试档。
 - 不显示谜底。
 - 不上传测试档。
 - **只在 `screen === "identity"` 渲染一次。**
@@ -810,7 +860,7 @@ interface SoloSaveEnvelope {
 
 ---
 
-## 13. 联机代码：保留但暂不优先
+## 14. 联机代码：保留但暂不优先
 
 现有路径：
 
@@ -839,9 +889,9 @@ interface SoloSaveEnvelope {
 
 ---
 
-## 14. 自动测试
+## 15. 自动测试
 
-当前 41 项测试分组：
+当前 57 项测试分组：
 
 | 文件 | 重点 |
 |---|---|
@@ -852,6 +902,10 @@ interface SoloSaveEnvelope {
 | `tests/chapter-two-engine.test.mjs` | 六段主流程、错误标记、地图、盾牌、逻辑分支、正史通关 |
 | `tests/chapter-two-save.test.mjs` | 门禁、畸形档、保存恢复 |
 | `tests/chapter-two-assets.test.mjs` | 16 图、3 BGM、14 SFX、23 语音、14 动画、齐夏男声、乔家劲港普 |
+| `tests/story-chapters-canon.test.mjs` | 第3至5章原文范围、正史结果、角色立绘/音色版本和逐行来源 |
+| `tests/story-chapters-engine.test.mjs` | 三章正史通关、精确道账、逐项错因、死亡和检查点、非谜题动画 |
+| `tests/story-chapters-save.test.mjs` | v2迁移、v3合并、调试门禁、无答案测试档、逐章解锁 |
+| `tests/story-chapters-assets.test.mjs` | 8图、3 BGM、13 SFX、34语音、15动画及全部文件哈希 |
 
 任何新章节至少增加四类测试：
 
@@ -864,9 +918,9 @@ interface SoloSaveEnvelope {
 
 ---
 
-## 15. 浏览器验收矩阵
+## 16. 浏览器验收矩阵
 
-### 15.1 桌面
+### 16.1 桌面
 
 - 身份牌可翻转且文字清楚。
 - 第一次用户手势可启动 BGM。
@@ -878,7 +932,7 @@ interface SoloSaveEnvelope {
 - 死亡后可回到正确检查点或起点。
 - 控制台无应用错误。
 
-### 15.2 手机 390×844
+### 16.2 手机 390×844
 
 - 页面无横向溢出。
 - 顶部 HUD 不覆盖主要按钮。
@@ -888,7 +942,7 @@ interface SoloSaveEnvelope {
 - 浏览器音量不为零时，BGM、SFX、证词和追问均可听。
 - 系统音量浮层不应被误认为网页遮挡，但网页必须避开自身 fixed 控件覆盖。
 
-### 15.3 生产验证
+### 16.3 生产验证
 
 不能以以下结果宣称上线成功：
 
@@ -907,7 +961,7 @@ interface SoloSaveEnvelope {
 
 ---
 
-## 16. Git 与 Render 发布流程
+## 17. Git 与 Render 发布流程
 
 ```powershell
 cd <克隆后的 zhongyan 项目目录>
@@ -939,17 +993,17 @@ https://zhongyan.onrender.com/?qa=<commit>
 
 ---
 
-## 17. 新章节的标准制作流程
+## 18. 新章节的标准制作流程
 
-下一位技术人员开始第三章时，按以下顺序，不要直接写 JSX。
+下一位技术人员开始第六章时，按以下顺序，不要直接写 JSX。
 
 ### 阶段 1：正史审计
 
-1. 从第二章终点继续定位原文。
+1. 从第五章终点继续定位原文。
 2. 记录章节标题、起止行、场景、出场角色和事件。
 3. 列出所有不可提前解释的伏笔。
 4. 冻结开场和结束镜头。
-5. 生成 `content/chapter-03-canon-audit.json`。
+5. 生成第六章的 canon audit 文件。
 
 ### 阶段 2：角色状态冻结
 
@@ -983,11 +1037,10 @@ https://zhongyan.onrender.com/?qa=<commit>
 建议新增：
 
 ```text
-app/lib/chapter-three/types.ts
-app/lib/chapter-three/canon.ts
-app/lib/chapter-three/engine.ts
-app/lib/chapter-three/selectors.ts
-app/lib/chapter-three/save.ts 或统一存档迁移
+app/lib/story-chapters/canon.ts
+app/lib/story-chapters/engine.ts
+app/lib/story-chapters/save.ts
+app/chapter/StoryChapterGame.tsx
 ```
 
 先让 reducer 在无 UI 情况下可完整通关和死亡，再写界面。
@@ -1048,7 +1101,7 @@ app/lib/chapter-three/save.ts 或统一存档迁移
 
 ---
 
-## 18. 常见失败及对应修正
+## 19. 常见失败及对应修正
 
 | 失败 | 根因 | 正确做法 |
 |---|---|---|
@@ -1068,13 +1121,13 @@ app/lib/chapter-three/save.ts 或统一存档迁移
 
 ---
 
-## 19. 建议的下一步优先级
+## 20. 建议的下一步优先级
 
 ### P0：交接后先验证，不立即扩章
 
 1. 拉取 `main`。
-2. 跑 lint、41 项测试和 `git diff --check`。
-3. 本地走第一章和第二章入口。
+2. 跑 lint、57 项测试和 `git diff --check`。
+3. 本地走第一章、第二章以及第三至第五章调试入口。
 4. 确认 Render 当前包与 `main` 一致。
 5. 修复第一章“四页草稿可跳过草稿甲”的技术债并补测试。
 
@@ -1089,13 +1142,13 @@ app/lib/characters.ts
 
 同时保留旧导出兼容，避免一次大重构破坏现有章节。
 
-### P2：第三章完整 PLAN
+### P2：第六章完整 PLAN
 
-从第 21 章后续开始重新审计，提交计划给产品负责人确认；没有确认不要写第三章 UI。
+从第 48 章后续继续审计，提交计划给产品负责人确认；没有确认不要写第六章 UI。
 
 ### P3：统一章节框架
 
-在第三章证明需求稳定后，再抽取：
+第 3 至 5 章共享框架已经稳定；后续只抽取真正重复且有测试保护的能力：
 
 - 通用 HUD。
 - 通用检查点死亡页。
@@ -1107,16 +1160,16 @@ app/lib/characters.ts
 
 ---
 
-## 20. 最终交接验收清单
+## 21. 最终交接验收清单
 
 下一位技术人员可以在首次接手时逐项打勾：
 
 - [ ] 工作目录是 `zhongyan-online-tabletop`，不是 boardgame 项目。
 - [ ] 当前分支是 `main`。
 - [ ] 仓库内 `reference/canon/` 原文存在，且已确认 SHA-256。
-- [ ] 已阅读本文件和 `docs/chapter-02-plan.md`。
+- [ ] 已阅读本文件、`docs/chapter-02-plan.md` 和 `docs/chapter-03-05-plan.md`。
 - [ ] `npm.cmd run lint` 通过。
-- [ ] `npm.cmd test` 41/41 通过。
+- [ ] `npm.cmd test` 57/57 通过。
 - [ ] `git diff --check` 通过。
 - [ ] 第一章身份牌 -> 规则 -> 6 观察 -> 角色证词可操作。
 - [ ] 第一章九张立绘在桌面和 390px 手机均不裁头。
@@ -1128,6 +1181,10 @@ app/lib/characters.ts
 - [ ] 第二章固定伤情不会被清空。
 - [ ] 死亡页面显示具体原因并回到正确检查点。
 - [ ] 第二章 14 段动画、BGM、SFX 和静态对白能播放。
+- [ ] 第三章七黑剑证据板与韩一墨正史死亡可完成。
+- [ ] 第四章人鼠规则漏洞、赌命死亡和朱雀事件可完成。
+- [ ] 第五章地牛八幕、黑熊死亡分支和九十六颗“道”结算可完成。
+- [ ] 第3至5章34条固定对白、3条BGM、13个SFX和15段独立事件动画可播放。
 - [ ] 首页调试入口不会出现在 gameplay DOM。
 - [ ] 生产站点加载的资源哈希与当前部署一致。
 - [ ] 没有把任何真实 API key 提交进仓库。

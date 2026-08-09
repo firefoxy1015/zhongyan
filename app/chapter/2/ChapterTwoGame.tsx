@@ -26,6 +26,7 @@ import {
   canEnterChapterTwo,
   createFreshChapterTwoSave,
   loadSoloSave,
+  markChapterTwoComplete,
   saveChapterTwo,
 } from "../../lib/chapter-two/save.ts";
 import { selectChapterTwoView } from "../../lib/chapter-two/selectors.ts";
@@ -169,7 +170,8 @@ export default function ChapterTwoGame() {
 
   useEffect(() => {
     if (!ready || locked || typeof window === "undefined") return;
-    saveChapterTwo(window.localStorage, state);
+    if (state.status.kind === "complete") markChapterTwoComplete(window.localStorage, state);
+    else saveChapterTwo(window.localStorage, state);
   }, [locked, ready, state]);
 
   useEffect(() => {
@@ -495,7 +497,7 @@ function TerminationScene({ state, act }: { state: ReturnType<typeof initialChap
 }
 
 function CompleteScene() {
-  return <section className={styles.complete}><p>第二章完成</p><h2>我听到了「招灾」的回响。</h2><span>终焉之地已经展开。第三章将在便利店开始。</span><Link href="/">回到章节目录</Link></section>;
+  return <section className={styles.complete}><p>第二章完成</p><h2>我听到了「招灾」的回响。</h2><span>终焉之地已经展开。第三章从破败便利店开始。</span><Link href="/chapter/3">进入第三章：七黑剑</Link><Link href="/">回到章节目录</Link></section>;
 }
 
 function CharacterLayer({ state }: { state: ReturnType<typeof initialChapterTwoState> }) {

@@ -101,6 +101,16 @@ export function saveChapterTwo(storage: StorageLike, chapterTwo: ChapterTwoState
   });
 }
 
+export function markChapterTwoComplete(storage: StorageLike, chapterTwo: ChapterTwoState) {
+  const current = loadSoloSave(storage) ?? createEmptySoloSave();
+  saveSoloState(storage, {
+    ...current,
+    completedChapters: appendUnique(current.completedChapters, 2),
+    activeChapter: 2,
+    chapterTwo,
+  });
+}
+
 export function canEnterChapterTwo(storage: Pick<StorageLike, "getItem">) {
   return loadSoloSave(storage)?.completedChapters.includes(1) ?? false;
 }

@@ -12,6 +12,7 @@ import {
 } from "./lib/deduction-game";
 import { LIAR_GAME, resolveCanonicalVote } from "./lib/liar-game";
 import { createFreshChapterTwoSave, markChapterOneComplete } from "./lib/chapter-two/save";
+import { unlockStoryChapterForTesting } from "./lib/story-chapters/save";
 import { SuspenseBgm } from "./lib/suspense-bgm";
 import {
   CHARACTER_VOICE_PROFILES,
@@ -61,15 +62,20 @@ function clonePuzzleErrors(): PuzzleErrors {
 }
 
 function ChapterDebugPortal() {
-  const enterChapter = (chapter: 1 | 2) => {
+  const enterChapter = (chapter: 1 | 2 | 3 | 4 | 5) => {
     if (typeof window === "undefined") return;
     if (chapter === 1) {
       window.location.assign("/");
       return;
     }
-    markChapterOneComplete(window.localStorage);
-    createFreshChapterTwoSave(window.localStorage);
-    window.location.assign("/chapter/2");
+    if (chapter === 2) {
+      markChapterOneComplete(window.localStorage);
+      createFreshChapterTwoSave(window.localStorage);
+      window.location.assign("/chapter/2");
+      return;
+    }
+    unlockStoryChapterForTesting(window.localStorage, chapter);
+    window.location.assign(`/chapter/${chapter}`);
   };
 
   return (
@@ -82,6 +88,9 @@ function ChapterDebugPortal() {
         <p>绕过正常章节门禁，仅用于逐章验收。不会显示谜底，也不会上传测试档。</p>
         <button onClick={() => enterChapter(1)}>直接进入第一章</button>
         <button onClick={() => enterChapter(2)}>直接进入第二章</button>
+        <button onClick={() => enterChapter(3)}>直接进入第三章</button>
+        <button onClick={() => enterChapter(4)}>直接进入第四章</button>
+        <button onClick={() => enterChapter(5)}>直接进入第五章</button>
       </div>
     </details>
   );

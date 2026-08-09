@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "generatedBy": "scripts/render-story-audio.mjs",
+  "bgm": {
+    "urban-dread": {
+      "src": "/audio/story-chapters/bgm/urban-dread.94a4c412a69b.wav",
+      "sha256": "94a4c412a69b5d93c67443055ff4b7a5631889579a98de3191b6e8f7afd4edc6",
+      "durationMs": 26000
+    },
+    "warehouse-deception": {
+      "src": "/audio/story-chapters/bgm/warehouse-deception.8f012ba82906.wav",
+      "sha256": "8f012ba82906c8fb0b5fc4ffc3a8c992bc5fcbe874e971929a88c84864e710a0",
+      "durationMs": 24000
+    },
+    "bear-pressure": {
+      "src": "/audio/story-chapters/bgm/bear-pressure.d10e24b6d414.wav",
+      "sha256": "d10e24b6d414d6c2603c11827a2a73c963162e9959b4aecc29c4f8d091da6db0",
+      "durationMs": 20000
+    }
+  },
+  "sfx": {
+    "store-door": {
+      "src": "/audio/story-chapters/sfx/store-door.ad6540bbfc98.wav",
+      "sha256": "ad6540bbfc983ccb85df1165215a5bb02dbac1d7972a8d019e08bf468223ad06",
+      "durationMs": 1100
+    },
+    "bell-sword": {
+      "src": "/audio/story-chapters/sfx/bell-sword.ca888ba8abd8.wav",
+      "sha256": "ca888ba8abd88076420ff52758b3077bfec12ad66d9f2348eb41b25ad1d0e491",
+      "durationMs": 2600
+    },
+    "team-split": {
+      "src": "/audio/story-chapters/sfx/team-split.364d1aa02468.wav",
+      "sha256": "364d1aa02468d1c26fef1c40a784ef2710bd4d38a86eb402e216a351e7ebf114",
+      "durationMs": 900
+    },
+    "light-switch": {
+      "src": "/audio/story-chapters/sfx/light-switch.65939f93d3b8.wav",
+      "sha256": "65939f93d3b897a5147441306498ac246a495864d0403fd16a8593cd6ebfcc52",
+      "durationMs": 350
+    },
+    "pocket-grab": {
+      "src": "/audio/story-chapters/sfx/pocket-grab.3fc22124ae2d.wav",
+      "sha256": "3fc22124ae2d132c98ef55b920d394350d5df34148ce1711361eac44ef9d0ebf",
+      "durationMs": 500
+    },
+    "wing-warp": {
+      "src": "/audio/story-chapters/sfx/wing-warp.340e1cf950a6.wav",
+      "sha256": "340e1cf950a667235d849c7053a086a3511bcd68e956ca38c63c6729f473d547",
+      "durationMs": 1400
+    },
+    "team-lights": {
+      "src": "/audio/story-chapters/sfx/team-lights.9ccbd5ede8d7.wav",
+      "sha256": "9ccbd5ede8d7880f33e12550e5d6cb15db956b8b964599e3ef16d081504da17e",
+      "durationMs": 800
+    },
+    "bear-gate": {
+      "src": "/audio/story-chapters/sfx/bear-gate.9764df40b28a.wav",
+      "sha256": "9764df40b28ac1dd723c89ea83170f182845d6d8eff9c9556bbc184c503784f5",
+      "durationMs": 1800
+    },
+    "plate-hit": {
+      "src": "/audio/story-chapters/sfx/plate-hit.c18de556e2a0.wav",
+      "sha256": "c18de556e2a093098e1926e46b6455b256e5e7781810b4e1fa0d8edb7d3f3347",
+      "durationMs": 750
+    },
+    "shoe-hit": {
+      "src": "/audio/story-chapters/sfx/shoe-hit.7d5af091ba7d.wav",
+      "sha256": "7d5af091ba7d67199546c122b1c2362793de41cbd6200bbf30a3abd7be6564bd",
+      "durationMs": 400
+    },
+    "countdown-zero": {
+      "src": "/audio/story-chapters/sfx/countdown-zero.d467611c20fc.wav",
+      "sha256": "d467611c20fca6b0113e0ae6df8015b800da6000135f14d5cf557bd7a7670725",
+      "durationMs": 1200
+    },
+    "dao-spill": {
+      "src": "/audio/story-chapters/sfx/dao-spill.adecd5a78844.wav",
+      "sha256": "adecd5a7884468ad0b46a84c9496777332f54cdb1823f06e935bff4449286758",
+      "durationMs": 1100
+    },
+    "fight-impact": {
+      "src": "/audio/story-chapters/sfx/fight-impact.a12da037e434.wav",
+      "sha256": "a12da037e434fa931ee0f98db2a30f29457095ccd4556ca3fc9a49860df6d17f",
+      "durationMs": 550
+    }
+  }
+}
