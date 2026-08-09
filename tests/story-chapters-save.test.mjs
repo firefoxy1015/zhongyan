@@ -65,3 +65,14 @@ test("marks a completed chapter and unlocks the next one", () => {
   assert.equal(canEnterStoryChapter(storage, 4), true);
   assert.ok(storage.getItem(STORY_SAVE_KEY));
 });
+
+test("fresh chapter entry replaces an existing completed destination save", () => {
+  const storage = new MemoryStorage();
+  unlockStoryChapterForTesting(storage, 5);
+  saveStoryChapter(storage, { ...initialStoryChapterState(5), status: { kind: "complete" }, daoCount: 96 });
+  const fresh = createFreshStoryChapterSave(storage, 5);
+  const restored = loadStorySave(storage).chapters[5];
+  assert.equal(fresh.status.kind, "playing");
+  assert.equal(restored.status.kind, "playing");
+  assert.equal(restored.sceneId, initialStoryChapterState(5).sceneId);
+});

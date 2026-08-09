@@ -79,6 +79,12 @@ test("server-renders chapters three through five before local saves hydrate", as
   }
 });
 
+test("chapter completion links start the next chapter instead of reopening its completed save", async () => {
+  const source = await readFile(new URL("../app/chapter/StoryChapterGame.tsx", import.meta.url), "utf8");
+  assert.match(source, /nextChapterId\}\?fresh=1/);
+  assert.match(source, /freshStartRequested[\s\S]*?createFreshStoryChapterSave/);
+});
+
 test("ships the full first-trial visual set", async () => {
   await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
   await access(new URL("../content/official-visual-reference.json", import.meta.url));

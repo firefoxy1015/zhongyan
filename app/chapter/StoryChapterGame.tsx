@@ -45,6 +45,14 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
         setReady(true);
         return;
       }
+      const freshStartRequested = new URLSearchParams(window.location.search).get("fresh") === "1";
+      if (freshStartRequested) {
+        const fresh = createFreshStoryChapterSave(window.localStorage, chapterId);
+        dispatch({ type: "RESTORE", state: fresh });
+        window.history.replaceState(window.history.state, "", window.location.pathname);
+        setReady(true);
+        return;
+      }
       const save = loadStorySave(window.localStorage);
       const restored = save?.chapters[chapterId];
       if (restored) dispatch({ type: "RESTORE", state: restored });
@@ -147,7 +155,7 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
         <p>{spec.completionText}</p>
         <div className={styles.completeStats}><b>{spec.completionDaoCount}</b><span>{spec.completionDaoLabel}</span></div>
         <div className={styles.completeActions}>
-          {spec.nextChapterId && <Link href={`/chapter/${spec.nextChapterId}`}>进入第{spec.nextChapterId}章</Link>}
+          {spec.nextChapterId && <Link href={`/chapter/${spec.nextChapterId}?fresh=1`}>进入第{spec.nextChapterId}章</Link>}
           <Link href="/">返回章节目录</Link>
         </div>
       </main>
