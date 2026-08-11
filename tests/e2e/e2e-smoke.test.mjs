@@ -338,23 +338,36 @@ test("real-browser chapter transition and mobile smoke", { timeout: 240_000 }, a
       const stageMask = page.locator('[data-stage-prop-id="c8-human-pig-mask"]');
       const stageMaskImage = stageMask.locator("img");
       await stageMaskImage.waitFor({ state: "visible" });
-      const stageMetrics = await stageMask.evaluate((figure) => {
+      const measureStageMask = () => stageMask.evaluate((figure) => {
         const stage = figure.closest("section")?.getBoundingClientRect();
         const box = figure.getBoundingClientRect();
         const image = figure.querySelector("img");
+        const portraits = [...(figure.closest("section")?.querySelectorAll("[class*='portraits'] figure") ?? [])].map((portrait) => {
+          const portraitBox = portrait.getBoundingClientRect();
+          return { left: portraitBox.left, right: portraitBox.right, top: portraitBox.top, bottom: portraitBox.bottom };
+        });
         return {
           stage: stage ? { left: stage.left, right: stage.right, top: stage.top, bottom: stage.bottom } : null,
           box: { left: box.left, right: box.right, top: box.top, bottom: box.bottom },
+          portraits,
           naturalWidth: image?.naturalWidth ?? 0,
           naturalHeight: image?.naturalHeight ?? 0,
           objectFit: image ? getComputedStyle(image).objectFit : "missing",
         };
       });
-      assert.ok(stageMetrics.stage, "chapter 8 mask has no stage container");
-      assert.ok(stageMetrics.naturalWidth > 0 && stageMetrics.naturalHeight > 0, "chapter 8 stage mask did not load");
-      assert.equal(stageMetrics.objectFit, "contain");
-      assert.ok(stageMetrics.box.left >= stageMetrics.stage.left - 1 && stageMetrics.box.right <= stageMetrics.stage.right + 1, "chapter 8 stage mask overflows horizontally");
-      assert.ok(stageMetrics.box.top >= stageMetrics.stage.top - 1 && stageMetrics.box.bottom <= stageMetrics.stage.bottom + 1, "chapter 8 stage mask overflows vertically");
+      const assertSeparatedStageMask = (stageMetrics, viewportLabel) => {
+        assert.ok(stageMetrics.stage, `${viewportLabel} chapter 8 mask has no stage container`);
+        assert.ok(stageMetrics.naturalWidth > 0 && stageMetrics.naturalHeight > 0, `${viewportLabel} chapter 8 stage mask did not load`);
+        assert.equal(stageMetrics.objectFit, "contain");
+        assert.ok(stageMetrics.box.left >= stageMetrics.stage.left - 1 && stageMetrics.box.right <= stageMetrics.stage.right + 1, `${viewportLabel} chapter 8 stage mask overflows horizontally`);
+        assert.ok(stageMetrics.box.top >= stageMetrics.stage.top - 1 && stageMetrics.box.bottom <= stageMetrics.stage.bottom + 1, `${viewportLabel} chapter 8 stage mask overflows vertically`);
+        for (const portrait of stageMetrics.portraits) {
+          const overlapWidth = Math.max(0, Math.min(stageMetrics.box.right, portrait.right) - Math.max(stageMetrics.box.left, portrait.left));
+          const overlapHeight = Math.max(0, Math.min(stageMetrics.box.bottom, portrait.bottom) - Math.max(stageMetrics.box.top, portrait.top));
+          assert.equal(overlapWidth * overlapHeight, 0, `${viewportLabel} chapter 8 mask overlaps a character portrait`);
+        }
+      };
+      assertSeparatedStageMask(await measureStageMask(), "390px");
 
       const evidenceCard = page.locator('button[data-observation-id="c8-empty-pig-mask"]');
       await evidenceCard.scrollIntoViewIfNeeded();
@@ -392,6 +405,9 @@ test("real-browser chapter transition and mobile smoke", { timeout: 240_000 }, a
       await page.reload({ waitUntil: "domcontentloaded" });
       await waitForPlayingChapter(page, 8);
       assert.ok((await readChapterState(page, 8)).state.observedIds.includes("c8-empty-pig-mask"), "chapter 8 lost the inspected mask after reload");
+      await page.setViewportSize({ width: 1150, height: 900 });
+      await stageMaskImage.waitFor({ state: "visible" });
+      assertSeparatedStageMask(await measureStageMask(), "1150px");
       diagnostics.assertClean("chapter 8 mask evidence");
     });
 

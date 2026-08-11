@@ -30,7 +30,7 @@
 .portrait2 { right:43%; z-index:2; transform:scale(.8); transform-origin:bottom; opacity:.8; }
 .portrait3 { right:61%; z-index:1; transform:scale(.75); transform-origin:bottom; opacity:.68; }
 .stageProps { position:absolute; z-index:7; inset:0; pointer-events:none; }
-.stageProps figure { position:absolute; left:50%; bottom:1.4rem; width:min(20vw,260px); aspect-ratio:1; margin:0; transform:translateX(-50%) rotate(-5deg); filter:drop-shadow(0 18px 16px rgba(0,0,0,.92)); }
+.stageProps figure { position:absolute; left:2rem; bottom:1.4rem; width:min(16vw,190px); aspect-ratio:1; margin:0; transform:rotate(-5deg); filter:drop-shadow(0 18px 16px rgba(0,0,0,.92)); }
 .stageProps figcaption { position:absolute; right:50%; bottom:-.7rem; transform:translateX(50%); padding:.3rem .7rem; border:1px solid rgba(217,172,92,.42); background:rgba(5,5,4,.86); color:#e6c891; white-space:nowrap; }
 .tabletop { width:min(1500px,calc(100% - 3rem)); margin:2rem auto 0; display:grid; grid-template-columns:minmax(0,1.75fr) minmax(300px,.75fr); gap:1.4rem; }
 .mainColumn,.sideColumn { display:flex; flex-direction:column; gap:1.4rem; min-width:0; }
@@ -285,9 +285,11 @@
   .portrait1 { right:24%; }
   .portrait2 { right:48%; }
   .portrait3 { right:59%; }
-  .stageProps figure { bottom:1.5rem; width:34vw; }
+  .stage:has(.stageProps) .portrait1 { right:16%; }
+  .stage:has(.stageProps) .portrait2 { right:32%; }
+  .stageProps figure { left:.5rem; bottom:1.5rem; width:clamp(74px,20vw,96px); }
   .portraits figcaption { bottom:.45rem; font-size:.72rem; }
-  .stageProps figcaption { bottom:-.5rem; font-size:.68rem; }
+  .stageProps figcaption { bottom:-.5rem; padding:.25rem .4rem; font-size:.62rem; }
   .observationGrid { grid-template-columns:1fr; }
   .observationGrid button { min-height:130px; }
   .playGuide summary { flex-direction:column; gap:.3rem; }
