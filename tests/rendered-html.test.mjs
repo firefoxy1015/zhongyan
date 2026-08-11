@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
+import { storyChapterSpec } from "../app/lib/story-chapters/canon.ts";
+import { STORY_CHAPTER_IDS } from "../app/lib/story-chapters/types.ts";
+
 async function render(path = "/", env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }) {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
@@ -54,8 +57,12 @@ test("keeps a clearly warned chapter debug portal on the homepage", async () => 
   assert.match(html, /直接进入第三章/);
   assert.match(html, /直接进入第四章/);
   assert.match(html, /直接进入第五章/);
+  assert.match(html, /直接进入第六章/);
+  assert.match(html, /直接进入第七章/);
+  assert.match(html, /直接进入第八章/);
   assert.match(pageSource, /markChapterOneComplete\(window\.localStorage\)/);
   assert.match(pageSource, /createFreshChapterTwoSave\(window\.localStorage\)/);
+  assert.match(pageSource, /STORY_CHAPTER_IDS\.map/);
   assert.equal((pageSource.match(/<ChapterDebugPortal \/>/g) ?? []).length, 1);
   assert.match(
     pageSource,
@@ -71,8 +78,9 @@ test("server-renders the second chapter entry before the local solo save is hydr
   assert.match(html, /正在读取单机档案/);
 });
 
-test("server-renders chapters three through five before local saves hydrate", async () => {
-  for (const path of ["/chapter/3", "/chapter/4", "/chapter/5"]) {
+test("server-renders chapters three through eight before local saves hydrate", async () => {
+  for (const chapterId of STORY_CHAPTER_IDS) {
+    const path = `/chapter/${chapterId}`;
     const response = await render(path);
     assert.equal(response.status, 200);
     assert.match(await response.text(), /正在读取单机档案/);
@@ -80,9 +88,30 @@ test("server-renders chapters three through five before local saves hydrate", as
 });
 
 test("chapter completion links start the next chapter instead of reopening its completed save", async () => {
+  const [sharedChapterSource, chapterTwoSource] = await Promise.all([
+    readFile(new URL("../app/chapter/StoryChapterGame.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/chapter/2/ChapterTwoGame.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(chapterTwoSource, /href="\/chapter\/3\?fresh=1"/);
+  assert.match(sharedChapterSource, /nextChapterId\}\?fresh=1/);
+  assert.match(sharedChapterSource, /freshStartRequested[\s\S]*?createFreshStoryChapterSave/);
+  assert.equal(storyChapterSpec(5).nextChapterId, 6);
+
+  const response = await render("/chapter/3?fresh=1");
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /正在读取单机档案/);
+});
+
+test("shared story UI explains risk, renders the full dao ledger, and locks early animation skips", async () => {
   const source = await readFile(new URL("../app/chapter/StoryChapterGame.tsx", import.meta.url), "utf8");
-  assert.match(source, /nextChapterId\}\?fresh=1/);
-  assert.match(source, /freshStartRequested[\s\S]*?createFreshStoryChapterSave/);
+
+  assert.match(source, /先观察，再推演，最后推进正史/);
+  assert.match(source, /错误项会在原位置写明错因，不会只扣压力/);
+  assert.match(source, /state\.daoLedger/);
+  assert.match(source, /<StoryChapterSession chapterId=\{chapterId\} key=\{chapterId\} \/>/);
+  assert.match(source, /animation\.skippableAfterMs/);
+  assert.match(source, /disabled=\{!canSkip\}/);
+  assert.doesNotMatch(source, /state\.daoCount|completionDaoCount/);
 });
 
 test("ships the full first-trial visual set", async () => {

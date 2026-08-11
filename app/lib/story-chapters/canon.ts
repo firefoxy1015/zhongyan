@@ -1,4 +1,22 @@
-import type { StoryChapterId, StoryChapterSpec, StorySpeakerId } from "./types.ts";
+import type { StoryChapterId, StoryChapterSpec, StorySourceRef, StorySpeakerId } from "./types.ts";
+import { STORY_CHAPTERS_06_08 } from "./canon-06-08.ts";
+
+const sourceRef = (
+  kind: StorySourceRef["kind"],
+  chapterStart: number,
+  chapterEnd: number,
+  lineStart: number,
+  lineEnd: number,
+): StorySourceRef => ({ chapterStart, chapterEnd, lineStart, lineEnd, kind });
+
+const summary = (chapterStart: number, chapterEnd: number, lineStart: number, lineEnd: number) =>
+  sourceRef("summary", chapterStart, chapterEnd, lineStart, lineEnd);
+
+const adaptation = (chapterStart: number, chapterEnd: number, lineStart: number, lineEnd: number) =>
+  sourceRef("adaptation", chapterStart, chapterEnd, lineStart, lineEnd);
+
+const quote = (chapterStart: number, chapterEnd: number, lineStart: number, lineEnd: number) =>
+  sourceRef("quote", chapterStart, chapterEnd, lineStart, lineEnd);
 
 export const STORY_SPEAKER_NAMES: Record<StorySpeakerId, string> = {
   qixia: "齐夏",
@@ -16,6 +34,15 @@ export const STORY_SPEAKER_NAMES: Record<StorySpeakerId, string> = {
   "ground-ox": "地牛",
   "zhang-shan": "张山",
   "little-glasses": "小眼镜",
+  xiaoxiao: "潇潇",
+  "old-lu": "老吕",
+  "human-pig": "人猪",
+  "human-rabbit": "人兔",
+};
+
+export const STORY_PORTRAIT_NAMES: Record<string, string> = {
+  ...STORY_SPEAKER_NAMES,
+  "human-pig-unmasked": "人猪",
 };
 
 export const STORY_PORTRAITS: Record<string, string> = {
@@ -33,6 +60,11 @@ export const STORY_PORTRAITS: Record<string, string> = {
   zhuque: "/art/chapter-04/zhuque-v1.png",
   "ground-ox": "/art/chapter-05/ground-ox-v1.png",
   "zhang-shan": "/art/chapter-05/zhang-shan-v1.png",
+  xiaoxiao: "/art/chapter-06/xiaoxiao-v1.png",
+  "old-lu": "/art/chapter-07/old-lu-v1.png",
+  "human-pig": "/art/chapter-07/human-pig-v1.png",
+  "human-pig-unmasked": "/art/chapter-07/human-pig-unmasked-v1.png",
+  "human-rabbit": "/art/chapter-08/human-rabbit-v1.png",
 };
 
 const chapterThree: StoryChapterSpec = {
@@ -41,10 +73,11 @@ const chapterThree: StoryChapterSpec = {
   title: "七黑剑",
   subtitle: "便利店、死者与第一次分队",
   source: { startLine: 3001, endLine: 4142, chapters: [22, 23, 24, 25, 26, 27, 28, 29] },
-  initialDao: 4,
+  initialDaoLedger: { qixiaParty: 4, liZhang: 0, oldLu: 0, burned: 0 },
+  pressureLimit: 12,
   completionTitle: "队伍分开了",
   completionText: "齐夏、乔家劲、甜甜和林檎走向人鼠的仓库。李尚武留在便利店，手里保存着一颗“道”。",
-  completionDaoCount: 3,
+  completionDaoLedger: { qixiaParty: 2, liZhang: 1, oldLu: 0, burned: 0 },
   completionDaoLabel: "全队账面共有“道”（探索队带走两颗）",
   nextChapterId: 4,
   scenes: [
@@ -53,18 +86,18 @@ const chapterThree: StoryChapterSpec = {
       title: "破败便利店",
       eyebrow: "第零天 / 黄昏",
       lead: "韩一墨的肩伤不能再拖。便利店里没有药，只有一个力气异常的瘦弱店员和紧闭的员工休息室。",
-      sourceRef: { chapter: 22, lineStart: 3001, lineEnd: 3306 },
+      sourceRef: summary(22, 23, 3001, 3306),
       backgroundAsset: "/art/chapter-03/ruined-convenience-store-v1.png",
       portraitIds: ["store-clerk", "qixia", "qiao"],
       observations: [
-        { id: "c3-filth", label: "黏黑地面", text: "货架倒塌，地面覆盖新鲜的腥臭、焦味和黏黑污物。", note: "这里一直有别的东西生活。", sourceRef: { chapter: 22, lineStart: 3019, lineEnd: 3045 } },
-        { id: "c3-staff-door", label: "员工休息室", text: "门后有翻找声；店员的力量足以拖动数个成年人。", note: "独自跟进去不是交易，是失去退路。", sourceRef: { chapter: 22, lineStart: 3077, lineEnd: 3137 } },
-        { id: "c3-hook", label: "鱼钩与鱼线", text: "生锈鱼钩可以磨成弯针，鱼线可用于缝合。", note: "它们是韩一墨此刻唯一的生路。", sourceRef: { chapter: 22, lineStart: 3141, lineEnd: 3163 } },
-        { id: "c3-pot", label: "锈锅", text: "锅中食物散发香气；店员反复称它为“小猪崽”。", note: "不要把香味当成安全证据。", sourceRef: { chapter: 23, lineStart: 3183, lineEnd: 3251 } },
+        { id: "c3-filth", label: "黏黑地面", text: "货架倒塌，地面覆盖新鲜的腥臭、焦味和黏黑污物。", note: "这里一直有别的东西生活。", sourceRef: summary(22, 22, 3019, 3045) },
+        { id: "c3-staff-door", label: "员工休息室", text: "门后有翻找声；店员的力量足以拖动数个成年人。", note: "门内持续传来翻找声，店员往返时始终占据门口。", sourceRef: summary(22, 22, 3077, 3137) },
+        { id: "c3-hook", label: "鱼钩与鱼线", text: "生锈鱼钩可以磨成弯针，鱼线可用于缝合。", note: "它们是韩一墨此刻唯一的生路。", sourceRef: summary(22, 22, 3141, 3163) },
+        { id: "c3-pot", label: "锈锅", text: "锅中食物散发香气；店员反复称它为“小猪崽”。", note: "不要把香味当成安全证据。", sourceRef: summary(23, 23, 3183, 3251) },
       ],
       dialogue: [
-        { id: "c03-clerk-001", speakerId: "store-clerk", text: "我这里有啊！有针线的！你跟我来啊！", sourceRef: { chapter: 22, lineStart: 3101, lineEnd: 3101 } },
-        { id: "c03-qixia-001", speakerId: "qixia", text: "先去救人，这里我们对付。", sourceRef: { chapter: 23, lineStart: 3211, lineEnd: 3211 } },
+        { id: "c03-clerk-001", speakerId: "store-clerk", text: "我这里有啊！有针线的！你跟我来啊！", sourceRef: adaptation(22, 22, 3083, 3083) },
+        { id: "c03-qixia-001", speakerId: "qixia", text: "先去救人，这里我们对付。", sourceRef: quote(23, 23, 3209, 3209) },
       ],
       puzzle: {
         id: "c3-trade",
@@ -89,7 +122,7 @@ const chapterThree: StoryChapterSpec = {
         fatalRules: [{ fieldId: "trade", value: "follow-alone", failureId: "clerk-room", reason: "你被店员拖进员工休息室，门在同伴赶到前关上。", checkpointSceneId: "c3-store" }],
       },
       animationId: "c3-hook-trade",
-      daoDeltaOnSolve: -1,
+      daoLedgerDeltaOnSolve: { qixiaParty: -1 },
       advanceLabel: "处理伤口，熬过黑夜",
     },
     {
@@ -97,16 +130,16 @@ const chapterThree: StoryChapterSpec = {
       title: "伸手不见五指",
       eyebrow: "第零天 / 深夜",
       lead: "赵海博在没有麻药的情况下完成缝合。黑夜吞没整座城市，所有人都在饥饿中睡去。",
-      sourceRef: { chapter: 24, lineStart: 3307, lineEnd: 3754 },
+      sourceRef: summary(24, 26, 3307, 3754),
       backgroundAsset: "/art/chapter-03/ruined-convenience-store-v1.png",
       portraitIds: ["han", "zhao", "qixia"],
       observations: [
-        { id: "c3-old-title", label: "离群之刺", text: "韩一墨坚持把阿卡丽称为“暗影之拳”，赵海博却只知道“离群之刺”。", note: "两人的常识像来自不同时间。", sourceRef: { chapter: 24, lineStart: 3319, lineEnd: 3365 } },
-        { id: "c3-darkness", label: "绝对黑夜", text: "城里没有路灯，黑到无法确认眼睛是否睁开。", note: "所有人最终都失去了对环境的监视。", sourceRef: { chapter: 26, lineStart: 3601, lineEnd: 3659 } },
+        { id: "c3-old-title", label: "离群之刺", text: "韩一墨坚持把阿卡丽称为“暗影之拳”，赵海博却只知道“离群之刺”。", note: "两人的常识像来自不同时间。", sourceRef: summary(24, 24, 3319, 3365) },
+        { id: "c3-darkness", label: "绝对黑夜", text: "城里没有路灯，黑到无法确认眼睛是否睁开。", note: "所有人最终都失去了对环境的监视。", sourceRef: summary(26, 26, 3601, 3659) },
       ],
       dialogue: [
-        { id: "c03-han-001", speakerId: "han", text: "没事……至少我能活下来，对吧？", sourceRef: { chapter: 23, lineStart: 3237, lineEnd: 3237 } },
-        { id: "c03-qixia-002", speakerId: "qixia", text: "小安，我马上就会从这个鬼地方逃出去。你等着。", sourceRef: { chapter: 26, lineStart: 3595, lineEnd: 3595 } },
+        { id: "c03-han-001", speakerId: "han", text: "没事……至少我能活下来，对吧？", sourceRef: quote(23, 23, 3227, 3227) },
+        { id: "c03-qixia-002", speakerId: "qixia", text: "小安，我马上就会从这个鬼地方逃出去。你等着。", sourceRef: adaptation(26, 26, 3599, 3599) },
       ],
       canonicalEvent: "黎明钟响后，韩一墨被一把通体漆黑的巨剑钉在地面，随后死亡。这个事件不可被玩家提前阻止。",
       animationId: "c3-bell-sword",
@@ -117,18 +150,18 @@ const chapterThree: StoryChapterSpec = {
       title: "死者与七黑剑",
       eyebrow: "第一天 / 黎明",
       lead: "韩一墨临死叫出齐夏，又反复说“七黑剑不可能”。不要靠情绪指认凶手，先检查他不可能知道的事。",
-      sourceRef: { chapter: 27, lineStart: 3755, lineEnd: 3892 },
+      sourceRef: summary(27, 27, 3755, 3892),
       backgroundAsset: "/art/chapter-03/ruined-convenience-store-v1.png",
       portraitIds: ["qixia", "zhang", "xiao"],
       observations: [
-        { id: "c3-ceiling", label: "完好天花板", text: "天花板没有破口，巨剑不是从上方坠落。", note: "“天降”解释不成立。", sourceRef: { chapter: 26, lineStart: 3701, lineEnd: 3707 } },
-        { id: "c3-weight", label: "一百五十斤", text: "齐夏与乔家劲合力拔剑，估算它约有一百五十斤。", note: "凶器不可能被悄无声息藏在普通人身上。", sourceRef: { chapter: 27, lineStart: 3781, lineEnd: 3791 } },
-        { id: "c3-engraving", label: "剑柄背面", text: "“七黑剑”刻在死者视线的另一侧。", note: "受击后第一次睁眼的人看不到这三个字。", sourceRef: { chapter: 27, lineStart: 3795, lineEnd: 3813 } },
-        { id: "c3-last-words", label: "最后的话", text: "韩一墨两次提到“七黑剑”，却没有说出刺杀者。", note: "他惊讶的是凶器本身。", sourceRef: { chapter: 27, lineStart: 3815, lineEnd: 3831 } },
+        { id: "c3-ceiling", label: "完好天花板", text: "天花板没有破口，巨剑不是从上方坠落。", note: "“天降”解释不成立。", sourceRef: summary(26, 26, 3701, 3707) },
+        { id: "c3-weight", label: "一百五十斤", text: "齐夏与乔家劲合力拔剑，估算它约有一百五十斤。", note: "凶器不可能被悄无声息藏在普通人身上。", sourceRef: summary(27, 27, 3781, 3791) },
+        { id: "c3-engraving", label: "剑柄背面", text: "“七黑剑”刻在死者视线的另一侧。", note: "受击后第一次睁眼的人看不到这三个字。", sourceRef: summary(27, 27, 3795, 3813) },
+        { id: "c3-last-words", label: "最后的话", text: "韩一墨两次提到“七黑剑”，却没有说出刺杀者。", note: "他惊讶的是凶器本身。", sourceRef: summary(27, 27, 3815, 3831) },
       ],
       dialogue: [
-        { id: "c03-han-002", speakerId: "han", text: "这地方不对劲……这把七黑剑绝对不可能……", sourceRef: { chapter: 26, lineStart: 3711, lineEnd: 3711 } },
-        { id: "c03-qixia-003", speakerId: "qixia", text: "韩一墨有可能认识那把剑。", sourceRef: { chapter: 29, lineStart: 4021, lineEnd: 4021 } },
+        { id: "c03-han-002", speakerId: "han", text: "这地方不对劲……这把七黑剑绝对不可能……", sourceRef: adaptation(26, 26, 3707, 3707), offscreen: true },
+        { id: "c03-qixia-003", speakerId: "qixia", text: "韩一墨有可能认识那把剑。", sourceRef: quote(29, 29, 4017, 4017) },
       ],
       puzzle: {
         id: "c3-sword-board",
@@ -150,16 +183,16 @@ const chapterThree: StoryChapterSpec = {
       title: "分道扬镳",
       eyebrow: "第一天 / 清晨",
       lead: "八个人分成留守与探索两队。你必须同时冻结人员、伤情和三颗剩余的“道”。",
-      sourceRef: { chapter: 25, lineStart: 3437, lineEnd: 4008 },
+      sourceRef: summary(25, 28, 3437, 4008),
       backgroundAsset: "/art/chapter-02/termination-plaza-v1.png",
       portraitIds: ["qixia", "qiao", "tiantian", "lin"],
       observations: [
-        { id: "c3-factions", label: "灰色阵营", text: "甜甜指出一道无形的墙：骗子、混混、陪酒小姐站在同一侧。", note: "林檎主动越过这道墙。", sourceRef: { chapter: 25, lineStart: 3523, lineEnd: 3565 } },
-        { id: "c3-dao-ledger", label: "剩余三颗道", text: "四颗“道”中有一颗已用于鱼钩和鱼线。", note: "探索仍需要筹码，留守队也得到一颗。", sourceRef: { chapter: 28, lineStart: 3893, lineEnd: 3997 } },
+        { id: "c3-factions", label: "灰色阵营", text: "甜甜指出一道无形的墙：骗子、混混、陪酒小姐站在同一侧。", note: "林檎主动越过这道墙。", sourceRef: summary(25, 25, 3523, 3565) },
+        { id: "c3-dao-ledger", label: "剩余三颗道", text: "四颗“道”中有一颗已用于鱼钩和鱼线。", note: "探索仍需要筹码，留守队也得到一颗。", sourceRef: summary(28, 28, 3893, 3997) },
       ],
       dialogue: [
-        { id: "c03-tiantian-001", speakerId: "tiantian", text: "墙的那一侧，是警察、律师、医生、作家；这一侧，是骗子、混混、妓女。", sourceRef: { chapter: 25, lineStart: 3539, lineEnd: 3539 } },
-        { id: "c03-qixia-004", speakerId: "qixia", text: "暂且寄存在你那里。那一颗给你，我手里的两颗就干净了。", sourceRef: { chapter: 28, lineStart: 3995, lineEnd: 3995 } },
+        { id: "c03-tiantian-001", speakerId: "tiantian", text: "墙的那一侧，是警察、律师、医生、作家；这一侧，是骗子、混混、妓女。", sourceRef: adaptation(25, 25, 3549, 3549) },
+        { id: "c03-qixia-004", speakerId: "qixia", text: "暂且寄存在你那里。那一颗给你，我手里的两颗就干净了。", sourceRef: adaptation(28, 28, 3997, 3997) },
       ],
       puzzle: {
         id: "c3-split-board",
@@ -173,6 +206,7 @@ const chapterThree: StoryChapterSpec = {
         ],
       },
       animationId: "c3-team-split",
+      daoLedgerDeltaOnSolve: { qixiaParty: -1, liZhang: 1 },
       advanceLabel: "返回广场",
     },
     {
@@ -180,16 +214,14 @@ const chapterThree: StoryChapterSpec = {
       title: "钟与回响",
       eyebrow: "第一天 / 广场",
       lead: "电子屏上的句子已经消失。钟声不是所有死者的丧钟；枯槁老人却认出这支队伍，并提到赌命与天龙。",
-      sourceRef: { chapter: 29, lineStart: 4009, lineEnd: 4142 },
+      sourceRef: summary(29, 29, 4009, 4142),
       backgroundAsset: "/art/chapter-02/termination-plaza-v1.png",
       portraitIds: ["qixia", "qiao", "tiantian", "lin"],
       observations: [
-        { id: "c3-bell", label: "两次钟声", text: "人羊打碎男人头颅、韩一墨死亡时都响过钟；但上千房间的死亡并未让钟持续鸣响。", note: "钟声触发条件仍未知。", sourceRef: { chapter: 29, lineStart: 4051, lineEnd: 4083 } },
-        { id: "c3-elder", label: "枯槁老人", text: "老人说答案是赌命，又因众人见过天龙而绝望。", note: "他像是认识曾经的齐夏与乔家劲。", sourceRef: { chapter: 29, lineStart: 4091, lineEnd: 4141 } },
+        { id: "c3-bell", label: "两次钟声", text: "人羊打碎男人头颅、韩一墨死亡时都响过钟；但上千房间的死亡并未让钟持续鸣响。", note: "钟声触发条件仍未知。", sourceRef: summary(29, 29, 4051, 4083) },
+        { id: "c3-elder", label: "枯槁老人", text: "老人说答案是赌命，又因众人见过天龙而绝望。", note: "他像是认识曾经的齐夏与乔家劲。", sourceRef: summary(29, 29, 4091, 4141) },
       ],
-      dialogue: [
-        { id: "c03-qiao-001", speakerId: "qiao", text: "冚家铲，又是疯子。总感觉待久了，我们也会疯掉。", sourceRef: { chapter: 30, lineStart: 4145, lineEnd: 4145 } },
-      ],
+      dialogue: [],
       advanceLabel: "走向人鼠的仓库",
     },
   ],
@@ -201,10 +233,11 @@ const chapterFour: StoryChapterSpec = {
   title: "仓库寻道",
   subtitle: "人鼠、赌命与朱雀",
   source: { startLine: 4143, endLine: 4986, chapters: [30, 31, 32, 33, 34, 35] },
-  initialDao: 2,
+  initialDaoLedger: { qixiaParty: 2, liZhang: 1, oldLu: 0, burned: 0 },
+  pressureLimit: 12,
   completionTitle: "先探规则，再赌命",
   completionText: "队伍拒绝杀人夺道。齐夏冻结新的战术：同伴先确认规则，他在有把握后赌命。",
-  completionDaoCount: 5,
+  completionDaoLedger: { qixiaParty: 5, liZhang: 1, oldLu: 0, burned: 0 },
   completionDaoLabel: "探索队当前持有“道”",
   nextChapterId: 5,
   scenes: [
@@ -213,16 +246,17 @@ const chapterFour: StoryChapterSpec = {
       title: "人鼠的安全游戏",
       eyebrow: "第一天 / 鼠类考验",
       lead: "门票一颗“道”。一个人进入仓库，五分钟内找到一颗“道”便获胜；失败只损失门票。越安全，越像陷阱。",
-      sourceRef: { chapter: 30, lineStart: 4143, lineEnd: 4288 },
+      sourceRef: summary(30, 30, 4143, 4288),
       backgroundAsset: "/art/chapter-04/warehouse-v1.png",
-      portraitIds: ["human-rat", "tiantian", "qixia"],
+      portraitIds: ["human-rat", "tiantian", "qixia", "qiao"],
       observations: [
-        { id: "c4-now", label: "规则里的“现在”", text: "人鼠每次都先站进仓库，才说“现在这个房间中有一个道”。", note: "这句话只保证宣读规则的瞬间。", sourceRef: { chapter: 30, lineStart: 4241, lineEnd: 4255 } },
-        { id: "c4-safe", label: "没有死亡惩罚", text: "失败只损失一颗门票；获胜也只得到一颗。", note: "常规下注不会产生净收益。", sourceRef: { chapter: 30, lineStart: 4257, lineEnd: 4275 } },
+        { id: "c4-now", label: "规则里的“现在”", text: "人鼠每次都先站进仓库，才说“现在这个房间中有一个道”。", note: "宣读这句话时，人鼠本人仍站在仓库里面。", sourceRef: summary(30, 30, 4241, 4255) },
+        { id: "c4-safe", label: "没有死亡惩罚", text: "失败只损失一颗门票；获胜也只得到一颗。", note: "常规下注不会产生净收益。", sourceRef: summary(30, 30, 4257, 4275) },
       ],
       dialogue: [
-        { id: "c04-rat-001", speakerId: "human-rat", text: "现在这个房间中有一个道，五分钟之内找到，它就归你们。", sourceRef: { chapter: 30, lineStart: 4247, lineEnd: 4247 } },
-        { id: "c04-tiantian-001", speakerId: "tiantian", text: "我可以先去试试。死了也没事。", sourceRef: { chapter: 30, lineStart: 4277, lineEnd: 4277 } },
+        { id: "c03-qiao-001", speakerId: "qiao", text: "冚家铲，又是疯子。总感觉待久了，我们也会疯掉。", sourceRef: adaptation(30, 30, 4145, 4145) },
+        { id: "c04-rat-001", speakerId: "human-rat", text: "现在这个房间中有一个道，五分钟之内找到，它就归你们。", sourceRef: adaptation(30, 30, 4243, 4243) },
+        { id: "c04-tiantian-001", speakerId: "tiantian", text: "我可以先去试试。死了也没事。", sourceRef: adaptation(30, 30, 4265, 4265) },
       ],
       puzzle: {
         id: "c4-first-search",
@@ -235,7 +269,7 @@ const chapterFour: StoryChapterSpec = {
           { id: "method", label: "搜索方法", correctValue: "scatter-dark-cans", options: [{ value: "one-box-at-time", label: "逐箱慢慢翻找" }, { value: "scatter-dark-cans", label: "推倒货架、关灯找光、再看罐头" }, { value: "grab-rat", label: "开局抓住人鼠" }], wrongMessages: { "one-box-at-time": "上百个箱子无法在五分钟内逐个检查。", "grab-rat": "第一次参与者是甜甜，她还没有确认裁判与“道”的关系。" } },
         ],
       },
-      daoDeltaOnSolve: -1,
+      daoLedgerDeltaOnSolve: { qixiaParty: -1 },
       animationId: "c4-warehouse-dark",
       advanceLabel: "复盘失败的五分钟",
     },
@@ -244,17 +278,17 @@ const chapterFour: StoryChapterSpec = {
       title: "道不在仓库里",
       eyebrow: "第二次下注前",
       lead: "房间复原得崭新如初。人鼠再次走进门内，重复同一句规则。把她的措辞与她知道失败的方式放在一起。",
-      sourceRef: { chapter: 31, lineStart: 4289, lineEnd: 4586 },
+      sourceRef: summary(31, 32, 4289, 4586),
       backgroundAsset: "/art/chapter-04/warehouse-v1.png",
       portraitIds: ["qixia", "human-rat", "qiao"],
       observations: [
-        { id: "c4-no-glow", label: "黑暗中没有光", text: "所有箱子散落、灯被关闭，仓库中没有任何“道”的微光。", note: "密封罐头只是可能性，不是答案。", sourceRef: { chapter: 31, lineStart: 4341, lineEnd: 4377 } },
-        { id: "c4-knows", label: "裁判提前知道失败", text: "门始终关闭，人鼠打开门的瞬间便宣布失败。", note: "她无需检查现场，因为她知道里面不可能有“道”。", sourceRef: { chapter: 32, lineStart: 4503, lineEnd: 4513 } },
-        { id: "c4-reset", label: "房间完全复原", text: "货架、箱子和罐头在第二局前全部回到原位。", note: "寻找行为不会永久改变场地。", sourceRef: { chapter: 31, lineStart: 4411, lineEnd: 4427 } },
+        { id: "c4-no-glow", label: "黑暗中没有光", text: "所有箱子散落、灯被关闭，仓库中没有任何“道”的微光。", note: "甜甜没有打开仍然密封的罐头。", sourceRef: summary(31, 31, 4341, 4377) },
+        { id: "c4-knows", label: "裁判提前知道失败", text: "门始终关闭，人鼠打开门的瞬间便宣布失败。", note: "门关闭期间，人鼠没有进入仓库查看现场。", sourceRef: summary(32, 32, 4503, 4513) },
+        { id: "c4-reset", label: "房间完全复原", text: "货架、箱子和罐头在第二局前全部回到原位。", note: "寻找行为不会永久改变场地。", sourceRef: summary(31, 31, 4411, 4427) },
       ],
       dialogue: [
-        { id: "c04-qixia-001", speakerId: "qixia", text: "这一次，我要赌命。", sourceRef: { chapter: 31, lineStart: 4445, lineEnd: 4445 } },
-        { id: "c04-qixia-002", speakerId: "qixia", text: "我找到了。", sourceRef: { chapter: 32, lineStart: 4479, lineEnd: 4479 } },
+        { id: "c04-qixia-001", speakerId: "qixia", text: "这一次，我要赌命。", sourceRef: quote(31, 31, 4443, 4443) },
+        { id: "c04-qixia-002", speakerId: "qixia", text: "我找到了。", sourceRef: quote(32, 32, 4485, 4485) },
       ],
       puzzle: {
         id: "c4-rule-trap",
@@ -272,7 +306,7 @@ const chapterFour: StoryChapterSpec = {
           { fieldId: "location", value: "light-switch", when: { wager: "life" }, failureId: "empty-warehouse", reason: "你赌上性命后拆开灯钮。真正的“道”已经随人鼠离开房间。", checkpointSceneId: "c4-deduction" },
         ],
       },
-      daoDeltaOnSolve: 4,
+      daoLedgerDeltaOnSolve: { qixiaParty: 4 },
       animationId: "c4-pocket-reveal",
       advanceLabel: "面对赌命的结果",
     },
@@ -281,17 +315,17 @@ const chapterFour: StoryChapterSpec = {
       title: "朱雀执行规则",
       eyebrow: "赌命 / 对等赌注",
       lead: "齐夏要求放过人鼠，但朱雀并不接受。人鼠违反规则并试图逃跑，她的死亡无法被这场胜利撤销。",
-      sourceRef: { chapter: 33, lineStart: 4587, lineEnd: 4730 },
+      sourceRef: summary(32, 33, 4521, 4730),
       backgroundAsset: "/art/chapter-02/termination-city-v1.png",
       portraitIds: ["zhuque", "human-rat", "qixia"],
       observations: [
-        { id: "c4-symmetric", label: "对等赌注", text: "参与者赌命，生肖也必须以命对应。", note: "赌命不是单方面加码。", sourceRef: { chapter: 33, lineStart: 4591, lineEnd: 4627 } },
-        { id: "c4-rule-enforcer", label: "规则执行者", text: "朱雀可以瞬间移动并制服人鼠，却声称自己也受更高规则限制。", note: "终焉之地存在强于生肖的管理层级。", sourceRef: { chapter: 33, lineStart: 4631, lineEnd: 4687 } },
-        { id: "c4-real-name", label: "张丽娟", text: "朱雀准确叫出齐夏、乔家劲、林檎和甜甜的本名。", note: "管理者掌握参与者身份。", sourceRef: { chapter: 33, lineStart: 4661, lineEnd: 4673 } },
+        { id: "c4-symmetric", label: "对等赌注", text: "参与者赌命，生肖也必须以命对应。", note: "赌命不是单方面加码。", sourceRef: summary(33, 33, 4591, 4627) },
+        { id: "c4-rule-enforcer", label: "规则执行者", text: "朱雀可以瞬间移动并制服人鼠，却声称自己也受更高规则限制。", note: "终焉之地存在强于生肖的管理层级。", sourceRef: summary(33, 33, 4631, 4687) },
+        { id: "c4-real-name", label: "张丽娟", text: "朱雀准确叫出齐夏、乔家劲、林檎和甜甜的本名。", note: "管理者掌握参与者身份。", sourceRef: summary(33, 33, 4661, 4673) },
       ],
       dialogue: [
-        { id: "c04-zhuque-001", speakerId: "zhuque", text: "逃跑可不行。你要乖一点，赌命就是赌命。", sourceRef: { chapter: 33, lineStart: 4617, lineEnd: 4617 } },
-        { id: "c04-rat-002", speakerId: "human-rat", text: "这里谁又不是参与者呢……我宁可从未戴上鼠的面具。", sourceRef: { chapter: 33, lineStart: 4713, lineEnd: 4713 } },
+        { id: "c04-zhuque-001", speakerId: "zhuque", text: "逃跑可不行。你要乖一点，赌命就是赌命。", sourceRef: adaptation(32, 32, 4565, 4565) },
+        { id: "c04-rat-002", speakerId: "human-rat", text: "这里谁又不是参与者呢……我宁可从未戴上鼠的面具。", sourceRef: adaptation(33, 33, 4705, 4705) },
       ],
       canonicalEvent: "人鼠死亡并交出返还门票与三颗自有“道”，队伍总数达到五颗。",
       animationId: "c4-zhuque-arrival",
@@ -302,15 +336,15 @@ const chapterFour: StoryChapterSpec = {
       title: "试探队友",
       eyebrow: "人鼠死后",
       lead: "齐夏提出“杀人夺道”。这不是最终方案，而是一次对三名队友底线的测试。",
-      sourceRef: { chapter: 34, lineStart: 4731, lineEnd: 4832 },
+      sourceRef: summary(34, 34, 4731, 4832),
       backgroundAsset: "/art/chapter-02/termination-city-v1.png",
       portraitIds: ["qixia", "qiao", "tiantian", "lin"],
       observations: [
-        { id: "c4-fairness", label: "诡异的公平", text: "朱雀维护赌局、又受规则限制；裁判希望参与者死在游戏里，而非被随意杀死。", note: "杀人夺道可能违反更高规则。", sourceRef: { chapter: 34, lineStart: 4777, lineEnd: 4813 } },
+        { id: "c4-fairness", label: "诡异的公平", text: "朱雀维护赌局、又受规则限制；裁判希望参与者死在游戏里，而非被随意杀死。", note: "杀人夺道可能违反更高规则。", sourceRef: summary(34, 34, 4777, 4813) },
       ],
       dialogue: [
-        { id: "c04-qiao-001", speakerId: "qiao", text: "我不会帮你。就算天塌下来，我也不会做不义的事。", sourceRef: { chapter: 34, lineStart: 4771, lineEnd: 4771 } },
-        { id: "c04-qixia-003", speakerId: "qixia", text: "很好，如今我可以放心告诉你们我真正的计划了。", sourceRef: { chapter: 34, lineStart: 4795, lineEnd: 4795 } },
+        { id: "c04-qiao-001", speakerId: "qiao", text: "我不会帮你。就算天塌下来，我也不会做不义的事。", sourceRef: adaptation(34, 34, 4803, 4803) },
+        { id: "c04-qixia-003", speakerId: "qixia", text: "很好，如今我可以放心告诉你们我真正的计划了。", sourceRef: adaptation(34, 34, 4813, 4813) },
       ],
       puzzle: {
         id: "c4-team-test",
@@ -331,16 +365,16 @@ const chapterFour: StoryChapterSpec = {
       title: "传单是什么",
       eyebrow: "第一天 / 城市深处",
       lead: "原住民递来一张陈旧广告。林檎却不知道“传单”是什么；齐夏没有得到答案，只把异常记入长期档案。",
-      sourceRef: { chapter: 35, lineStart: 4833, lineEnd: 4986 },
+      sourceRef: summary(35, 35, 4833, 4986),
       backgroundAsset: "/art/chapter-02/termination-city-v1.png",
       portraitIds: ["lin", "qixia", "qiao"],
       observations: [
-        { id: "c4-leaflet-fact", label: "常识缺口", text: "林檎认真询问“传单是什么”，且不认为自己的问题异常。", note: "这里只记录事实，不提前解释她的身份。", sourceRef: { chapter: 35, lineStart: 4891, lineEnd: 4955 } },
-        { id: "c4-glasses", label: "眼镜男招手", text: "街对面的眼镜男称他们为“良人”，并邀请四人参加需要二十人的牛类游戏。", note: "下一场游戏承诺大量“道”。", sourceRef: { chapter: 35, lineStart: 4957, lineEnd: 4985 } },
+        { id: "c4-leaflet-fact", label: "常识缺口", text: "林檎认真询问“传单是什么”，且不认为自己的问题异常。", note: "这里只记录事实，不提前解释她的身份。", sourceRef: summary(35, 35, 4891, 4955) },
+        { id: "c4-glasses", label: "眼镜男招手", text: "街对面的眼镜男称他们为“良人”，并邀请四人参加需要二十人的牛类游戏。", note: "下一场游戏承诺大量“道”。", sourceRef: summary(35, 35, 4957, 4985) },
       ],
       dialogue: [
-        { id: "c04-lin-001", speakerId: "lin", text: "传单是什么？", sourceRef: { chapter: 35, lineStart: 4899, lineEnd: 4899 } },
-        { id: "c04-glasses-001", speakerId: "little-glasses", text: "我们找到个不错的游戏，有没有兴趣一起赚点道？", sourceRef: { chapter: 35, lineStart: 4979, lineEnd: 4979 } },
+        { id: "c04-lin-001", speakerId: "lin", text: "传单是什么？", sourceRef: adaptation(35, 35, 4897, 4897) },
+        { id: "c04-glasses-001", speakerId: "little-glasses", text: "我们找到个不错的游戏，有没有兴趣一起赚点道？", sourceRef: adaptation(35, 35, 4977, 4977), offscreen: true },
       ],
       advanceLabel: "接受地牛的邀请",
     },
@@ -353,10 +387,12 @@ const chapterFive: StoryChapterSpec = {
   title: "地牛",
   subtitle: "十分钟、黑熊与圆形铁板",
   source: { startLine: 4987, endLine: 6744, chapters: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48] },
-  initialDao: 5,
+  initialDaoLedger: { qixiaParty: 5, liZhang: 1, oldLu: 0, burned: 0 },
+  pressureLimit: 12,
   completionTitle: "大脑与拳头",
   completionText: "四人带着九十六颗“道”和一条熊臂离开。张山留下逃离者笔记的地址，而可疑的独行女子在背后露出真实神色。",
-  completionDaoCount: 96,
+  completionDaoLedger: { qixiaParty: 96, liZhang: 1, oldLu: 0, burned: 0 },
+  nextChapterId: 6,
   completionDaoLabel: "四人完成全部交易后持有“道”",
   scenes: [
     {
@@ -364,16 +400,16 @@ const chapterFive: StoryChapterSpec = {
       title: "二十人的地牛游戏",
       eyebrow: "第一天 / 牛类考验",
       lead: "每人门票一颗“道”，二十人随机分成黄绿两队。坚持十分钟的每位幸存者，都得到与总通关人数相同的“道”。",
-      sourceRef: { chapter: 36, lineStart: 4987, lineEnd: 5256 },
+      sourceRef: summary(36, 37, 4987, 5256),
       backgroundAsset: "/art/chapter-05/underground-arena-v1.png",
       portraitIds: ["ground-ox", "qixia", "qiao"],
       observations: [
-        { id: "c5-reward", label: "奖励公式", text: "若十九人通关，每名幸存者都得到十九颗“道”。", note: "总收益随幸存人数增长。", sourceRef: { chapter: 36, lineStart: 5025, lineEnd: 5041 } },
-        { id: "c5-random", label: "随机分队", text: "齐夏、乔家劲进入黄队；甜甜、林檎进入绿队。", note: "两场独立进行，无法互相支援。", sourceRef: { chapter: 37, lineStart: 5173, lineEnd: 5225 } },
+        { id: "c5-reward", label: "奖励公式", text: "若十九人通关，每名幸存者都得到十九颗“道”。", note: "总收益随幸存人数增长。", sourceRef: summary(36, 36, 5025, 5041) },
+        { id: "c5-random", label: "随机分队", text: "齐夏、乔家劲进入黄队；甜甜、林檎进入绿队。", note: "两场独立进行，无法互相支援。", sourceRef: summary(37, 37, 5173, 5225) },
       ],
       dialogue: [
-        { id: "c05-ox-001", speakerId: "ground-ox", text: "双方独立进行游戏。坚持十分钟不被淘汰，则视为过关。", sourceRef: { chapter: 37, lineStart: 5205, lineEnd: 5205 } },
-        { id: "c05-qiao-001", speakerId: "qiao", text: "终于轮到我表现了。", sourceRef: { chapter: 36, lineStart: 5081, lineEnd: 5081 } },
+        { id: "c05-ox-001", speakerId: "ground-ox", text: "双方独立进行游戏。坚持十分钟不被淘汰，则视为过关。", sourceRef: adaptation(37, 37, 5217, 5217) },
+        { id: "c05-qiao-001", speakerId: "qiao", text: "终于轮到我表现了。", sourceRef: adaptation(36, 36, 5065, 5065) },
       ],
       puzzle: {
         id: "c5-entry-board",
@@ -386,7 +422,7 @@ const chapterFive: StoryChapterSpec = {
           { id: "teams", label: "分队", correctValue: "qixia-qiao-yellow", options: [{ value: "all-yellow", label: "四人同在黄队" }, { value: "qixia-qiao-yellow", label: "齐夏乔家劲黄队，甜甜林檎绿队" }, { value: "qixia-alone", label: "齐夏独自进入黄队" }], wrongMessages: { "all-yellow": "灯光随机分队，两个女孩亮起绿灯。", "qixia-alone": "乔家劲与齐夏同时亮起黄灯。" } },
         ],
       },
-      daoDeltaOnSolve: -4,
+      daoLedgerDeltaOnSolve: { qixiaParty: -4 },
       animationId: "c5-team-lights",
       advanceLabel: "走进黄色场地",
     },
@@ -395,16 +431,16 @@ const chapterFive: StoryChapterSpec = {
       title: "黑色来客",
       eyebrow: "倒计时 10:00",
       lead: "铁门升起，饥饿黑熊进入场地。一名参与者听信“遇熊装死”，当场被杀。你要从场地里找出唯一可重复使用的工具。",
-      sourceRef: { chapter: 38, lineStart: 5257, lineEnd: 5534 },
+      sourceRef: summary(38, 39, 5257, 5534),
       backgroundAsset: "/art/chapter-05/underground-arena-v1.png",
       portraitIds: ["qixia", "qiao"],
       observations: [
-        { id: "c5-black-bear", label: "胸口白月牙", text: "这是体型异常巨大的黑熊，不是棕熊。", note: "饥饿黑熊会把装死的人当成食物。", sourceRef: { chapter: 38, lineStart: 5299, lineEnd: 5359 } },
-        { id: "c5-plate", label: "中央圆铁板", text: "场地空旷，唯一人为放置的物件是一块桌面大小的沉重圆铁板。", note: "它没有机关或文字，但可以立起并滚动。", sourceRef: { chapter: 38, lineStart: 5391, lineEnd: 5401 } },
+        { id: "c5-black-bear", label: "胸口白月牙", text: "这是体型异常巨大的黑熊，不是棕熊。", note: "黑熊入场后，身后的铁门立刻关闭。", sourceRef: summary(38, 38, 5299, 5359) },
+        { id: "c5-plate", label: "中央圆铁板", text: "场地空旷，唯一人为放置的物件是一块桌面大小的沉重圆铁板。", note: "铁板表面没有机关、图案或文字。", sourceRef: summary(38, 38, 5391, 5401) },
       ],
       dialogue: [
-        { id: "c05-qixia-001", speakerId: "qixia", text: "如果遇到棕熊，装死还有一线生机，可黑熊不行！快起来跑！", sourceRef: { chapter: 38, lineStart: 5341, lineEnd: 5341 } },
-        { id: "c05-qiao-002", speakerId: "qiao", text: "骗人仔！我这条烂命可交给你了！", sourceRef: { chapter: 39, lineStart: 5415, lineEnd: 5415 } },
+        { id: "c05-qixia-001", speakerId: "qixia", text: "如果遇到棕熊，装死还有一线生机，可黑熊不行！快起来跑！", sourceRef: adaptation(38, 38, 5329, 5329) },
+        { id: "c05-qiao-002", speakerId: "qiao", text: "骗人仔！我这条烂命可交给你了！", sourceRef: adaptation(39, 39, 5427, 5427) },
       ],
       puzzle: {
         id: "c5-first-response",
@@ -426,16 +462,16 @@ const chapterFive: StoryChapterSpec = {
       title: "老鹰捉小鸡",
       eyebrow: "倒计时 07:00",
       lead: "铁板只能勉强挡住一个人，却可以滚动。把“防御敌人”和“保护队友”转换成童年游戏的阵型。",
-      sourceRef: { chapter: 39, lineStart: 5403, lineEnd: 5822 },
+      sourceRef: summary(39, 41, 5403, 5822),
       backgroundAsset: "/art/chapter-05/underground-arena-v1.png",
       portraitIds: ["qiao", "qixia"],
       observations: [
-        { id: "c5-roll", label: "圆板可滚动", text: "铁板很重、无把手，平举不可行；立起后可以沿地面改变方向。", note: "正面承力者会失去视野。", sourceRef: { chapter: 40, lineStart: 5573, lineEnd: 5599 } },
-        { id: "c5-group", label: "十人不能争抢", text: "所有人争夺一块板只会互相暴露；队列必须共享同一防线。", note: "决定权集中在前方两人。", sourceRef: { chapter: 40, lineStart: 5611, lineEnd: 5659 } },
+        { id: "c5-roll", label: "圆板可滚动", text: "铁板很重、无把手，平举不可行；立起后可以沿地面改变方向。", note: "铁板直立时遮住了板后方的正面视线。", sourceRef: summary(40, 40, 5573, 5599) },
+        { id: "c5-group", label: "十人不能争抢", text: "所有人争夺一块板只会互相暴露；队列必须共享同一防线。", note: "争抢中，铁板曾被拉扯到无法稳定移动。", sourceRef: summary(40, 40, 5611, 5659) },
       ],
       dialogue: [
-        { id: "c05-qixia-002", speakerId: "qixia", text: "答案就是老鹰捉小鸡。", sourceRef: { chapter: 41, lineStart: 5685, lineEnd: 5685 } },
-        { id: "c05-qiao-003", speakerId: "qiao", text: "母你老母啊，能不能换个名字？", sourceRef: { chapter: 41, lineStart: 5699, lineEnd: 5699 } },
+        { id: "c05-qixia-002", speakerId: "qixia", text: "答案就是老鹰捉小鸡。", sourceRef: adaptation(41, 41, 5687, 5687) },
+        { id: "c05-qiao-003", speakerId: "qiao", text: "母你老母啊，能不能换个名字？", sourceRef: adaptation(41, 41, 5697, 5697) },
       ],
       puzzle: {
         id: "c5-formation-board",
@@ -458,15 +494,15 @@ const chapterFive: StoryChapterSpec = {
       title: "趋利避害",
       eyebrow: "倒计时 03:10",
       lead: "老吕抛下队伍，黑熊转向这个孤立目标。小眼镜愿意冒死救人；齐夏先要求两人的通关奖励，再用动物弱点改变攻击目标。",
-      sourceRef: { chapter: 42, lineStart: 5823, lineEnd: 5952 },
+      sourceRef: summary(42, 42, 5823, 5952),
       backgroundAsset: "/art/chapter-05/underground-arena-v1.png",
       portraitIds: ["qixia", "qiao"],
       observations: [
-        { id: "c5-shoes", label: "小眼镜的鞋", text: "场地没有投掷物，但小眼镜脚上有两只运动鞋。", note: "一次攻击背部，一次打向敏感鼻部。", sourceRef: { chapter: 42, lineStart: 5899, lineEnd: 5945 } },
-        { id: "c5-debt", label: "救命交易", text: "小眼镜替自己和老吕担保：两人的通关奖励都交给齐夏。", note: "交易成立后才执行救援。", sourceRef: { chapter: 42, lineStart: 5873, lineEnd: 5897 } },
+        { id: "c5-shoes", label: "小眼镜的鞋", text: "场地没有投掷物，但小眼镜脚上有两只运动鞋。", note: "小眼镜脱下两只运动鞋，先后握在手中。", sourceRef: summary(42, 42, 5899, 5945) },
+        { id: "c5-debt", label: "救命交易", text: "小眼镜替自己和老吕担保：两人的通关奖励都交给齐夏。", note: "交易成立后才执行救援。", sourceRef: summary(42, 42, 5873, 5917) },
       ],
       dialogue: [
-        { id: "c05-qixia-003", speakerId: "qixia", text: "这场游戏如果我能让你们活下来，你们俩的道归我。", sourceRef: { chapter: 42, lineStart: 5877, lineEnd: 5877 } },
+        { id: "c05-qixia-003", speakerId: "qixia", text: "这场游戏如果我能让你们活下来，你们俩的道归我。", sourceRef: adaptation(42, 42, 5903, 5903) },
       ],
       puzzle: {
         id: "c5-rescue-board",
@@ -488,16 +524,16 @@ const chapterFive: StoryChapterSpec = {
       title: "最后二十秒",
       eyebrow: "倒计时 00:20",
       lead: "黑熊把铁板向外拉翻。齐夏倒地，乔家劲负伤，小眼镜必须把追击从齐夏身上引开，坚持到计时归零。",
-      sourceRef: { chapter: 43, lineStart: 5953, lineEnd: 6238 },
+      sourceRef: summary(43, 44, 5953, 6238),
       backgroundAsset: "/art/chapter-05/underground-arena-v1.png",
       portraitIds: ["qiao", "qixia"],
       observations: [
-        { id: "c5-pull", label: "黑熊改变受力", text: "黑熊不再向内压板，而是抓住边缘向外拉，借众人反向用力掀翻铁板。", note: "阵型已经失效，只剩拖延时间。", sourceRef: { chapter: 43, lineStart: 6011, lineEnd: 6033 } },
-        { id: "c5-clock", label: "不足二十秒", text: "计时器接近零；铁门会在时间到达时强制回收黑熊。", note: "目标不再是重建阵型，而是让齐夏活过最后几秒。", sourceRef: { chapter: 43, lineStart: 6059, lineEnd: 6085 } },
+        { id: "c5-pull", label: "黑熊改变受力", text: "黑熊不再向内压板，而是抓住边缘向外拉，借众人反向用力掀翻铁板。", note: "铁板被拉倒后平压在地面，众人同时失去遮挡。", sourceRef: summary(43, 43, 6011, 6033) },
+        { id: "c5-clock", label: "不足二十秒", text: "计时器接近零；铁门会在时间到达时强制回收黑熊。", note: "电子钟不足二十秒，齐夏胸口受伤倒地。", sourceRef: summary(43, 43, 6059, 6085) },
       ],
       dialogue: [
-        { id: "c05-glasses-001", speakerId: "little-glasses", text: "喂！王八蛋！别动他！", sourceRef: { chapter: 43, lineStart: 6075, lineEnd: 6075 } },
-        { id: "c05-qiao-004", speakerId: "qiao", text: "时间到了！别再杀人了！", sourceRef: { chapter: 44, lineStart: 6115, lineEnd: 6115 } },
+        { id: "c05-glasses-001", speakerId: "little-glasses", text: "喂！王八蛋！别动他！", sourceRef: adaptation(43, 43, 6067, 6067), offscreen: true },
+        { id: "c05-qiao-004", speakerId: "qiao", text: "时间到了！别再杀人了！", sourceRef: adaptation(44, 44, 6109, 6109) },
       ],
       puzzle: {
         id: "c5-final-sequence",
@@ -520,19 +556,19 @@ const chapterFive: StoryChapterSpec = {
       title: "十九名通关者",
       eyebrow: "地牛结算",
       lead: "黄队九人生还，绿队十人生还。张山用铁板打死另一只黑熊并带回两条熊臂。",
-      sourceRef: { chapter: 44, lineStart: 6087, lineEnd: 6482 },
+      sourceRef: summary(44, 45, 6087, 6299),
       backgroundAsset: "/art/chapter-05/underground-arena-v1.png",
       portraitIds: ["ground-ox", "zhang-shan", "qixia"],
       observations: [
-        { id: "c5-nineteen", label: "十九人", text: "两队合计十九人通关，因此每名幸存者获得十九颗“道”。", note: "四人份为七十六颗。", sourceRef: { chapter: 45, lineStart: 6239, lineEnd: 6249 } },
-        { id: "c5-zhang", label: "张山的熊臂", text: "张山以铁板压住黑熊并持续攻击，绿队十人无一死亡。", note: "他的正面力量足以改变后续格局。", sourceRef: { chapter: 45, lineStart: 6261, lineEnd: 6299 } },
+        { id: "c5-nineteen", label: "十九人", text: "两队合计十九人通关，因此每名幸存者获得十九颗“道”。", note: "黄队九人、绿队十人回到结算室。", sourceRef: summary(45, 45, 6239, 6249) },
+        { id: "c5-zhang", label: "张山的熊臂", text: "张山以铁板压住黑熊并持续攻击，绿队十人无一死亡。", note: "他的正面力量足以改变后续格局。", sourceRef: summary(45, 45, 6261, 6299) },
       ],
       dialogue: [
-        { id: "c05-ox-002", speakerId: "ground-ox", text: "每人十九颗道，游戏结束。", sourceRef: { chapter: 45, lineStart: 6241, lineEnd: 6241 } },
-        { id: "c05-zhang-001", speakerId: "zhang-shan", text: "干……老牛，你还真是不客气，熊这种东西都准备好了？", sourceRef: { chapter: 44, lineStart: 6229, lineEnd: 6229 } },
+        { id: "c05-ox-002", speakerId: "ground-ox", text: "每人十九颗道，游戏结束。", sourceRef: adaptation(45, 45, 6241, 6241) },
+        { id: "c05-zhang-001", speakerId: "zhang-shan", text: "干……老牛，你还真是不客气，熊这种东西都准备好了？", sourceRef: adaptation(44, 44, 6233, 6233) },
       ],
       canonicalEvent: "队伍四人得到七十六颗，齐夏依据交易取得小眼镜与老吕的三十八颗，再归还小眼镜一袋十九颗；连同赛前剩余一颗，净持有九十六颗。",
-      daoDeltaOnAdvance: 95,
+      daoLedgerDeltaOnAdvance: { qixiaParty: 95 },
       animationId: "c5-dao-settlement",
       advanceLabel: "处理张山的来意",
     },
@@ -541,16 +577,17 @@ const chapterFive: StoryChapterSpec = {
       title: "大脑与拳头",
       eyebrow: "结算后 / 椅阵",
       lead: "齐夏误判张山来意，先用椅子攻击。乔家劲接替他与张山交手，地牛最终将两人分开。",
-      sourceRef: { chapter: 46, lineStart: 6483, lineEnd: 6618 },
+      sourceRef: summary(45, 47, 6285, 6618),
       backgroundAsset: "/art/chapter-05/underground-arena-v1.png",
       portraitIds: ["qixia", "qiao", "zhang-shan"],
       observations: [
-        { id: "c5-chair", label: "椅子与伤势", text: "张山刚经历熊战、胸前有伤；齐夏利用椅子制造距离并抢先攻击。", note: "这不是公平格斗，而是先手求生。", sourceRef: { chapter: 45, lineStart: 6325, lineEnd: 6401 } },
-        { id: "c5-brain-fist", label: "大脑与拳头", text: "乔家劲称齐夏为自己的“大脑”，自己则是他的“拳头”。", note: "两人的合作关系第一次被明确命名。", sourceRef: { chapter: 46, lineStart: 6539, lineEnd: 6551 } },
+        { id: "c5-chair", label: "椅子与伤势", text: "张山刚经历熊战、胸前有伤；齐夏利用椅子制造距离并抢先攻击。", note: "这不是公平格斗，而是先手求生。", sourceRef: summary(45, 46, 6325, 6401) },
+        { id: "c5-brain-fist", label: "大脑与拳头", text: "乔家劲称齐夏为自己的“大脑”，自己则是他的“拳头”。", note: "两人的合作关系第一次被明确命名。", sourceRef: summary(46, 46, 6405, 6419) },
       ],
       dialogue: [
-        { id: "c05-qiao-005", speakerId: "qiao", text: "他是我的大脑。你打坏他的头，我俩可就都变傻了。", sourceRef: { chapter: 46, lineStart: 6543, lineEnd: 6543 } },
-        { id: "c05-qiao-006", speakerId: "qiao", text: "如果非要说的话，我是他的拳头。", sourceRef: { chapter: 46, lineStart: 6549, lineEnd: 6549 } },
+        { id: "c05-qiao-005", speakerId: "qiao", text: "他是我的大脑。你打坏他的头，我俩可就都变傻了。", sourceRef: adaptation(46, 46, 6413, 6413) },
+        { id: "c05-qiao-006", speakerId: "qiao", text: "如果非要说的话，我是他的拳头。", sourceRef: adaptation(46, 46, 6417, 6417) },
+        { id: "c05-zhang-002", speakerId: "zhang-shan", text: "我们正在聚集一批厉害的人物，然后一起走出这个地方。", sourceRef: adaptation(47, 47, 6561, 6561) },
       ],
       puzzle: {
         id: "c5-conflict-board",
@@ -572,16 +609,15 @@ const chapterFive: StoryChapterSpec = {
       title: "逃离的可能",
       eyebrow: "离开地牛场地",
       lead: "张山说他们找到过一名逃离者的笔记，并留下血画地图。齐夏拒绝加入，也拒绝让独自存活的微胖女子靠近队伍。",
-      sourceRef: { chapter: 47, lineStart: 6619, lineEnd: 6744 },
+      sourceRef: summary(48, 48, 6619, 6744),
       backgroundAsset: "/art/chapter-02/termination-city-v1.png",
       portraitIds: ["zhang-shan", "qixia", "qiao"],
       observations: [
-        { id: "c5-escape-note", label: "逃离者笔记", text: "张山没有见过逃离者本人，只找到一份笔记，并以此相信多人可以一起离开。", note: "“只有一人能出去”从未被生肖明确说过。", sourceRef: { chapter: 47, lineStart: 6671, lineEnd: 6699 } },
-        { id: "c5-woman", label: "独活的弱女子", text: "她声称八名队友全死在面试中，自己却独自存活至今并主动接近大量“道”。", note: "齐夏只记录高风险，不宣称已经证明她的身份。", sourceRef: { chapter: 48, lineStart: 6721, lineEnd: 6743 } },
+        { id: "c5-escape-note", label: "逃离者笔记", text: "张山没有见过逃离者本人，只找到一份笔记，并以此相信多人可以一起离开。", note: "“只有一人能出去”从未被生肖明确说过。", sourceRef: summary(48, 48, 6621, 6643) },
+        { id: "c5-woman", label: "独活的弱女子", text: "她声称八名队友全死在面试中，自己却独自存活至今并主动接近大量“道”。", note: "齐夏只记录高风险，不宣称已经证明她的身份。", sourceRef: summary(48, 48, 6691, 6739) },
       ],
       dialogue: [
-        { id: "c05-zhang-002", speakerId: "zhang-shan", text: "我们正在聚集一批厉害的人物，然后一起走出这个地方。", sourceRef: { chapter: 47, lineStart: 6655, lineEnd: 6655 } },
-        { id: "c05-qixia-004", speakerId: "qixia", text: "我是个骗子。我的话不要信。", sourceRef: { chapter: 48, lineStart: 6689, lineEnd: 6689 } },
+        { id: "c05-qixia-004", speakerId: "qixia", text: "我是个骗子。我的话不要信。", sourceRef: adaptation(48, 48, 6661, 6661) },
       ],
       advanceLabel: "带着收获离开",
     },
@@ -592,6 +628,7 @@ export const STORY_CHAPTERS: Record<StoryChapterId, StoryChapterSpec> = {
   3: chapterThree,
   4: chapterFour,
   5: chapterFive,
+  ...STORY_CHAPTERS_06_08,
 };
 
 export function storyChapterSpec(chapterId: StoryChapterId) {

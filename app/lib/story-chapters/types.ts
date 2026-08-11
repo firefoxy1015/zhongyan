@@ -1,15 +1,25 @@
-export type StoryChapterId = 3 | 4 | 5;
+import type { StoryAnimationId } from "./animation.ts";
+
+export const STORY_CHAPTER_IDS = [3, 4, 5, 6, 7, 8] as const;
+export const SOLO_CHAPTER_IDS = [1, 2, ...STORY_CHAPTER_IDS] as const;
+
+export type StoryChapterId = typeof STORY_CHAPTER_IDS[number];
+export type SoloChapterId = typeof SOLO_CHAPTER_IDS[number];
 
 export type StoryStatus =
   | { kind: "playing" }
-  | { kind: "animating"; animationId: string }
+  | { kind: "animating"; animationId: StoryAnimationId }
   | { kind: "death"; failureId: string; reason: string; checkpointSceneId: string }
   | { kind: "complete" };
 
+export type StorySourceKind = "quote" | "adaptation" | "summary";
+
 export interface StorySourceRef {
-  chapter: number;
+  chapterStart: number;
+  chapterEnd: number;
   lineStart: number;
   lineEnd: number;
+  kind: StorySourceKind;
 }
 
 export interface StoryObservation {
@@ -68,14 +78,23 @@ export type StorySpeakerId =
   | "zhuque"
   | "ground-ox"
   | "zhang-shan"
-  | "little-glasses";
+  | "little-glasses"
+  | "xiaoxiao"
+  | "old-lu"
+  | "human-pig"
+  | "human-rabbit";
 
 export interface StoryDialogueLine {
   id: string;
   speakerId: StorySpeakerId;
   text: string;
   sourceRef: StorySourceRef;
+  offscreen?: boolean;
 }
+
+export type StoryDaoAccountId = "qixiaParty" | "liZhang" | "oldLu" | "burned";
+export type StoryDaoLedger = Readonly<Record<StoryDaoAccountId, number>>;
+export type StoryDaoDelta = Readonly<Partial<Record<StoryDaoAccountId, number>>>;
 
 export interface StoryScene {
   id: string;
@@ -88,10 +107,10 @@ export interface StoryScene {
   observations: readonly StoryObservation[];
   dialogue: readonly StoryDialogueLine[];
   puzzle?: StoryPuzzle;
-  animationId?: string;
+  animationId?: StoryAnimationId;
   advanceLabel: string;
-  daoDeltaOnSolve?: number;
-  daoDeltaOnAdvance?: number;
+  daoLedgerDeltaOnSolve?: StoryDaoDelta;
+  daoLedgerDeltaOnAdvance?: StoryDaoDelta;
   canonicalEvent?: string;
 }
 
@@ -101,11 +120,12 @@ export interface StoryChapterSpec {
   title: string;
   subtitle: string;
   source: { startLine: number; endLine: number; chapters: readonly number[] };
-  initialDao: number;
+  initialDaoLedger: StoryDaoLedger;
+  pressureLimit: number;
   scenes: readonly StoryScene[];
   completionTitle: string;
   completionText: string;
-  completionDaoCount: number;
+  completionDaoLedger: StoryDaoLedger;
   completionDaoLabel: string;
   nextChapterId?: StoryChapterId;
 }
@@ -122,18 +142,19 @@ export interface StoryHistoryEntry {
 }
 
 export interface StoryChapterState {
-  schemaVersion: 1;
+  schemaVersion: 2;
   chapterId: StoryChapterId;
   sceneId: string;
   checkpointSceneId: string;
   status: StoryStatus;
-  daoCount: number;
+  daoLedger: StoryDaoLedger;
   pressure: number;
   observedIds: string[];
   solvedSceneIds: string[];
   answers: Record<string, string>;
   errors: StoryFieldError[];
   history: StoryHistoryEntry[];
+  eventSequence: number;
 }
 
 export type StoryChapterAction =
@@ -143,5 +164,5 @@ export type StoryChapterAction =
   | { type: "SET_FIELD"; fieldId: string; value: string }
   | { type: "SUBMIT_PUZZLE" }
   | { type: "ADVANCE" }
-  | { type: "ANIMATION_FINISHED"; animationId: string }
+  | { type: "ANIMATION_FINISHED"; animationId: StoryAnimationId }
   | { type: "RETRY_CHECKPOINT" };

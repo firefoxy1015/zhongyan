@@ -133,6 +133,12 @@ export const CROSS_EXAMINATIONS: readonly CrossExamination[] = [
 
 export type DeductionPuzzleId = "case-thread" | "air-ledger" | "last-moment" | "rule-reversal";
 
+export const RULE_REVERSAL_PREREQUISITES = ["case-thread", "air-ledger", "last-moment"] as const satisfies readonly DeductionPuzzleId[];
+
+export function ruleReversalIsAvailable(solvedPuzzles: ReadonlySet<DeductionPuzzleId>) {
+  return RULE_REVERSAL_PREREQUISITES.every((puzzleId) => solvedPuzzles.has(puzzleId));
+}
+
 export type DeductionSlot = {
   id: string;
   options: readonly string[];

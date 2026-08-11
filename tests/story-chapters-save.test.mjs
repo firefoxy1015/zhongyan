@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { SOLO_SAVE_KEY } from "../app/lib/chapter-two/save.ts";
 import { initialStoryChapterState } from "../app/lib/story-chapters/engine.ts";
-import { STORY_SAVE_KEY, canEnterStoryChapter, createFreshStoryChapterSave, loadStorySave, saveStoryChapter, unlockStoryChapterForTesting } from "../app/lib/story-chapters/save.ts";
+import { STORY_SAVE_KEY, canEnterStoryChapter, createEmptyStorySave, createFreshStoryChapterSave, loadStorySave, saveStoryChapter, unlockStoryChapterForTesting } from "../app/lib/story-chapters/save.ts";
 
 class MemoryStorage {
   values = new Map();
@@ -38,23 +38,33 @@ test("merges later legacy progress even when a v3 save already exists", () => {
   assert.equal(canEnterStoryChapter(storage, 3), true);
 });
 
+test("never imports chapter three through eight completion markers from a v2 save", () => {
+  const storage = new MemoryStorage();
+  storage.setItem(SOLO_SAVE_KEY, JSON.stringify(legacySave([1, 2, 3, 4, 5, 6, 7, 8])));
+  const save = loadStorySave(storage);
+  assert.deepEqual(save.completedChapters, [1, 2]);
+  assert.equal(canEnterStoryChapter(storage, 3), true);
+  assert.equal(canEnterStoryChapter(storage, 4), false);
+});
+
 test("unlocks debug chapters without writing answers", () => {
   const storage = new MemoryStorage();
-  unlockStoryChapterForTesting(storage, 5);
+  unlockStoryChapterForTesting(storage, 8);
   const save = loadStorySave(storage);
-  assert.deepEqual(save.completedChapters, [1, 2, 3, 4]);
-  assert.deepEqual(save.chapters[5].answers, {});
-  assert.equal(canEnterStoryChapter(storage, 5), true);
+  assert.deepEqual(save.completedChapters, [1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(save.chapters[8].answers, {});
+  assert.deepEqual(Object.keys(save.chapters), ["3", "4", "5", "6", "7", "8"]);
+  assert.equal(canEnterStoryChapter(storage, 8), true);
 });
 
 test("debug entry resets a previously completed chapter instead of reopening stale settlement data", () => {
   const storage = new MemoryStorage();
   unlockStoryChapterForTesting(storage, 5);
-  saveStoryChapter(storage, { ...initialStoryChapterState(5), status: { kind: "complete" }, daoCount: 5, answers: { stale: "answer" } });
+  saveStoryChapter(storage, { ...initialStoryChapterState(5), status: { kind: "complete" }, answers: { stale: "answer" } });
   unlockStoryChapterForTesting(storage, 5);
   const state = loadStorySave(storage).chapters[5];
   assert.equal(state.status.kind, "playing");
-  assert.equal(state.daoCount, 5);
+  assert.deepEqual(state.daoLedger, initialStoryChapterState(5).daoLedger);
   assert.deepEqual(state.answers, {});
 });
 
@@ -69,10 +79,39 @@ test("marks a completed chapter and unlocks the next one", () => {
 test("fresh chapter entry replaces an existing completed destination save", () => {
   const storage = new MemoryStorage();
   unlockStoryChapterForTesting(storage, 5);
-  saveStoryChapter(storage, { ...initialStoryChapterState(5), status: { kind: "complete" }, daoCount: 96 });
+  saveStoryChapter(storage, { ...initialStoryChapterState(5), status: { kind: "complete" } });
   const fresh = createFreshStoryChapterSave(storage, 5);
   const restored = loadStorySave(storage).chapters[5];
   assert.equal(fresh.status.kind, "playing");
   assert.equal(restored.status.kind, "playing");
   assert.equal(restored.sceneId, initialStoryChapterState(5).sceneId);
+});
+
+test("requires every predecessor instead of trusting only the immediately previous marker", () => {
+  const storage = new MemoryStorage();
+  storage.setItem(STORY_SAVE_KEY, JSON.stringify({
+    ...createEmptyStorySave(),
+    completedChapters: [1, 2, 3, 5],
+    activeChapter: 5,
+  }));
+  assert.equal(canEnterStoryChapter(storage, 6), false);
+});
+
+test("parses chapter eight saves and migrates embedded schema-one chapter state", () => {
+  const storage = new MemoryStorage();
+  const legacyChapter = {
+    ...initialStoryChapterState(6),
+    schemaVersion: 1,
+    daoCount: 96,
+  };
+  storage.setItem(STORY_SAVE_KEY, JSON.stringify({
+    ...createEmptyStorySave(),
+    completedChapters: [1, 2, 3, 4, 5],
+    activeChapter: 8,
+    chapters: { 6: legacyChapter, 8: initialStoryChapterState(8) },
+  }));
+  const save = loadStorySave(storage);
+  assert.equal(save.activeChapter, 8);
+  assert.equal(save.chapters[6].schemaVersion, 2);
+  assert.equal(save.chapters[8].chapterId, 8);
 });

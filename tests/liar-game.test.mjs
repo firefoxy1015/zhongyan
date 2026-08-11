@@ -19,6 +19,7 @@ import {
   PUZZLE_BY_ID,
   ROOM_CLUES,
   puzzleErrorCount,
+  ruleReversalIsAvailable,
 } from "../app/lib/deduction-game.ts";
 import { CHARACTER_VOICE_PROFILES, FOLLOW_UP_SPEAKER_ID } from "../app/lib/testimony-speech.ts";
 import {
@@ -187,4 +188,11 @@ test("keeps the two-million chain as a tempting but non-decisive side deduction"
   assert.equal(puzzleErrorCount(puzzle, correct), 0);
   assert.match(correct.timeline, /不能百分百定罪/);
   assert.match(PUZZLE_BY_ID["rule-reversal"].success, /人羊/);
+});
+
+test("requires every prior draft before the rule reversal can be opened", () => {
+  assert.equal(ruleReversalIsAvailable(new Set(["air-ledger", "last-moment"])), false);
+  assert.equal(ruleReversalIsAvailable(new Set(["case-thread", "last-moment"])), false);
+  assert.equal(ruleReversalIsAvailable(new Set(["case-thread", "air-ledger"])), false);
+  assert.equal(ruleReversalIsAvailable(new Set(["case-thread", "air-ledger", "last-moment"])), true);
 });

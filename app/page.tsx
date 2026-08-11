@@ -6,6 +6,7 @@ import {
   CROSS_EXAMINATIONS,
   DEDUCTION_PUZZLES,
   PUZZLE_BY_ID,
+  ruleReversalIsAvailable,
   ROOM_CLUES,
   type DeductionPuzzleId,
   type RoomClueId,
@@ -13,6 +14,7 @@ import {
 import { LIAR_GAME, resolveCanonicalVote } from "./lib/liar-game";
 import { createFreshChapterTwoSave, markChapterOneComplete } from "./lib/chapter-two/save";
 import { unlockStoryChapterForTesting } from "./lib/story-chapters/save";
+import { STORY_CHAPTER_IDS, type SoloChapterId, type StoryChapterId } from "./lib/story-chapters/types";
 import { SuspenseBgm } from "./lib/suspense-bgm";
 import {
   CHARACTER_VOICE_PROFILES,
@@ -62,7 +64,16 @@ function clonePuzzleErrors(): PuzzleErrors {
 }
 
 function ChapterDebugPortal() {
-  const enterChapter = (chapter: 1 | 2 | 3 | 4 | 5) => {
+  const chapterNames: Readonly<Record<StoryChapterId, string>> = {
+    3: "三",
+    4: "四",
+    5: "五",
+    6: "六",
+    7: "七",
+    8: "八",
+  };
+
+  const enterChapter = (chapter: SoloChapterId) => {
     if (typeof window === "undefined") return;
     if (chapter === 1) {
       window.location.assign("/");
@@ -88,9 +99,9 @@ function ChapterDebugPortal() {
         <p>绕过正常章节门禁，仅用于逐章验收。不会显示谜底，也不会上传测试档。</p>
         <button onClick={() => enterChapter(1)}>直接进入第一章</button>
         <button onClick={() => enterChapter(2)}>直接进入第二章</button>
-        <button onClick={() => enterChapter(3)}>直接进入第三章</button>
-        <button onClick={() => enterChapter(4)}>直接进入第四章</button>
-        <button onClick={() => enterChapter(5)}>直接进入第五章</button>
+        {STORY_CHAPTER_IDS.map((chapter) => (
+          <button key={chapter} onClick={() => enterChapter(chapter)}>{`直接进入第${chapterNames[chapter]}章`}</button>
+        ))}
       </div>
     </details>
   );
@@ -303,7 +314,7 @@ export default function Home() {
     if (puzzleId === "case-thread") return caseThreadReady;
     if (puzzleId === "air-ledger") return roomClueReady;
     if (puzzleId === "last-moment") return challengedStories.size === LIAR_GAME.stories.length;
-    return solvedPuzzles.has("air-ledger") && solvedPuzzles.has("last-moment");
+    return ruleReversalIsAvailable(solvedPuzzles);
   };
 
   const updateAnswer = (puzzleId: DeductionPuzzleId, slotId: string, value: string) => {
@@ -728,7 +739,7 @@ export default function Home() {
                     ? "先观察房间里的六个发光点，并把每条观察记在草稿边缘。"
                     : activePuzzle.id === "last-moment"
                       ? "先记录九人的证词，并分别完成一次正确追问。"
-                      : "先完成草稿乙“空气账”和草稿丙“最后一刻”。"}</p>
+                      : "先完成草稿甲“四段故事”、草稿乙“空气账”和草稿丙“最后一刻”。"}</p>
               </div>
             ) : (
               <>

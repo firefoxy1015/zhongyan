@@ -1,0 +1,607 @@
+{
+  "version": 2,
+  "generatedBy": "scripts/build-story-asset-manifest.mjs",
+  "policy": "Official materials define direction only. Registered images are original companion art and must not be presented as official frames or adaptation stills.",
+  "registryModule": "app/lib/story-chapters/assets.ts",
+  "referenceFile": "content/official-visual-reference.json",
+  "linkedManifests": {
+    "audio": "content/story-chapters-audio-manifest.json",
+    "voices": "content/story-chapters-voice-manifest.json"
+  },
+  "assets": {
+    "portrait-qixia": {
+      "assetId": "portrait-qixia",
+      "src": "/art/qixia-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2090302,
+      "sha256": "6f3051f55f1a4d25f4509bdeafd60159cd3eeb94b7575e66f298316d22e7390a"
+    },
+    "portrait-qiao-jiajin": {
+      "assetId": "portrait-qiao-jiajin",
+      "src": "/art/qiaojiajin-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2056104,
+      "sha256": "9f1a0db72f59290b9cae974dc7b6f1c23c18c7e49255c0d4d3eeda89d3a72426"
+    },
+    "portrait-tiantian": {
+      "assetId": "portrait-tiantian",
+      "src": "/art/tiantian-v2.png",
+      "width": 1086,
+      "height": 1448,
+      "version": "v2",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1930066,
+      "sha256": "644b6c9241c9066b591a6ca15fd83f8c4c004475cd5e7ef88f3d789dc984d6fe"
+    },
+    "portrait-lin-qin": {
+      "assetId": "portrait-lin-qin",
+      "src": "/art/linqin-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1959051,
+      "sha256": "fc34bcad530cb982844874493e4d7cc3510fb7996262a3302a717595c46ad96f"
+    },
+    "portrait-li-shangwu": {
+      "assetId": "portrait-li-shangwu",
+      "src": "/art/lishangwu-v1.png",
+      "width": 864,
+      "height": 1821,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1957254,
+      "sha256": "dee214e027ca719bba1d5609f67b4db2c67221e1709c59cbdb076e5cad7ca397"
+    },
+    "portrait-zhao-haibo": {
+      "assetId": "portrait-zhao-haibo",
+      "src": "/art/zhaohaibo-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2101002,
+      "sha256": "f14c02c57a7fbd0da6371df34894e3e9a046d44cf35c2d1638e186443a19d1b5"
+    },
+    "portrait-han-yimo": {
+      "assetId": "portrait-han-yimo",
+      "src": "/art/hanyimo-v1.png",
+      "width": 1023,
+      "height": 1537,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1835912,
+      "sha256": "8f968f3598d69d49cb2a0642aa1a70a5f859a48d3d0fdcebf54f91d15381d4c8"
+    },
+    "portrait-zhang-chenze": {
+      "assetId": "portrait-zhang-chenze",
+      "src": "/art/zhangchenze-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2221007,
+      "sha256": "5215f0023a4c143b1481135c327569308012f749906f2c9783c2ccfd67874ece"
+    },
+    "portrait-xiao-ran": {
+      "assetId": "portrait-xiao-ran",
+      "src": "/art/xiaoran-v1.png",
+      "width": 864,
+      "height": 1821,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1930728,
+      "sha256": "14ceafefa77a7ff219dd36bad56c8e21255d0218b09956db97a65e770479054d"
+    },
+    "shared-termination-plaza": {
+      "assetId": "shared-termination-plaza",
+      "src": "/art/chapter-02/termination-plaza-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 2350093,
+      "sha256": "a614b348387dab9f994faa7f77163c3e880f655a16de2b1243c9779b96666dc6"
+    },
+    "shared-termination-city": {
+      "assetId": "shared-termination-city",
+      "src": "/art/chapter-02/termination-city-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 2350093,
+      "sha256": "a614b348387dab9f994faa7f77163c3e880f655a16de2b1243c9779b96666dc6"
+    },
+    "c3-store-background": {
+      "assetId": "c3-store-background",
+      "src": "/art/chapter-03/ruined-convenience-store-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 2195159,
+      "sha256": "5fb69c99e399cb3e3b81de396bd9e2a5bac475248e6fb2fa1a649de3054885d2"
+    },
+    "c3-store-clerk": {
+      "assetId": "c3-store-clerk",
+      "src": "/art/chapter-03/store-clerk-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2034217,
+      "sha256": "8730ab86fccf30dd1b8cb39de2a920e6c87180450d7dddfcec552cd9e6b32653"
+    },
+    "c4-warehouse-background": {
+      "assetId": "c4-warehouse-background",
+      "src": "/art/chapter-04/warehouse-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 1832263,
+      "sha256": "8f7b829f92654ae971200b29a27b4192853886e6722c92446cbd39e804a886ab"
+    },
+    "c4-human-rat": {
+      "assetId": "c4-human-rat",
+      "src": "/art/chapter-04/human-rat-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1952528,
+      "sha256": "dacfa4ff574ee4ae64107322760a2ab69729954266fd282b2fd6b3500c7406cd"
+    },
+    "c4-zhuque": {
+      "assetId": "c4-zhuque",
+      "src": "/art/chapter-04/zhuque-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2165231,
+      "sha256": "328c18940680f3b770ca9ccd0e534bf3000b22716b11e4a204d2e37a4afa04c8"
+    },
+    "c5-arena-background": {
+      "assetId": "c5-arena-background",
+      "src": "/art/chapter-05/underground-arena-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 2451613,
+      "sha256": "82ab9c2bbbc2bed366493052b20d564185f3df4e88297103db17ee80567dd0fa"
+    },
+    "c5-ground-ox": {
+      "assetId": "c5-ground-ox",
+      "src": "/art/chapter-05/ground-ox-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1884369,
+      "sha256": "aef7c9c796eb6bc5b43b5f5522d766bd7ae17ca7166d57670bfbf91eef7f22cc"
+    },
+    "c5-zhang-shan": {
+      "assetId": "c5-zhang-shan",
+      "src": "/art/chapter-05/zhang-shan-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2017882,
+      "sha256": "b406e5da1fcde116ea46b2e75bb369c4026a7639da960b817775368ee69b9f9e"
+    },
+    "c6-restaurant-background": {
+      "assetId": "c6-restaurant-background",
+      "src": "/art/chapter-06/abandoned-restaurant-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 2028439,
+      "sha256": "9734e4b8c1957d70eed5e736ebb2e4d45734c4965eb1ec2b89225fa7bdcfa7d4"
+    },
+    "c6-xiaoxiao": {
+      "assetId": "c6-xiaoxiao",
+      "src": "/art/chapter-06/xiaoxiao-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1957918,
+      "sha256": "d0aacb3135f79626ec52d18903d84e0c8f5e1a3b78b83dd78e07b2f103ba7676"
+    },
+    "c7-go-club-background": {
+      "assetId": "c7-go-club-background",
+      "src": "/art/chapter-07/go-club-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 1573046,
+      "sha256": "15fcc3fe71c87b77259ce481e873dcb052fd45f6fbb25f87e764c38e89bd7f21"
+    },
+    "c7-human-pig": {
+      "assetId": "c7-human-pig",
+      "src": "/art/chapter-07/human-pig-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 1861088,
+      "sha256": "125bb13fe112c08ee67ee7f6269e8b8004ca17b250274066504d8a78918753c4"
+    },
+    "c7-human-pig-unmasked": {
+      "assetId": "c7-human-pig-unmasked",
+      "src": "/art/chapter-07/human-pig-unmasked-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2036153,
+      "sha256": "ef261344f5159fc97115b33c04807ccfef6792f07d4541cfe1e034310f9d6e9e"
+    },
+    "c7-old-lu": {
+      "assetId": "c7-old-lu",
+      "src": "/art/chapter-07/old-lu-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2150752,
+      "sha256": "4484164d9acb676e2c84fb4ea57335045d0795c6215aa2acc8a10c86f71702ba"
+    },
+    "c8-rabbit-room-background": {
+      "assetId": "c8-rabbit-room-background",
+      "src": "/art/chapter-08/rabbit-escape-room-v1.png",
+      "width": 1672,
+      "height": 941,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 6,
+        "right": 6,
+        "bottom": 8,
+        "left": 6
+      },
+      "bytes": 2455690,
+      "sha256": "501ccb42328efab48e96fc5bdb44932c4cbafc2dbfd43f76b5192c898e076486"
+    },
+    "c8-human-rabbit": {
+      "assetId": "c8-human-rabbit",
+      "src": "/art/chapter-08/human-rabbit-v1.png",
+      "width": 1024,
+      "height": 1536,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 4,
+        "right": 7,
+        "bottom": 3,
+        "left": 7
+      },
+      "bytes": 2204662,
+      "sha256": "d80fc13c9c80309134f76abb58ccd92b61812437264516b60385a6edd0e23462"
+    }
+  }
+}

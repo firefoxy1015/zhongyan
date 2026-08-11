@@ -1,11 +1,11 @@
 # 《十日终焉》单机剧情桌游技术交接文档
 
-- 最后核对日期：2026-08-09
+- 最后核对日期：2026-08-10
 - 项目目录：克隆仓库后的项目根目录
 - 代码仓库：`https://github.com/firefoxy1015/zhongyan`
 - 生产环境：`https://zhongyan.onrender.com`
 - 当前主分支：`main`
-- 本交接对应的游戏代码基线：本次第 3、4、5 章提交（以最新 `main` commit 为准）
+- 本交接对应的游戏代码基线：第 1 至 8 章单机流程（以最新 `main` commit 为准）
 
 > 这是一份给下一位技术人员直接接手的实施说明，不是宣传稿。凡是本文与实际运行结果冲突，按“线上运行行为 > 当前代码 > 清单与测试 > 本文 > 旧计划”的顺序回查。
 
@@ -116,25 +116,24 @@ npm.cmd run canon:manifest
 - 第二章“四面杀机”从原著第 11 章衔接至第 21 章前半。
 - 第二章 6 个主要推理/操作模块、检查点死亡和完整成功路线。
 - 第二章 16 个视觉资产、14 段动画、3 条 BGM、14 个 SFX、23 个固定对白文件。
-- 第三章“七黑剑”、第四章“仓库寻道”、第五章“地牛”共 18 个可操作场景和完整正史成功路线。
-- 第 3 至 5 章共享数据驱动 reducer、明确错项、死亡检查点、版本 3 存档迁移和逐章门禁。
-- 第 3 至 5 章新增 8 张锁定视觉图、15 段事件动画、3 条 BGM、13 个 SFX、34 个固定对白文件。
-- 首页测试人员调试入口，可直接进入第一至第五章，并写入不含答案的合法测试档。
-- 自动测试 61 项，覆盖仓库原文哈希、正史、引擎、存档、素材哈希、语音锁、SSR 和联机房纯逻辑。
+- 第三至第八章共 41 个可操作场景和完整正史成功路线；新增“极道”“百分百”“舍己”。
+- 第 3 至 8 章共享数据驱动 reducer、具体错项、压力死亡、正史死亡检查点、分账户“道”账本、旧存档迁移和逐章门禁。
+- 第 3 至 8 章共 34 段专属事件动画、6 条 BGM、27 个 SFX、77 个一次生成后永久复用的固定对白文件。
+- 首页测试人员调试入口可直接进入第一至第八章，并写入不含答案的合法测试档。
+- 自动测试覆盖仓库原文哈希与逐字引用、正史、引擎、存档、素材哈希、唯一音色锁、SSR 和联机房纯逻辑；另有真实 Chromium E2E。
 - Render 生产站点已建立并从 GitHub `main` 部署。
 
 ### 3.2 尚未完成
 
-- 第六章及后续正史章节。
+- 第九章及后续正史章节。
 - 全剧情数据引擎。目前第一章主要由 React 局部状态驱动，第二章已有独立 reducer；两章架构尚未完全统一。
 - 完整角色圣经文件。目前角色锁分散在 `liar-game.ts`、`testimony-speech.ts`、`chapter-two/canon.ts`、语音清单和资产清单中。
-- 自动化浏览器端到端测试。目前主要是 Node 测试加人工浏览器验收。
-- 第一、二章尚未迁入第 3 至 5 章使用的通用章节 UI；不要为了统一架构先破坏已验收章节。
-- 自动化浏览器 E2E 脚本仍未固化进仓库；本次使用 Playwright CLI 做了桌面、390px、音频请求和动画实机验收。
+- 第一、二章与第 3 至 8 章仍使用两套状态模型；不要为了统一架构先破坏已验收章节。
+- 完整游玩流程 E2E 仍需逐章扩充；当前 `npm.cmd run e2e` 已固化调试入口、2→3 至 7→8 全部跨章链、`fresh=1`、刷新存档、390px 溢出与立绘边界回归。
 
 ### 3.3 已知文档状态
 
-`docs/chapter-02-plan.md` 和 `docs/chapter-03-05-plan.md` 是已实现章节的详细契约。判断现状仍以当前代码、测试和线上版本为准。
+`docs/chapter-02-plan.md`、`docs/chapter-03-05-plan.md` 和 `docs/chapter-06-08-plan.md` 是已实现章节的详细契约。判断现状仍以当前代码、测试和线上版本为准。
 
 ---
 
@@ -213,12 +212,14 @@ app/
 content/                           正史、视觉、声音和资产审计清单
 public/art/                        第一章固定图
 public/art/chapter-02/             第二章固定图和解谜 SVG
-public/art/chapter-03..05/         第三至第五章固定场景和角色图
+public/art/chapter-03..08/         第三至第八章固定场景和角色图
 public/audio/                      固定语音、BGM、SFX
 scripts/                           正史清单与离线音频生成脚本
-tests/                             61 项回归测试
+tests/                             Node 回归测试与真实浏览器 E2E
 docs/chapter-02-plan.md            第二章实现契约
 docs/chapter-03-05-plan.md         第三至第五章实现契约
+docs/chapter-06-08-plan.md         第六至第八章实现契约
+docs/e2e-smoke.md                  真实浏览器验收说明
 ```
 
 ### 5.1 推荐依赖方向
@@ -238,7 +239,7 @@ flowchart LR
   Tests --> Assets
 ```
 
-第六章继续沿用第 3 至 5 章方向：**正史数据 -> 纯 reducer -> UI 投影**，不要把规则堆进页面组件。
+第九章继续沿用第 3 至 8 章方向：**正史数据 -> 纯 reducer -> UI 投影**，不要把规则堆进页面组件。
 
 ---
 
@@ -373,23 +374,15 @@ type Drawer = "witness" | "observation" | "notebook" | "rules" | null;
 
 达到 60 分钟进入死亡结算。错误草稿必须显示每个 `此项错误`，不能只显示“答案不正确”。
 
-### 6.8 当前第一章的一个技术债
+### 6.8 第一章四页草稿门禁（已修复）
 
-产品文案要求闭合四页草稿后投票，但当前代码中：
-
-```ts
-const voteUnlocked = solvedPuzzles.has("rule-reversal");
-```
-
-而 `rule-reversal` 的解锁只要求草稿乙与草稿丙，并未强制草稿甲完成。也就是说，熟悉路线的玩家理论上可能跳过草稿甲直接解锁投票。
-
-下一位技术人员应在不破坏正史的前提下决定并测试：
+`app/lib/deduction-game.ts` 现在集中声明：
 
 ```ts
-const voteUnlocked = DEDUCTION_PUZZLES.every((puzzle) => solvedPuzzles.has(puzzle.id));
+RULE_REVERSAL_PREREQUISITES = ["case-thread", "air-ledger", "last-moment"];
 ```
 
-同时把 `rule-reversal` 的前置关系明确写进数据，而不是只散落在页面条件中。
+`ruleReversalIsAvailable()` 要求草稿甲、乙、丙全部闭合后才允许打开规则反转页；最终投票仍要求规则反转完成。`tests/liar-game.test.mjs` 分别覆盖缺任意一页都不能解锁，以及三页齐全才可解锁。不要把此前只检查乙、丙的旧条件写回页面。
 
 ### 6.9 第一章成功与存档
 
@@ -576,7 +569,7 @@ insertion = vertical-then-horizontal
 
 ---
 
-## 8. 第三至第五章：七黑剑、仓库寻道、地牛
+## 8. 第三至第八章：通用单机剧情引擎
 
 ### 8.1 正史范围与场景数
 
@@ -585,41 +578,48 @@ insertion = vertical-then-horizontal
 | 第三章“七黑剑” | 22-29 | 3001-4142 | 5 | 韩一墨死亡；探索队带两颗“道”，李尚武留一颗 |
 | 第四章“仓库寻道” | 30-35 | 4143-4986 | 5 | 人鼠赌命失败后返还门票并赔三颗，探索队共五颗 |
 | 第五章“地牛” | 36-48 | 4987-6744 | 8 | 十九人通关；四人队按交易与归还结算为九十六颗 |
+| 第六章“极道” | 49-57 | 6745-8060 | 9 | 乔家劲、甜甜固定死亡；九十六颗全部焚毁 |
+| 第七章“百分百” | 58-64 | 8061-9016 | 7 | `74/99` 概率策略与真假话赌命闭合；老吕个人十颗 |
+| 第八章“舍己” | 65-71 | 9017-9968 | 7 | 李尚武舍手救人后死亡；章晨泽交付四颗，新四人队成立 |
 
-实现契约：`docs/chapter-03-05-plan.md`。正史数据与逐行来源：`app/lib/story-chapters/canon.ts`。
+实现契约：`docs/chapter-03-05-plan.md` 与 `docs/chapter-06-08-plan.md`。正史数据位于 `app/lib/story-chapters/canon.ts`、`canon-06-08.ts`；全部来源坐标由 `tests/story-chapters-source.test.mjs` 对仓库原文自动核验。
 
 ### 8.2 通用章节架构
 
 ```text
-app/chapter/StoryChapterGame.tsx       第3至5章共享UI和音频编排
+app/chapter/StoryChapterGame.tsx       第3至8章共享UI和音频编排
 app/chapter/story-chapter.module.css   桌面/390px布局和事件动画
 app/lib/story-chapters/types.ts        通用场景、谜题、观察、失败和状态类型
-app/lib/story-chapters/canon.ts        三章正史、对白、观察、答案和行号
+app/lib/story-chapters/canon.ts        第3至5章正史与总注册表
+app/lib/story-chapters/canon-06-08.ts  第6至8章正史、对白、观察、答案和行号
 app/lib/story-chapters/engine.ts       纯reducer、错项、动画、死亡、检查点
-app/lib/story-chapters/save.ts         v3存档、v2迁移、门禁、调试解锁
+app/lib/story-chapters/save.ts         v3 envelope、schema1→2迁移、全前置门禁、调试解锁
 app/lib/story-chapters/audio.ts        BGM/SFX/静态对白播放器
-app/lib/story-chapters/voice-assets.ts 34条本地固定语音及哈希
-content/chapter-03-05-asset-manifest.json 视觉和声音总锁定清单
+app/lib/story-chapters/voice-assets.ts 77条本地固定语音及完整配置哈希
+content/story-chapters-asset-manifest.json 第3至8章视觉与关联声音清单
+content/story-chapters-voice-manifest.json 一次生成后永久复用的语音锁
 ```
 
-页面只传 `chapterId`，不复制规则：`/chapter/3`、`/chapter/4`、`/chapter/5` 都渲染 `StoryChapterGame`。
+页面只传 `chapterId`，不复制规则：`/chapter/3` 至 `/chapter/8` 都渲染 `StoryChapterGame`。章节集合只从 `STORY_CHAPTER_IDS` 读取，禁止再次散落硬编码 3-5。
 
 ### 8.3 玩家规则
 
 - 先点现场观察；未观察就提交会逐项提示“先检查什么”，同时增加压力。
 - 每个单选字段有独立错误文本，不能只显示“答案错误”。
-- 正确推演触发对应事件动画和 SFX，动画结束后才允许推进。
+- 正确推演触发对应事件动画和 SFX；`skippableAfterMs` 到达前跳过按钮必须禁用，动画结束后才允许推进。
 - 非谜题正史事件也必须先播放动画，再自动进入下一幕。
 - 明确的致死选择保留死亡：第三章独自跟店员进里屋、第四章赌命后找错位置、第五章黑熊前装死等。
 - 死亡页必须显示失败 ID、具体原因和返回检查点；重试重建该检查点之前的正史账面。
+- 普通错误仍会累计压力；达到章节 `pressureLimit` 时死亡，但死亡原因必须包含最后一次具体错项。
+- “道”禁止再用单一总数覆盖。`qixiaParty`、`liZhang`、`oldLu`、`burned` 四个账户分别记账；场景 delta 计算结果必须与结算 ledger 完全相等，否则引擎直接报数据错误。
 
 ### 8.4 资产、语音和动画锁
 
-- 新图：`public/art/chapter-03/` 到 `public/art/chapter-05/`，8 张，全部锁 SHA-256 与尺寸。
-- 静态对白：34 条，路径 `public/audio/story-chapters/voice/`，运行时不调用 TTS。
-- 乔家劲继续使用 `qiao-hk-clone-v1`；齐夏继续使用固定成年男声；甜甜继续使用固定甜美女声。
-- 三章 BGM：`urban-dread`、`warehouse-deception`、`bear-pressure`。
-- 15 段动画不是统一占位：巨剑落地、仓库熄灯、口袋取道、朱雀红羽、分队灯、熊门、圆板、鞋子诱敌、倒计时、道散落等都有独立 CSS 运动和 SFX。
+- 图片注册：`app/lib/story-chapters/assets.ts` 的 27 项运行时资产全部记录版本、尺寸、安全区、来源 ID 与 SHA-256；目录覆盖 `chapter-03` 至 `chapter-08`。
+- 静态对白：77 条，路径 `public/audio/story-chapters/voice/`，运行时不调用 TTS；完整 model、voiceId、voiceVersion、delivery、参数和文本共同进入 input hash。
+- 十九名角色的 `model + voiceId` 两两唯一；九名回归角色与第一章音色严格相同。乔家劲继续使用 MiniMax 港普克隆；齐夏固定成年男声；甜甜固定甜美女声。
+- 六章独立 BGM：`urban-dread`、`warehouse-deception`、`bear-pressure`、`echo-grief`、`probability-dread`、`sacrifice-tension`。
+- 34 段动画全部有独立 ID、专属 CSS 选择器、受保护的开头、字幕和本地 SFX；测试禁止退回统一红线占位。
 - 语音重新生成命令只用于离线制作；执行需要本机环境变量，API key 禁止进入代码、manifest、日志文档或 Git。
 
 ---
@@ -810,7 +810,7 @@ city-reveal
 
 ```text
 zhongyan:solo-save:v2  第一、二章旧档，继续读取
-zhongyan:solo-save:v3  第三至第五章主档
+zhongyan:solo-save:v3  第三至第八章主档（内部章节状态 schema 2）
 ```
 
 envelope：
@@ -820,8 +820,8 @@ interface StorySaveEnvelope {
   version: 3;
   updatedAt: string;
   completedChapters: number[];
-  activeChapter: 1 | 2 | 3 | 4 | 5;
-  chapters: Partial<Record<3 | 4 | 5, StoryChapterState>>;
+  activeChapter: SoloChapterId; // 1..8
+  chapters: Partial<Record<StoryChapterId, StoryChapterState>>; // 3..8
   lockedAssetVersions: {
     portraits: string;
     voices: string;
@@ -834,11 +834,11 @@ interface StorySaveEnvelope {
 - 第一章正确结算后 `completedChapters` 加入 `1`。
 - 第二章只允许在 `canEnterChapterTwo()` 为真时进入。
 - `loadStorySave()` 会迁移并持续合并 v2 的第一、二章完成标记，避免先创建 v3 后丢失旧进度。
-- 第三至第五章分别要求前一章出现在 `completedChapters`。
+- 第三至第八章要求此前全部章节都出现在 `completedChapters`，不能只信任紧邻前一章标记。
 - `saveStoryChapter()` 只在章节状态为 `complete` 时写入完成标记。
 - 调试解锁会写入合法章节状态和前置完成标记，但不写答案。
 - 畸形 JSON、未知场景或不匹配 schema 会回退到安全初始状态。
-- 第六章扩展时必须迁移版本或向后兼容，不能直接覆盖旧玩家档案。
+- 章节状态已从 schema 1 的单一 `daoCount` 迁移为 schema 2 的分账户 ledger；后续再改 schema 必须继续向后兼容，不能直接覆盖旧玩家档案。
 
 ---
 
@@ -849,8 +849,8 @@ interface StorySaveEnvelope {
 要求：
 
 - 首页显示“测试人员调试入口 / 普通用户请勿点击”。
-- 可直接进入第一至第五章。
-- 第二章沿用 v2 测试档；第三至第五章调用 `unlockStoryChapterForTesting()` 写入 v3 合法测试档。
+- 可直接进入第一至第八章。
+- 第二章沿用 v2 测试档；第三至第八章调用 `unlockStoryChapterForTesting()` 写入 v3 合法测试档。
 - 不显示谜底。
 - 不上传测试档。
 - **只在 `screen === "identity"` 渲染一次。**
@@ -891,7 +891,7 @@ interface StorySaveEnvelope {
 
 ## 15. 自动测试
 
-当前 61 项测试分组：
+`npm.cmd test` 先执行 strict typecheck 与完整构建，再运行 `tests/*.test.mjs` 的全部 Node 测试；不要维护会漏掉新测试文件的手写短列表。主要分组：
 
 | 文件 | 重点 |
 |---|---|
@@ -902,10 +902,14 @@ interface StorySaveEnvelope {
 | `tests/chapter-two-engine.test.mjs` | 六段主流程、错误标记、地图、盾牌、逻辑分支、正史通关 |
 | `tests/chapter-two-save.test.mjs` | 门禁、畸形档、保存恢复 |
 | `tests/chapter-two-assets.test.mjs` | 16 图、3 BGM、14 SFX、23 语音、14 动画、齐夏男声、乔家劲港普 |
-| `tests/story-chapters-canon.test.mjs` | 第3至5章原文范围、正史结果、角色立绘/音色版本和逐行来源 |
-| `tests/story-chapters-engine.test.mjs` | 三章正史通关、精确道账、逐项错因、死亡和检查点、非谜题动画 |
-| `tests/story-chapters-save.test.mjs` | v2迁移、v3合并、调试门禁、无答案测试档、逐章解锁 |
-| `tests/story-chapters-assets.test.mjs` | 8图、3 BGM、13 SFX、34语音、15动画及全部文件哈希 |
+| `tests/story-chapters-canon.test.mjs` | 第3至8章正史结果、角色立绘和固定音色身份 |
+| `tests/story-chapters-source.test.mjs` | 原文哈希、每个来源坐标所属章节、逐字 quote、adaptation/summary 契约、防泄题 |
+| `tests/story-chapters-integrity.test.mjs` | 连续边界、唯一 ID、谜题完整性、人物与立绘、34段专属动画、关键数值 |
+| `tests/story-chapters-engine.test.mjs` | 六章正史通关、分账户道账、所有非致命错项、压力死亡、全部致命分支与检查点 |
+| `tests/story-chapters-save.test.mjs` | schema1→2迁移、v3合并、全前置门禁、无答案测试档、3-8章恢复 |
+| `tests/story-chapters-assets.test.mjs` | 视觉 provenance、安全区、6 BGM、27 SFX、语音/图片文件哈希、音频竞态 |
+| `tests/story-chapters-voice.test.mjs` | 19角色唯一音色、9回归角色跨章不变、77条语音配置/文本/文件锁 |
+| `tests/e2e/e2e-smoke.test.mjs` | 真实 Chromium 点击、4→5/5→6 fresh、刷新恢复、首页和3-8章390px溢出 |
 
 任何新章节至少增加四类测试：
 
@@ -995,15 +999,15 @@ https://zhongyan.onrender.com/?qa=<commit>
 
 ## 18. 新章节的标准制作流程
 
-下一位技术人员开始第六章时，按以下顺序，不要直接写 JSX。
+下一位技术人员开始第九章时，按以下顺序，不要直接写 JSX。
 
 ### 阶段 1：正史审计
 
-1. 从第五章终点继续定位原文。
+1. 从第八章终点（原文第 71 章 / L9968）继续定位原文。
 2. 记录章节标题、起止行、场景、出场角色和事件。
 3. 列出所有不可提前解释的伏笔。
 4. 冻结开场和结束镜头。
-5. 生成第六章的 canon audit 文件。
+5. 生成第九章的 canon audit 文件。
 
 ### 阶段 2：角色状态冻结
 
@@ -1126,10 +1130,10 @@ app/chapter/StoryChapterGame.tsx
 ### P0：交接后先验证，不立即扩章
 
 1. 拉取 `main`。
-2. 跑 lint、61 项测试和 `git diff --check`。
-3. 本地走第一章、第二章以及第三至第五章调试入口。
+2. 跑 typecheck、lint、全部 Node 测试、真实浏览器 E2E 和 `git diff --check`。
+3. 本地走第一章、第二章以及第三至第八章调试入口。
 4. 确认 Render 当前包与 `main` 一致。
-5. 修复第一章“四页草稿可跳过草稿甲”的技术债并补测试。
+5. 核对线上独有标题/资源哈希，而不是把 push 成功或 HTTP 200 当作上线完成。
 
 ### P1：建立统一角色圣经
 
@@ -1142,13 +1146,13 @@ app/lib/characters.ts
 
 同时保留旧导出兼容，避免一次大重构破坏现有章节。
 
-### P2：第六章完整 PLAN
+### P2：第九章完整 PLAN
 
-从第 48 章后续继续审计，提交计划给产品负责人确认；没有确认不要写第六章 UI。
+从第 71 章后续继续审计，提交计划给产品负责人确认；没有确认不要写第九章 UI。
 
 ### P3：统一章节框架
 
-第 3 至 5 章共享框架已经稳定；后续只抽取真正重复且有测试保护的能力：
+第 3 至 8 章共享框架已经稳定；后续只抽取真正重复且有测试保护的能力：
 
 - 通用 HUD。
 - 通用检查点死亡页。
@@ -1167,9 +1171,11 @@ app/lib/characters.ts
 - [ ] 工作目录是 `zhongyan-online-tabletop`，不是 boardgame 项目。
 - [ ] 当前分支是 `main`。
 - [ ] 仓库内 `reference/canon/` 原文存在，且已确认 SHA-256。
-- [ ] 已阅读本文件、`docs/chapter-02-plan.md` 和 `docs/chapter-03-05-plan.md`。
+- [ ] 已阅读本文件、`docs/chapter-02-plan.md`、`docs/chapter-03-05-plan.md` 和 `docs/chapter-06-08-plan.md`。
+- [ ] `npm.cmd run typecheck` 通过。
 - [ ] `npm.cmd run lint` 通过。
-- [ ] `npm.cmd test` 61/61 通过。
+- [ ] `npm.cmd test` 全部通过且包含 source、integrity、voice 新测试。
+- [ ] `npm.cmd run e2e` 真实 Chromium 通过。
 - [ ] `git diff --check` 通过。
 - [ ] 第一章身份牌 -> 规则 -> 6 观察 -> 角色证词可操作。
 - [ ] 第一章九张立绘在桌面和 390px 手机均不裁头。
@@ -1184,7 +1190,11 @@ app/lib/characters.ts
 - [ ] 第三章七黑剑证据板与韩一墨正史死亡可完成。
 - [ ] 第四章人鼠规则漏洞、赌命死亡和朱雀事件可完成。
 - [ ] 第五章地牛八幕、黑熊死亡分支和九十六颗“道”结算可完成。
-- [ ] 第3至5章34条固定对白、3条BGM、13个SFX和15段独立事件动画可播放。
+- [ ] 第六章九十六颗焚毁、乔家劲/甜甜固定死亡与静默撤退可完成。
+- [ ] 第七章 `74/99`、真假话嵌套与人猪固定死亡可完成。
+- [ ] 第八章空面具、异常物证、人兔残局、李尚武舍手与四颗转账可完成。
+- [ ] 第3至8章77条固定对白、6条BGM、27个SFX和34段独立事件动画可播放。
+- [ ] 2→3 至 7→8 点击完成页链接都会重开目标首场，观察后刷新仍保留。
 - [ ] 首页调试入口不会出现在 gameplay DOM。
 - [ ] 生产站点加载的资源哈希与当前部署一致。
 - [ ] 没有把任何真实 API key 提交进仓库。

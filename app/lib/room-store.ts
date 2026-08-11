@@ -143,7 +143,7 @@ async function ensureSchema() {
     const db = getD1();
     schemaReady = db.batch(ROOM_SCHEMA.map((statement) => db.prepare(statement))).then(async () => {
       const columns = await db.prepare("PRAGMA table_info(game_rooms)").all<{ name: string }>();
-      if (!columns.results.some((column) => column.name === "story_index")) {
+      if (!columns.results.some((column: { name: string }) => column.name === "story_index")) {
         await db.prepare("ALTER TABLE game_rooms ADD COLUMN story_index INTEGER NOT NULL DEFAULT 0").run();
       }
     });
@@ -200,7 +200,7 @@ function parseResult(value: string | null): RoomResult | null {
 
 async function requireSeat(code: string, token: string) {
   const seats = await getSeats(code);
-  const seat = seats.find((candidate) => candidate.seat_token === token);
+  const seat = seats.find((candidate: SeatRow) => candidate.seat_token === token);
   if (!seat) throw new RoomError("该设备不属于这个房间。", 403);
   return { seat, seats };
 }
@@ -274,16 +274,16 @@ export async function getRoomSnapshot(roomCodeValue: unknown, tokenValue: unknow
       isHost: Boolean(seat.is_host),
       identity: "说谎者",
       role: LIAR_GAME.stories[seat.seat_number - 1],
-      hasVoted: votes.some((vote) => vote.seat_number === seat.seat_number),
+      hasVoted: votes.some((vote: VoteRow) => vote.seat_number === seat.seat_number),
     },
     seats: Array.from({ length: ROOM_CAPACITY }, (_, index) => {
-      const member = seats.find((candidate) => candidate.seat_number === index + 1);
+      const member = seats.find((candidate: SeatRow) => candidate.seat_number === index + 1);
       return member
         ? { seatNumber: member.seat_number, playerName: member.player_name, isHost: Boolean(member.is_host) }
         : { seatNumber: index + 1, playerName: null, isHost: false };
     }),
     voteCount: votes.length,
-    messages: messages.map((message) => ({
+    messages: messages.map((message: MessageRow) => ({
       id: message.id,
       seatNumber: message.seat_number,
       playerName: message.player_name,
@@ -343,7 +343,7 @@ export async function applyRoomAction(roomCodeValue: unknown, tokenValue: unknow
 
     const votes = await getVotes(code);
     if (votes.length === ROOM_CAPACITY) {
-      const result = resolveRoomVotes(votes.map((vote) => vote.target_id));
+      const result = resolveRoomVotes(votes.map((vote: VoteRow) => vote.target_id));
       await db.prepare("UPDATE game_rooms SET phase = ?, result = ?, updated_at = ? WHERE code = ?")
         .bind("result", JSON.stringify(result), timestamp, code)
         .run();

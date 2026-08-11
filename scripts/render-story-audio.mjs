@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 
 const sampleRate = 22050;
 const root = new URL("../public/audio/story-chapters/", import.meta.url);
-const manifestUrl = new URL("../content/chapter-03-05-audio-manifest.json", import.meta.url);
+const manifestUrl = new URL("../content/story-chapters-audio-manifest.json", import.meta.url);
 const moduleUrl = new URL("../app/lib/story-chapters/audio-assets.ts", import.meta.url);
 
 function rng(seed) {
@@ -71,6 +71,9 @@ const bgmDefinitions = {
   "urban-dread": { duration: 26, roots: [61.74, 92.5, 123.47, 185], pulse: 1.8, seed: 303 },
   "warehouse-deception": { duration: 24, roots: [73.42, 110, 146.83, 220], pulse: 1.1, seed: 404 },
   "bear-pressure": { duration: 20, roots: [55, 82.41, 110, 164.81], pulse: .62, seed: 505 },
+  "echo-grief": { duration: 24, roots: [48.99, 73.42, 98, 146.83], pulse: .92, seed: 606 },
+  "probability-dread": { duration: 22, roots: [65.41, 98, 130.81, 196], pulse: .74, seed: 707 },
+  "sacrifice-tension": { duration: 26, roots: [43.65, 65.41, 87.31, 130.81], pulse: 1.28, seed: 808 },
 };
 
 const sfxDefinitions = {
@@ -87,6 +90,20 @@ const sfxDefinitions = {
   "countdown-zero": { duration: 1.2, start: 880, end: 110, noise: .12, seed: 55 },
   "dao-spill": { duration: 1.1, start: 690, end: 210, noise: .18, seed: 56 },
   "fight-impact": { duration: .55, start: 120, end: 38, noise: .62, seed: 57 },
+  "ledger-clink": { duration: 1.2, start: 960, end: 220, noise: .12, seed: 61 },
+  "bell-collapse": { duration: 2.1, start: 510, end: 52, noise: .38, seed: 62 },
+  "fire-burst": { duration: 1.5, start: 240, end: 46, noise: .82, seed: 63 },
+  "wood-impact": { duration: .8, start: 150, end: 36, noise: .55, seed: 64 },
+  "insect-scrape": { duration: 1.7, start: 1220, end: 180, noise: .66, seed: 65 },
+  "stone-drop": { duration: .55, start: 1320, end: 260, noise: .09, seed: 71 },
+  "headset-lock": { duration: .7, start: 720, end: 92, noise: .26, seed: 72 },
+  "revolver-click": { duration: .48, start: 520, end: 75, noise: .31, seed: 73 },
+  "revolver-shot": { duration: 1.35, start: 170, end: 31, noise: .92, seed: 74 },
+  "water-rise": { duration: 2.4, start: 290, end: 74, noise: .48, seed: 81 },
+  "metal-break": { duration: 1.1, start: 210, end: 29, noise: .76, seed: 82 },
+  "glass-break": { duration: 1.5, start: 1560, end: 85, noise: .88, seed: 83 },
+  "evidence-swap": { duration: 1.3, start: 680, end: 130, noise: .2, seed: 84 },
+  "team-form": { duration: 1.2, start: 440, end: 82, noise: .16, seed: 85 },
 };
 
 async function writeGroup(group, definitions, renderer) {

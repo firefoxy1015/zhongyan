@@ -47,7 +47,7 @@ function isUnlocked(state: ChapterTwoState, line: typeof CHAPTER_TWO_VOICE_LINES
     if (line.speakerId === "renlong") return state.narrativeBeat >= 3;
     return state.narrativeBeat >= 5;
   }
-  return line.scene === "termination-reveal" || line.scene === "complete";
+  return true;
 }
 
 export default function SceneDialogue({ state, activeLineId, error, onPlay }: {

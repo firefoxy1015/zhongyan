@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { STORY_ANIMATIONS, storyAnimationDuration } from "../lib/story-chapters/animation.ts";
+import { STORY_ANIMATIONS, storyAnimationDuration, type StoryAnimationId } from "../lib/story-chapters/animation.ts";
 import { bgmForStoryChapter, StoryAudioDirector } from "../lib/story-chapters/audio.ts";
-import { STORY_PORTRAITS, STORY_SPEAKER_NAMES, storyChapterSpec } from "../lib/story-chapters/canon.ts";
+import { STORY_PORTRAIT_NAMES, STORY_PORTRAITS, STORY_SPEAKER_NAMES, storyChapterSpec } from "../lib/story-chapters/canon.ts";
 import { initialStoryChapterState, sceneForState, storyChapterReducer } from "../lib/story-chapters/engine.ts";
 import {
   canEnterStoryChapter,
@@ -13,11 +13,91 @@ import {
   loadStorySave,
   saveStoryChapter,
 } from "../lib/story-chapters/save.ts";
-import type { StoryChapterAction, StoryChapterId } from "../lib/story-chapters/types.ts";
+import type {
+  StoryChapterAction,
+  StoryChapterId,
+  StoryDaoAccountId,
+  StoryDaoLedger,
+} from "../lib/story-chapters/types.ts";
 import { storyVoiceAsset } from "../lib/story-chapters/voice-assets.ts";
 import styles from "./story-chapter.module.css";
 
+const DAO_ACCOUNT_LABELS: Readonly<Record<StoryDaoAccountId, string>> = {
+  qixiaParty: "齐夏队",
+  liZhang: "李尚武 / 章晨泽",
+  oldLu: "老吕",
+  burned: "已焚毁（不可用）",
+};
+
+function DaoLedger({ ledger }: { ledger: StoryDaoLedger }) {
+  return (
+    <div className={styles.daoLedger} aria-label="道账明细">
+      {(Object.keys(DAO_ACCOUNT_LABELS) as StoryDaoAccountId[]).map((accountId) => (
+        <span data-account={accountId} key={accountId}>
+          <small>{DAO_ACCOUNT_LABELS[accountId]}</small>
+          <b>{ledger[accountId]}</b>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function StoryCinematic({
+  animationId,
+  backgroundAsset,
+  onFinish,
+}: {
+  animationId: StoryAnimationId;
+  backgroundAsset: string;
+  onFinish: () => void;
+}) {
+  const animation = STORY_ANIMATIONS[animationId];
+  const [canSkip, setCanSkip] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCanSkip(true), animation.skippableAfterMs);
+    return () => window.clearTimeout(timer);
+  }, [animation.skippableAfterMs]);
+
+  return (
+    <section className={styles.cinematic} data-animation={animationId} aria-label="剧情动画" role="dialog">
+      <div className={styles.cinematicFrame} style={{ backgroundImage: `url("${backgroundAsset}")` }}><i /><i /><i /></div>
+      <span>ANIMATION / {animationId}</span>
+      <p>{animation.caption}</p>
+      <button disabled={!canSkip} onClick={onFinish}>{canSkip ? "跳过动画" : "剧情展开中……"}</button>
+    </section>
+  );
+}
+
+function StoryPlayGuide({
+  errorCost,
+  openByDefault,
+  pressureLimit,
+}: {
+  errorCost: number;
+  openByDefault: boolean;
+  pressureLimit: number;
+}) {
+  const [open, setOpen] = useState(openByDefault);
+
+  return (
+    <details className={styles.playGuide} open={open} onToggle={(event) => setOpen(event.currentTarget.open)}>
+      <summary>本章怎么玩 <span>先观察，再推演，最后推进正史</span></summary>
+      <ol>
+        <li><b>检查现场</b><span>逐项点击“现场观察”。推演要求的事实没有记录齐，就不能闭合。</span></li>
+        <li><b>完成推演</b><span>每个词条选一个答案再提交。错误项会在原位置写明错因，不会只扣压力。</span></li>
+        <li><b>承担风险</b><span>本幕答错一次增加 {errorCost} 点压力；压力达到 {pressureLimit} 会死亡。致命选择会直接死亡，但可返回检查点。</span></li>
+        <li><b>推进事件</b><span>推演闭合后按下推进按钮；关键事件会先播放不可立即跳过的动画，再写入道账和记录。</span></li>
+      </ol>
+    </details>
+  );
+}
+
 export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapterId }) {
+  return <StoryChapterSession chapterId={chapterId} key={chapterId} />;
+}
+
+function StoryChapterSession({ chapterId }: { chapterId: StoryChapterId }) {
   const spec = useMemo(() => storyChapterSpec(chapterId), [chapterId]);
   const [state, dispatch] = useReducer(storyChapterReducer, chapterId, initialStoryChapterState);
   const [ready, setReady] = useState(false);
@@ -73,13 +153,18 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
   }, [audioEnabled, chapterId, muted]);
 
   useEffect(() => {
+    audioRef.current?.stopVoice();
+  }, [chapterId, scene.id, state.status.kind]);
+
+  useEffect(() => {
     if (state.status.kind !== "animating") return;
-    const animation = STORY_ANIMATIONS[state.status.animationId];
-    for (const sfxId of animation?.sfxIds ?? []) audioRef.current?.playSfx(sfxId);
+    const animationId = state.status.animationId;
+    const animation = STORY_ANIMATIONS[animationId];
+    for (const sfxId of animation.sfxIds) audioRef.current?.playSfx(sfxId);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const timer = window.setTimeout(
-      () => dispatch({ type: "ANIMATION_FINISHED", animationId: state.status.kind === "animating" ? state.status.animationId : "" }),
-      storyAnimationDuration(state.status.animationId, reduced),
+      () => dispatch({ type: "ANIMATION_FINISHED", animationId }),
+      storyAnimationDuration(animationId, reduced),
     );
     return () => window.clearTimeout(timer);
   }, [state.status]);
@@ -114,6 +199,7 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
       return;
     }
     beginAudio();
+    setActiveVoiceId(null);
     setVoiceError(null);
     void audioRef.current?.playVoice(lineId, () => setActiveVoiceId(lineId), () => setActiveVoiceId(null), () => {
       setActiveVoiceId(null);
@@ -135,12 +221,13 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
   }
 
   if (state.status.kind === "death") {
+    const deathStatus = state.status;
     return (
       <main className={styles.death}>
-        <span>非正史失败 / {state.status.failureId}</span>
+        <span>非正史失败 / {deathStatus.failureId}</span>
         <h1>你死在了这一幕</h1>
-        <p>{state.status.reason}</p>
-        <small>返回检查点：{spec.scenes.find((item) => item.id === state.status.checkpointSceneId)?.title}</small>
+        <p>{deathStatus.reason}</p>
+        <small>返回检查点：{spec.scenes.find((item) => item.id === deathStatus.checkpointSceneId)?.title}</small>
         <button onClick={() => dispatch({ type: "RETRY_CHECKPOINT" })}>回到检查点</button>
         <b>错误已写清楚；死亡保留。</b>
       </main>
@@ -153,7 +240,11 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
         <span>第{chapterId}章完成</span>
         <h1>{spec.completionTitle}</h1>
         <p>{spec.completionText}</p>
-        <div className={styles.completeStats}><b>{spec.completionDaoCount}</b><span>{spec.completionDaoLabel}</span></div>
+        <section className={styles.completeStats} aria-label="本章道账结算">
+          <h2>道账结算</h2>
+          <DaoLedger ledger={state.daoLedger} />
+          <p>{spec.completionDaoLabel}</p>
+        </section>
         <div className={styles.completeActions}>
           {spec.nextChapterId && <Link href={`/chapter/${spec.nextChapterId}?fresh=1`}>进入第{spec.nextChapterId}章</Link>}
           <Link href="/">返回章节目录</Link>
@@ -164,14 +255,17 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
 
   const solved = state.solvedSceneIds.includes(scene.id);
   const observationCount = scene.observations.filter((item) => state.observedIds.includes(item.id)).length;
-  const animation = state.status.kind === "animating" ? STORY_ANIMATIONS[state.status.animationId] : null;
+  const animationId = state.status.kind === "animating" ? state.status.animationId : null;
 
   return (
     <main className={styles.shell}>
       <header className={styles.hud}>
         <div><span>CHAPTER {chapterId}</span><strong>{spec.title}</strong></div>
         <div className={styles.progress}><i style={{ width: `${progress}%` }} /><span>{sceneIndex + 1} / {spec.scenes.length}</span></div>
-        <div className={styles.resources}><span>道 <b>{state.daoCount}</b></span><span>压力 <b>{state.pressure}</b></span></div>
+        <div className={styles.resources}>
+          <DaoLedger ledger={state.daoLedger} />
+          <span className={styles.pressure}>压力 <b>{state.pressure} / {spec.pressureLimit}</b></span>
+        </div>
         <button aria-pressed={audioEnabled && !muted} onClick={toggleAudio}>{!audioEnabled ? "开启声场" : muted ? "恢复声音" : "静音"}</button>
       </header>
 
@@ -181,13 +275,21 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
           {scene.portraitIds.map((portraitId, index) => {
             const src = STORY_PORTRAITS[portraitId];
             if (!src) return null;
-            return <figure className={styles[`portrait${Math.min(index, 3)}`]} key={portraitId}><Image alt={STORY_SPEAKER_NAMES[portraitId as keyof typeof STORY_SPEAKER_NAMES] ?? portraitId} fill priority={index === 0} sizes="(max-width: 720px) 38vw, 24vw" src={src} unoptimized /><figcaption>{STORY_SPEAKER_NAMES[portraitId as keyof typeof STORY_SPEAKER_NAMES] ?? portraitId}</figcaption></figure>;
+            const label = STORY_PORTRAIT_NAMES[portraitId] ?? portraitId;
+            return <figure className={styles[`portrait${Math.min(index, 3)}`]} key={portraitId}><Image alt={label} fill priority={index === 0} sizes="(max-width: 720px) 38vw, 24vw" src={src} style={{ objectFit: "contain", objectPosition: "center bottom" }} unoptimized /><figcaption>{label}</figcaption></figure>;
           })}
         </div>
       </section>
 
       <section className={styles.tabletop}>
         <div className={styles.mainColumn}>
+          <StoryPlayGuide
+            errorCost={scene.puzzle?.errorCost ?? 0}
+            key={scene.id}
+            openByDefault={sceneIndex === 0}
+            pressureLimit={spec.pressureLimit}
+          />
+
           <section className={styles.observations}>
             <header><span>现场观察</span><b>{observationCount} / {scene.observations.length}</b></header>
             <div className={styles.observationGrid}>
@@ -241,13 +343,13 @@ export default function StoryChapterGame({ chapterId }: { chapterId: StoryChapte
         </aside>
       </section>
 
-      {animation && state.status.kind === "animating" && (
-        <section className={styles.cinematic} data-animation={state.status.animationId} aria-label="剧情动画">
-          <div className={styles.cinematicFrame} style={{ backgroundImage: `url("${scene.backgroundAsset}")` }}><i /><i /><i /></div>
-          <span>ANIMATION / {state.status.animationId}</span>
-          <p>{animation.caption}</p>
-          <button onClick={() => dispatch({ type: "ANIMATION_FINISHED", animationId: state.status.kind === "animating" ? state.status.animationId : "" })}>跳过动画</button>
-        </section>
+      {animationId && (
+        <StoryCinematic
+          animationId={animationId}
+          backgroundAsset={scene.backgroundAsset}
+          key={animationId}
+          onFinish={() => dispatch({ type: "ANIMATION_FINISHED", animationId })}
+        />
       )}
     </main>
   );

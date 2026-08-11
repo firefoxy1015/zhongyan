@@ -1,15 +1,25 @@
 import { STORY_BGM_ASSETS, STORY_SFX_ASSETS, type StoryBgmId, type StorySfxId } from "./audio-assets.ts";
+import type { StoryChapterId } from "./types.ts";
 import { storyVoiceAsset } from "./voice-assets.ts";
 
-export function bgmForStoryChapter(chapterId: 3 | 4 | 5): StoryBgmId {
-  if (chapterId === 3) return "urban-dread";
-  if (chapterId === 4) return "warehouse-deception";
-  return "bear-pressure";
+const STORY_CHAPTER_BGM: Readonly<Record<StoryChapterId, StoryBgmId>> = {
+  3: "urban-dread",
+  4: "warehouse-deception",
+  5: "bear-pressure",
+  6: "echo-grief",
+  7: "probability-dread",
+  8: "sacrifice-tension",
+};
+
+export function bgmForStoryChapter(chapterId: StoryChapterId): StoryBgmId {
+  return STORY_CHAPTER_BGM[chapterId];
 }
 
 export class StoryAudioDirector {
   private bgm: HTMLAudioElement | null = null;
   private voice: HTMLAudioElement | null = null;
+  private voiceOnEnd: (() => void) | null = null;
+  private voiceRequestId = 0;
   private sfx = new Set<HTMLAudioElement>();
   private trackId: StoryBgmId | null = null;
   private muted = false;
@@ -46,6 +56,7 @@ export class StoryAudioDirector {
 
   async playVoice(lineId: string, onStart: () => void, onEnd: () => void, onError: () => void) {
     this.stopVoice();
+    const requestId = this.voiceRequestId;
     const asset = storyVoiceAsset(lineId);
     if (!asset || typeof window === "undefined") {
       onError();
@@ -53,49 +64,61 @@ export class StoryAudioDirector {
     }
     const audio = new Audio(asset.src);
     this.voice = audio;
+    this.voiceOnEnd = onEnd;
     audio.preload = "auto";
     audio.onended = () => {
-      if (this.voice !== audio) return;
+      if (this.voiceRequestId !== requestId || this.voice !== audio) return;
       this.voice = null;
+      this.voiceOnEnd = null;
       if (this.bgm && !this.muted) this.bgm.volume = .31;
       onEnd();
     };
     audio.onerror = () => {
-      if (this.voice !== audio) return;
+      if (this.voiceRequestId !== requestId || this.voice !== audio) return;
       this.voice = null;
+      this.voiceOnEnd = null;
       if (this.bgm && !this.muted) this.bgm.volume = .31;
       onError();
     };
     try {
       if (this.bgm) this.bgm.volume = .08;
       await audio.play();
+      if (this.voiceRequestId !== requestId || this.voice !== audio) return false;
       onStart();
       return true;
     } catch {
-      if (this.voice === audio) this.voice = null;
+      if (this.voiceRequestId !== requestId || this.voice !== audio) return false;
+      this.voice = null;
+      this.voiceOnEnd = null;
       if (this.bgm && !this.muted) this.bgm.volume = .31;
       onError();
       return false;
     }
   }
 
-  stopVoice() {
-    if (!this.voice) return;
-    this.voice.pause();
-    this.voice.currentTime = 0;
+  stopVoice(notify = true) {
+    this.voiceRequestId += 1;
+    const voice = this.voice;
+    const onEnd = this.voiceOnEnd;
     this.voice = null;
+    this.voiceOnEnd = null;
+    if (voice) {
+      voice.pause();
+      voice.currentTime = 0;
+    }
     if (this.bgm && !this.muted) this.bgm.volume = .31;
+    if (notify) onEnd?.();
   }
 
   setMuted(muted: boolean) {
     this.muted = muted;
-    if (this.bgm) this.bgm.volume = muted ? 0 : .31;
+    if (this.bgm) this.bgm.volume = muted ? 0 : this.voice ? .08 : .31;
     if (this.voice) this.voice.muted = muted;
     for (const audio of this.sfx) audio.muted = muted;
   }
 
   stop() {
-    this.stopVoice();
+    this.stopVoice(false);
     this.bgm?.pause();
     if (this.bgm) this.bgm.currentTime = 0;
     for (const audio of this.sfx) audio.pause();

@@ -13,6 +13,21 @@ export const STORY_BGM_ASSETS = {
     "src": "/audio/story-chapters/bgm/bear-pressure.d10e24b6d414.wav",
     "sha256": "d10e24b6d414d6c2603c11827a2a73c963162e9959b4aecc29c4f8d091da6db0",
     "durationMs": 20000
+  },
+  "echo-grief": {
+    "src": "/audio/story-chapters/bgm/echo-grief.ccd67919a05e.wav",
+    "sha256": "ccd67919a05e9af9abf4c413638ce133265a243c3695522dd4188e45e84bde0c",
+    "durationMs": 24000
+  },
+  "probability-dread": {
+    "src": "/audio/story-chapters/bgm/probability-dread.fc9acb13a704.wav",
+    "sha256": "fc9acb13a704afbfa05d97b986daf7158ef9e9331132acb159cd59e329886c5d",
+    "durationMs": 22000
+  },
+  "sacrifice-tension": {
+    "src": "/audio/story-chapters/bgm/sacrifice-tension.df570babd1f7.wav",
+    "sha256": "df570babd1f7265bfeac201b2f33b970389a268fd18e3b51e1b116ccc9c2b1d4",
+    "durationMs": 26000
   }
 } as const;
 
@@ -81,6 +96,76 @@ export const STORY_SFX_ASSETS = {
     "src": "/audio/story-chapters/sfx/fight-impact.a12da037e434.wav",
     "sha256": "a12da037e434fa931ee0f98db2a30f29457095ccd4556ca3fc9a49860df6d17f",
     "durationMs": 550
+  },
+  "ledger-clink": {
+    "src": "/audio/story-chapters/sfx/ledger-clink.e7f135bc95b1.wav",
+    "sha256": "e7f135bc95b1f64290ecf1c3a1056915671cf4cf52ca431a84b3b7271ea518ea",
+    "durationMs": 1200
+  },
+  "bell-collapse": {
+    "src": "/audio/story-chapters/sfx/bell-collapse.92542d928335.wav",
+    "sha256": "92542d928335afbbde7ac2d2fa388d1c5f0dc23bfa1ba595cd970240b6339919",
+    "durationMs": 2100
+  },
+  "fire-burst": {
+    "src": "/audio/story-chapters/sfx/fire-burst.5c98cec683a4.wav",
+    "sha256": "5c98cec683a4bc73b1f1b4bcf02a33d20a157378f727e2575deb3a682670cd73",
+    "durationMs": 1500
+  },
+  "wood-impact": {
+    "src": "/audio/story-chapters/sfx/wood-impact.b097c640d053.wav",
+    "sha256": "b097c640d053208d8cced3e944d00729beffde3afcb9b6e82b440b51f5610e2e",
+    "durationMs": 800
+  },
+  "insect-scrape": {
+    "src": "/audio/story-chapters/sfx/insect-scrape.165365cecdef.wav",
+    "sha256": "165365cecdef02fcd6d1434627864988254c7d2abd6bf47f91f3b48fcb35bacc",
+    "durationMs": 1700
+  },
+  "stone-drop": {
+    "src": "/audio/story-chapters/sfx/stone-drop.64c29e7e06e0.wav",
+    "sha256": "64c29e7e06e027b3c1a1393e1790ac55339fd60bf374d40d63128f7ed24cd1ff",
+    "durationMs": 550
+  },
+  "headset-lock": {
+    "src": "/audio/story-chapters/sfx/headset-lock.cce49c7ffc97.wav",
+    "sha256": "cce49c7ffc97d359ea5bbf58c61479c74cc956f287ac65bc2d0a6eb46d38c807",
+    "durationMs": 700
+  },
+  "revolver-click": {
+    "src": "/audio/story-chapters/sfx/revolver-click.316c5497c267.wav",
+    "sha256": "316c5497c267dea97494253ff984d838cf9923ad1766445c20c6ad06162f26ab",
+    "durationMs": 480
+  },
+  "revolver-shot": {
+    "src": "/audio/story-chapters/sfx/revolver-shot.e7fac83dbf2f.wav",
+    "sha256": "e7fac83dbf2fd8e5d2e174cf2cd00974777afc744fb5218eeb159190197767c4",
+    "durationMs": 1350
+  },
+  "water-rise": {
+    "src": "/audio/story-chapters/sfx/water-rise.0727dc6949e5.wav",
+    "sha256": "0727dc6949e501c001eb4b7b5adb80371fd1fe0abf27f91513fe8fd221f661b7",
+    "durationMs": 2400
+  },
+  "metal-break": {
+    "src": "/audio/story-chapters/sfx/metal-break.4c7fd7417cf3.wav",
+    "sha256": "4c7fd7417cf32cd4fb9217ba946e6e3ee986e02d276d1072c6e90ca0273e3276",
+    "durationMs": 1100
+  },
+  "glass-break": {
+    "src": "/audio/story-chapters/sfx/glass-break.b86f019202d4.wav",
+    "sha256": "b86f019202d42bd1fb0daf42b45901a32011857c89baea8016fc2b5a2da04265",
+    "durationMs": 1500
+  },
+  "evidence-swap": {
+    "src": "/audio/story-chapters/sfx/evidence-swap.9080f964fc33.wav",
+    "sha256": "9080f964fc3342c86b50852509d144349ce805708fd43aa52d258c3d9aedde78",
+    "durationMs": 1300
+  },
+  "team-form": {
+    "src": "/audio/story-chapters/sfx/team-form.f0a2b5dde9d2.wav",
+    "sha256": "f0a2b5dde9d2e90782140015fd0a350fe1018c31406c9fd9ea375d6be382da22",
+    "durationMs": 1200
   }
 } as const;
 
