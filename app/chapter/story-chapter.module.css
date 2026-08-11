@@ -29,6 +29,9 @@
 .portrait1 { right:23%; z-index:3; transform:scale(.9); transform-origin:bottom; opacity:.9; }
 .portrait2 { right:43%; z-index:2; transform:scale(.8); transform-origin:bottom; opacity:.8; }
 .portrait3 { right:61%; z-index:1; transform:scale(.75); transform-origin:bottom; opacity:.68; }
+.stageProps { position:absolute; z-index:7; inset:0; pointer-events:none; }
+.stageProps figure { position:absolute; left:50%; bottom:1.4rem; width:min(20vw,260px); aspect-ratio:1; margin:0; transform:translateX(-50%) rotate(-5deg); filter:drop-shadow(0 18px 16px rgba(0,0,0,.92)); }
+.stageProps figcaption { position:absolute; right:50%; bottom:-.7rem; transform:translateX(50%); padding:.3rem .7rem; border:1px solid rgba(217,172,92,.42); background:rgba(5,5,4,.86); color:#e6c891; white-space:nowrap; }
 .tabletop { width:min(1500px,calc(100% - 3rem)); margin:2rem auto 0; display:grid; grid-template-columns:minmax(0,1.75fr) minmax(300px,.75fr); gap:1.4rem; }
 .mainColumn,.sideColumn { display:flex; flex-direction:column; gap:1.4rem; min-width:0; }
 .observations,.puzzle,.dialogue,.log,.narrativeAction,.playGuide { border:1px solid rgba(183,136,66,.3); background:rgba(18,15,12,.9); box-shadow:0 18px 60px rgba(0,0,0,.26); }
@@ -43,6 +46,7 @@
 .observationGrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; padding:1rem; }
 .observationGrid button { min-height:150px; text-align:left; padding:1rem; color:#cbbda7; background:#0d0c0a; border:1px solid #33291e; cursor:pointer; display:flex; flex-direction:column; gap:.65rem; }
 .observationGrid button:hover,.observationGrid .observed { border-color:#9f6a31; background:#17110d; }
+.observationVisual { display:block; width:100%; aspect-ratio:16/9; overflow:hidden; border:1px solid rgba(183,136,66,.24); background:radial-gradient(circle at 50% 60%,#2b1e17,#080706 72%); }
 .observationGrid strong { color:#f0d9b2; font-size:1rem; }
 .observationGrid small { margin-top:auto; color:#c18a48; line-height:1.5; }
 .puzzle>p { padding:0 1.2rem; line-height:1.8; color:#c8b8a0; }
@@ -281,7 +285,9 @@
   .portrait1 { right:24%; }
   .portrait2 { right:48%; }
   .portrait3 { right:59%; }
+  .stageProps figure { bottom:1.5rem; width:34vw; }
   .portraits figcaption { bottom:.45rem; font-size:.72rem; }
+  .stageProps figcaption { bottom:-.5rem; font-size:.68rem; }
   .observationGrid { grid-template-columns:1fr; }
   .observationGrid button { min-height:130px; }
   .playGuide summary { flex-direction:column; gap:.3rem; }

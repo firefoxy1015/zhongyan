@@ -36,7 +36,7 @@ export const STORY_ANIMATIONS = {
   "c7-one-each": { durationMs: 2100, skippableAfterMs: 450, sfxIds: ["stone-drop"], caption: "人猪反复预判后，亲手留下了一黑一白。" },
   "c7-truth-loop": { durationMs: 2600, skippableAfterMs: 550, sfxIds: ["headset-lock", "stone-drop"], caption: "真话经过说谎者，假话经过诚实者，两个回答都指向展示棋子的反面。" },
   "c7-final-shot": { durationMs: 3000, skippableAfterMs: 800, sfxIds: ["revolver-click", "revolver-shot"], caption: "第五个问题结束。门外只剩一声枪响，棋社里没有多出一颗“道”。" },
-  "c8-mask-hidden": { durationMs: 1700, skippableAfterMs: 350, sfxIds: ["stone-drop"], caption: "空面具被藏入背包。没人知道戴上它会继承什么。" },
+  "c8-mask-hidden": { durationMs: 1700, skippableAfterMs: 350, sfxIds: ["stone-drop"], caption: "空面具被藏到废弃桌板后。成为生肖是否需要考核、冒充会受到什么制裁，仍无人知道。" },
   "c8-blood-trail": { durationMs: 2200, skippableAfterMs: 450, sfxIds: ["water-rise"], caption: "新鲜血迹穿过街道，最终停在药店门口。" },
   "c8-evidence-swap": { durationMs: 2600, skippableAfterMs: 550, sfxIds: ["bell-collapse", "evidence-swap"], caption: "钟声前后，屏幕上的“嫁祸”消失；霉烟与塑料打火机变成干净烟盒和金属火机。" },
   "c8-water-rise": { durationMs: 2800, skippableAfterMs: 600, sfxIds: ["water-rise", "headset-lock"], caption: "鱼缸水位不断升高；钥匙在水里，水阀却离被铐住的人两步。" },

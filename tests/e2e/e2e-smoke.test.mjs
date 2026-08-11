@@ -331,6 +331,70 @@ test("real-browser chapter transition and mobile smoke", { timeout: 240_000 }, a
       });
     }
 
+    await t.test("chapter 8 renders the empty Human Pig mask as persistent evidence", async () => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await enterDebugChapter(page, 8);
+
+      const stageMask = page.locator('[data-stage-prop-id="c8-human-pig-mask"]');
+      const stageMaskImage = stageMask.locator("img");
+      await stageMaskImage.waitFor({ state: "visible" });
+      const stageMetrics = await stageMask.evaluate((figure) => {
+        const stage = figure.closest("section")?.getBoundingClientRect();
+        const box = figure.getBoundingClientRect();
+        const image = figure.querySelector("img");
+        return {
+          stage: stage ? { left: stage.left, right: stage.right, top: stage.top, bottom: stage.bottom } : null,
+          box: { left: box.left, right: box.right, top: box.top, bottom: box.bottom },
+          naturalWidth: image?.naturalWidth ?? 0,
+          naturalHeight: image?.naturalHeight ?? 0,
+          objectFit: image ? getComputedStyle(image).objectFit : "missing",
+        };
+      });
+      assert.ok(stageMetrics.stage, "chapter 8 mask has no stage container");
+      assert.ok(stageMetrics.naturalWidth > 0 && stageMetrics.naturalHeight > 0, "chapter 8 stage mask did not load");
+      assert.equal(stageMetrics.objectFit, "contain");
+      assert.ok(stageMetrics.box.left >= stageMetrics.stage.left - 1 && stageMetrics.box.right <= stageMetrics.stage.right + 1, "chapter 8 stage mask overflows horizontally");
+      assert.ok(stageMetrics.box.top >= stageMetrics.stage.top - 1 && stageMetrics.box.bottom <= stageMetrics.stage.bottom + 1, "chapter 8 stage mask overflows vertically");
+
+      const evidenceCard = page.locator('button[data-observation-id="c8-empty-pig-mask"]');
+      await evidenceCard.scrollIntoViewIfNeeded();
+      const evidenceImage = evidenceCard.locator('[data-asset-id="c8-human-pig-mask"] img');
+      await evidenceImage.waitFor({ state: "visible" });
+      const evidenceMetrics = await evidenceCard.evaluate((button) => {
+        const box = button.getBoundingClientRect();
+        const image = button.querySelector("img");
+        const imageBox = image?.getBoundingClientRect();
+        return {
+          box: { left: box.left, right: box.right },
+          image: imageBox ? { left: imageBox.left, right: imageBox.right } : null,
+          naturalWidth: image?.naturalWidth ?? 0,
+          naturalHeight: image?.naturalHeight ?? 0,
+          objectFit: image ? getComputedStyle(image).objectFit : "missing",
+        };
+      });
+      assert.ok(evidenceMetrics.image, "chapter 8 mask evidence image has no bounds");
+      assert.ok(evidenceMetrics.naturalWidth > 0 && evidenceMetrics.naturalHeight > 0, "chapter 8 mask evidence image did not load");
+      assert.equal(evidenceMetrics.objectFit, "contain");
+      assert.ok(evidenceMetrics.image.left >= evidenceMetrics.box.left - 1 && evidenceMetrics.image.right <= evidenceMetrics.box.right + 1, "chapter 8 mask evidence image overflows its card");
+
+      await evidenceCard.click();
+      await page.waitForFunction((prefix) => {
+        for (const key of Object.keys(localStorage).filter((item) => item.startsWith(prefix))) {
+          try {
+            const save = JSON.parse(localStorage.getItem(key) ?? "null");
+            if (save?.chapters?.["8"]?.observedIds?.includes("c8-empty-pig-mask")) return true;
+          } catch {
+            // Keep looking for the current valid envelope.
+          }
+        }
+        return false;
+      }, STORY_SAVE_PREFIX);
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await waitForPlayingChapter(page, 8);
+      assert.ok((await readChapterState(page, 8)).state.observedIds.includes("c8-empty-pig-mask"), "chapter 8 lost the inspected mask after reload");
+      diagnostics.assertClean("chapter 8 mask evidence");
+    });
+
     await t.test("all shared story chapters fit a 390px viewport", async () => {
       await page.setViewportSize({ width: 390, height: 844 });
       for (const chapterId of STORY_CHAPTER_IDS) {

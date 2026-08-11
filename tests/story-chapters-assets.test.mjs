@@ -37,7 +37,7 @@ test("registers every chapter 3-8 image once with provenance, references and a s
   const provenanceIds = new Set(references.assetProvenance.map((entry) => entry.id));
   const assets = Object.values(STORY_IMAGE_ASSETS);
 
-  assert.equal(assets.length, 27);
+  assert.equal(assets.length, 28);
   assert.equal(new Set(assets.map((asset) => asset.assetId)).size, assets.length);
   assert.equal(new Set(assets.map((asset) => asset.src)).size, assets.length);
 
@@ -99,7 +99,7 @@ test("generates one common manifest from the TypeScript image registry", async (
   }
 });
 
-test("registers every runtime background and portrait referenced by canon scenes", () => {
+test("registers every runtime background, portrait and evidence image referenced by canon scenes", () => {
   const assetBySource = new Map(Object.values(STORY_IMAGE_ASSETS).map((asset) => [asset.src, asset]));
 
   for (const chapter of Object.values(STORY_CHAPTERS)) {
@@ -109,6 +109,12 @@ test("registers every runtime background and portrait referenced by canon scenes
         const portraitSource = STORY_PORTRAITS[portraitId];
         assert.ok(portraitSource, `${chapter.id}/${scene.id} has no runtime portrait mapping for ${portraitId}`);
         assert.ok(assetBySource.has(portraitSource), `${chapter.id}/${scene.id} portrait is not registered: ${portraitSource}`);
+      }
+      for (const assetId of scene.stagePropAssetIds ?? []) {
+        assert.ok(STORY_IMAGE_ASSETS[assetId], `${chapter.id}/${scene.id} stage prop is not registered: ${assetId}`);
+      }
+      for (const observation of scene.observations) {
+        if (observation.visualAssetId) assert.ok(STORY_IMAGE_ASSETS[observation.visualAssetId], `${chapter.id}/${scene.id}/${observation.id} evidence image is not registered`);
       }
     }
   }

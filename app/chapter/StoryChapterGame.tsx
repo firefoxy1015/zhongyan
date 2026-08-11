@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { STORY_ANIMATIONS, storyAnimationDuration, type StoryAnimationId } from "../lib/story-chapters/animation.ts";
+import { STORY_IMAGE_ASSETS, STORY_STAGE_PROP_LABELS } from "../lib/story-chapters/assets.ts";
 import { bgmForStoryChapter, StoryAudioDirector } from "../lib/story-chapters/audio.ts";
 import { STORY_PORTRAIT_NAMES, STORY_PORTRAITS, STORY_SPEAKER_NAMES, storyChapterSpec } from "../lib/story-chapters/canon.ts";
 import { initialStoryChapterState, sceneForState, storyChapterReducer } from "../lib/story-chapters/engine.ts";
@@ -279,6 +280,13 @@ function StoryChapterSession({ chapterId }: { chapterId: StoryChapterId }) {
             return <figure className={styles[`portrait${Math.min(index, 3)}`]} key={portraitId}><Image alt={label} fill priority={index === 0} sizes="(max-width: 720px) 38vw, 24vw" src={src} style={{ objectFit: "contain", objectPosition: "center bottom" }} unoptimized /><figcaption>{label}</figcaption></figure>;
           })}
         </div>
+        {!!scene.stagePropAssetIds?.length && <div className={styles.stageProps} aria-label="现场物证">
+          {scene.stagePropAssetIds.map((assetId) => {
+            const asset = STORY_IMAGE_ASSETS[assetId];
+            const label = STORY_STAGE_PROP_LABELS[assetId] ?? assetId;
+            return <figure data-stage-prop-id={assetId} key={assetId}><Image alt={label} fill sizes="(max-width: 620px) 34vw, 20vw" src={asset.src} style={{ objectFit: "contain", objectPosition: "center bottom" }} unoptimized /><figcaption>{label}</figcaption></figure>;
+          })}
+        </div>}
       </section>
 
       <section className={styles.tabletop}>
@@ -295,7 +303,8 @@ function StoryChapterSession({ chapterId }: { chapterId: StoryChapterId }) {
             <div className={styles.observationGrid}>
               {scene.observations.map((observation) => {
                 const active = state.observedIds.includes(observation.id);
-                return <button className={active ? styles.observed : ""} key={observation.id} onClick={() => act({ type: "OBSERVE", observationId: observation.id })}><strong>{observation.label}</strong><span>{active ? observation.text : "点击检查"}</span>{active && <small>{observation.note}</small>}</button>;
+                const visualAsset = observation.visualAssetId ? STORY_IMAGE_ASSETS[observation.visualAssetId] : undefined;
+                return <button className={active ? styles.observed : ""} data-observation-id={observation.id} key={observation.id} onClick={() => act({ type: "OBSERVE", observationId: observation.id })}>{visualAsset && <span className={styles.observationVisual} data-asset-id={visualAsset.assetId}><Image alt="" height={visualAsset.height} sizes="(max-width: 620px) 86vw, 32vw" src={visualAsset.src} style={{ height: "100%", objectFit: "contain", width: "100%" }} unoptimized width={visualAsset.width} /></span>}<strong>{observation.label}</strong><span>{active ? observation.text : "点击检查"}</span>{active && <small>{observation.note}</small>}</button>;
               })}
             </div>
           </section>

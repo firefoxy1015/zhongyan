@@ -581,6 +581,28 @@
       "bytes": 2455690,
       "sha256": "501ccb42328efab48e96fc5bdb44932c4cbafc2dbfd43f76b5192c898e076486"
     },
+    "c8-human-pig-mask": {
+      "assetId": "c8-human-pig-mask",
+      "src": "/art/chapter-08/human-pig-mask-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "version": "v1",
+      "provenanceId": "project-generated-companion-art",
+      "generationMode": "ai-generated-original",
+      "referenceIds": [
+        "source-text",
+        "animation-pv",
+        "drama-announcement"
+      ],
+      "safeArea": {
+        "top": 12,
+        "right": 10,
+        "bottom": 12,
+        "left": 10
+      },
+      "bytes": 1080728,
+      "sha256": "25bf8238be71979539ed651654025b19ba86737badb44553426b82436dff4c1d"
+    },
     "c8-human-rabbit": {
       "assetId": "c8-human-rabbit",
       "src": "/art/chapter-08/human-rabbit-v1.png",

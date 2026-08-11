@@ -25,6 +25,7 @@ const CHARACTER_REFERENCES = ["source-text", "animation-pv", "drama-announcement
 const ENVIRONMENT_REFERENCES = ["source-text", "animation-pv", "drama-announcement"] as const;
 const PORTRAIT_SAFE_AREA = { top: 4, right: 7, bottom: 3, left: 7 } as const;
 const ENVIRONMENT_SAFE_AREA = { top: 6, right: 6, bottom: 8, left: 6 } as const;
+const PROP_SAFE_AREA = { top: 12, right: 10, bottom: 12, left: 10 } as const;
 
 function generatedAsset(
   assetId: string,
@@ -77,7 +78,12 @@ export const STORY_IMAGE_ASSETS = {
   "c7-human-pig-unmasked": generatedAsset("c7-human-pig-unmasked", "/art/chapter-07/human-pig-unmasked-v1.png", 1024, 1536, "v1", CHARACTER_REFERENCES, PORTRAIT_SAFE_AREA),
   "c7-old-lu": generatedAsset("c7-old-lu", "/art/chapter-07/old-lu-v1.png", 1024, 1536, "v1", CHARACTER_REFERENCES, PORTRAIT_SAFE_AREA),
   "c8-rabbit-room-background": generatedAsset("c8-rabbit-room-background", "/art/chapter-08/rabbit-escape-room-v1.png", 1672, 941, "v1", ENVIRONMENT_REFERENCES, ENVIRONMENT_SAFE_AREA),
+  "c8-human-pig-mask": generatedAsset("c8-human-pig-mask", "/art/chapter-08/human-pig-mask-v1.png", 1254, 1254, "v1", CHARACTER_REFERENCES, PROP_SAFE_AREA),
   "c8-human-rabbit": generatedAsset("c8-human-rabbit", "/art/chapter-08/human-rabbit-v1.png", 1024, 1536, "v1", CHARACTER_REFERENCES, PORTRAIT_SAFE_AREA),
 } as const satisfies Record<string, StoryImageAsset>;
 
 export type StoryImageAssetId = keyof typeof STORY_IMAGE_ASSETS;
+
+export const STORY_STAGE_PROP_LABELS: Readonly<Partial<Record<StoryImageAssetId, string>>> = {
+  "c8-human-pig-mask": "空猪面具",
+};

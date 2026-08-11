@@ -615,7 +615,7 @@ content/story-chapters-voice-manifest.json 一次生成后永久复用的语音�
 
 ### 8.4 资产、语音和动画锁
 
-- 图片注册：`app/lib/story-chapters/assets.ts` 的 27 项运行时资产全部记录版本、尺寸、安全区、来源 ID 与 SHA-256；目录覆盖 `chapter-03` 至 `chapter-08`。
+- 图片注册：`app/lib/story-chapters/assets.ts` 的 28 项运行时资产全部记录版本、尺寸、安全区、来源 ID 与 SHA-256；目录覆盖 `chapter-03` 至 `chapter-08`。
 - 静态对白：77 条，路径 `public/audio/story-chapters/voice/`，运行时不调用 TTS；完整 model、voiceId、voiceVersion、delivery、参数和文本共同进入 input hash。
 - 十九名角色的 `model + voiceId` 两两唯一；九名回归角色与第一章音色严格相同。乔家劲继续使用 MiniMax 港普克隆；齐夏固定成年男声；甜甜固定甜美女声。
 - 六章独立 BGM：`urban-dread`、`warehouse-deception`、`bear-pressure`、`echo-grief`、`probability-dread`、`sacrifice-tension`。

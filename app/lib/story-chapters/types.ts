@@ -1,4 +1,5 @@
 import type { StoryAnimationId } from "./animation.ts";
+import type { StoryImageAssetId } from "./assets.ts";
 
 export const STORY_CHAPTER_IDS = [3, 4, 5, 6, 7, 8] as const;
 export const SOLO_CHAPTER_IDS = [1, 2, ...STORY_CHAPTER_IDS] as const;
@@ -28,6 +29,7 @@ export interface StoryObservation {
   text: string;
   note: string;
   sourceRef: StorySourceRef;
+  visualAssetId?: StoryImageAssetId;
 }
 
 export interface StoryPuzzleOption {
@@ -104,6 +106,7 @@ export interface StoryScene {
   sourceRef: StorySourceRef;
   backgroundAsset: string;
   portraitIds: readonly string[];
+  stagePropAssetIds?: readonly StoryImageAssetId[];
   observations: readonly StoryObservation[];
   dialogue: readonly StoryDialogueLine[];
   puzzle?: StoryPuzzle;

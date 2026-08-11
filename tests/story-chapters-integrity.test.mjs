@@ -183,6 +183,21 @@ test("chapter seven keeps 74/99 exact and Old Lu's confirmed ledger separate", (
 
 test("chapter eight preserves the unknown death, Rabbit aftermath and four-Dao transfer", () => {
   const chapter = STORY_CHAPTERS[8];
+  const emptyMaskScene = scene(8, "c8-empty-mask");
+  assert.match(emptyMaskScene.lead, /没有留下额外的“道”.*摘下的猪头面具落在地上/);
+  assert.doesNotMatch(emptyMaskScene.lead, /只留下一副空面具/);
+  assert.deepEqual(emptyMaskScene.stagePropAssetIds, ["c8-human-pig-mask"]);
+  assert.equal(observation(8, "c8-empty-mask", "c8-empty-pig-mask").visualAssetId, "c8-human-pig-mask");
+  assert.ok(!emptyMaskScene.portraitIds.includes("human-pig"));
+  assert.ok(!emptyMaskScene.portraitIds.includes("human-pig-unmasked"));
+  assert.ok(!STORY_PORTRAITS["human-pig-mask"]);
+  assert.match(STORY_ANIMATIONS["c8-mask-hidden"].caption, /废弃桌板后/);
+  assert.doesNotMatch(STORY_ANIMATIONS["c8-mask-hidden"].caption, /背包/);
+  assert.doesNotMatch(STORY_ANIMATIONS["c8-mask-hidden"].caption, /继承/);
+  assert.match(field(8, "c8-empty-mask", "mask-action").wrongMessages.wear, /管理者制裁/);
+  assert.doesNotMatch(field(8, "c8-empty-mask", "mask-action").wrongMessages.wear, /不可撤回/);
+  assert.match(css, /\.stageProps/);
+  assert.match(css, /\.observationVisual/);
   assert.equal(field(8, "c8-heavens-mouth", "death-cause").correctValue, "unknown");
   assert.match(field(8, "c8-heavens-mouth", "death-cause").wrongMessages.xiaoxiao, /推测.*没有.*(?:物证|证据)/);
   assert.deepEqual(scene(8, "c8-heavens-mouth").sourceRef, {
